@@ -1,0 +1,6 @@
+package-as: NDui_Plus
+
+ignore:
+  - .gitignore
+  - .github/*
+  - README.md

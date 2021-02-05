@@ -1,0 +1,17 @@
+## Interface: 11306
+## Title: |cff0080ffNDui|r Plus
+## Author: Witness
+## Notes: NDui Mod
+## RequiredDeps: NDui
+## Version: @project-version@
+## SavedVariables: NDuiPlusDB, NDuiPlusBAGDB
+## SavedVariablesPerCharacter: NDuiPlusCharDB
+## X-Curse-Project-ID: 389434
+## X-Credits: Siweia, Elv, fgprodigal, Cybeloras_, hokohuang, Dencer, fang2hou, HopeAsd, p3lim, gegenschall.
+
+Init.lua
+Locales\Locales.xml
+Libs\Libs.xml
+Media\Media.xml
+Core\Core.xml
+Modules\Modules.xml

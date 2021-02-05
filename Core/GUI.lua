@@ -1,0 +1,614 @@
+local addonName, ns = ...
+local B, C, L, DB, P = unpack(ns)
+local G = P:RegisterModule("GUI")
+
+local cr, cg, cb = DB.r, DB.g, DB.b
+local guiTab, guiPage, gui = {}, {}
+
+local extraGUIs = {}
+local function toggleExtraGUI(guiName)
+	for name, frame in pairs(extraGUIs) do
+		if name == guiName then
+			B:TogglePanel(frame)
+		else
+			frame:Hide()
+		end
+	end
+end
+
+local function hideExtraGUIs()
+	for _, frame in pairs(extraGUIs) do
+		frame:Hide()
+	end
+end
+
+local function createExtraGUI(parent, name, title, scrollFrame)
+	local frame = CreateFrame("Frame", name, parent)
+	frame:SetSize(280, parent:GetHeight())
+	frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 3, 0)
+	B.SetBD(frame)
+
+	if title then
+		B.CreateFS(frame, 14, title, "system", "TOPLEFT", 20, -25)
+	end
+
+	if scrollFrame then
+		local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+		scroll:SetSize(frame:GetWidth() - 40, frame:GetHeight() - 60)
+		scroll:SetPoint("TOPLEFT", 10, -50)
+		scroll.bg = B.CreateBDFrame(scroll, .3)
+		scroll.bg:SetAllPoints()
+		scroll.child = CreateFrame("Frame", nil, scroll)
+		scroll.child:SetSize(frame:GetWidth() - 40, 1)
+		scroll:SetScrollChild(scroll.child)
+		B.ReskinScroll(scroll.ScrollBar)
+
+		frame.scroll =  scroll
+	end
+
+	if not parent.extraGUIHook then
+		parent:HookScript("OnHide", hideExtraGUIs)
+		parent.extraGUIHook = true
+	end
+	extraGUIs[name] = frame
+
+	return frame
+end
+
+local function setupChangelog()
+	local guiName = "NDuiPlusGUI_Changelog"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(NDuiPlusGUI, guiName, L["Changelog"], true)
+	panel.scroll.bg:Hide()
+	local frame = panel.scroll.child
+
+	local fs = frame:CreateFontString(nil, "OVERLAY")
+	fs:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
+	fs:SetPoint("TOPLEFT", 10, -10)
+	fs:SetPoint("TOPRIGHT", -10, -10)
+	fs:SetJustifyH("LEFT")
+	fs:SetSpacing(10) 
+	fs:SetText(P.Changelog)
+end
+
+local qualityTable = {
+	[1] = ITEM_QUALITY_COLORS[1].hex .. ITEM_QUALITY1_DESC .. "|r",
+	[2] = ITEM_QUALITY_COLORS[2].hex .. ITEM_QUALITY2_DESC .. "|r",
+	[3] = ITEM_QUALITY_COLORS[3].hex .. ITEM_QUALITY3_DESC .. "|r",
+	[4] = ITEM_QUALITY_COLORS[4].hex .. ITEM_QUALITY4_DESC .. "|r",
+}
+
+G.TextureList = {}
+local function initTexStyle()
+	NDuiPlusDB["TexStyle"]["Index"] = 0
+
+	for i, v in ipairs(P.TextureTable) do
+		tinsert(G.TextureList, v.name)
+		if v.name == NDuiPlusDB["TexStyle"]["Texture"] then
+			NDuiPlusDB["TexStyle"]["Index"] = i
+		end
+	end
+end
+
+local function setupTexStyle()
+	NDuiPlusDB["TexStyle"]["Texture"] = G.TextureList[NDuiPlusDB["TexStyle"]["Index"]]
+end
+
+local function updateABFaderAlpha()
+	local AB = P:GetModule("ActionBar")
+	if not AB.fadeParent then return end
+
+	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+end
+
+local function updateABFaderSettings()
+	local AB = P:GetModule("ActionBar")
+	if not AB.fadeParent then return end
+
+	AB:UpdateFaderSettings()
+	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+end
+
+local function updateABFaderState()
+	local AB = P:GetModule("ActionBar")
+	if not AB.fadeParent then return end
+
+	AB:UpdateActionBar()
+	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+end
+
+local function updateUFsNameText()
+	P:GetModule("UnitFrames"):UpdateNameText()
+end
+
+local function updateUFsFader()
+	P:GetModule("UnitFrames"):UpdateUFsFader()
+end
+
+local function hideLootRoll()
+	if _G.NDuiPlus_LootRoll then _G.NDuiPlus_LootRoll:Hide() end
+end
+
+local function updateLootRoll()
+	P:GetModule("LootRoll"):UpdateLootRollTest()
+end
+
+local function AddTextureToOption(parent, index)
+	local tex = parent[index]:CreateTexture()
+	tex:SetInside(nil, 4, 4)
+	tex:SetTexture(P.TextureTable[index].texture)
+	tex:SetVertexColor(DB.r, DB.g, DB.b)
+end
+
+-- Config
+local HeaderTag = "|cff00cc4c"
+local NewFeatureTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
+
+G.TabList = {
+	L["Actionbar"],
+	L["Bags"],
+	L["UnitFrames"],
+	L["Chat"],
+	L["Skins"],
+	L["Misc"],
+}
+
+G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, scripts
+	[1] = {
+		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"]},
+		{},
+		{3, "ActionBar", "Alpha", L["Fade Alpha"].."*", false, {0, 1, .1}, updateABFaderAlpha},
+		{3, "ActionBar", "Delay", L["Fade Delay"].."*", true, {0, 3, .1}},
+		{},
+		{1, "ActionBar", "Combat", L["Combat Status"].."*", nil, nil, updateABFaderSettings},
+		{1, "ActionBar", "Target", L["Target Exists"].."*", true, nil, updateABFaderSettings},
+		{1, "ActionBar", "Cast", L["Cast Status"].."*", nil, nil, updateABFaderSettings},
+		{1, "ActionBar", "Health", L["Health Changed"].."*", true, nil, updateABFaderSettings},
+		{},
+		{1, "ActionBar", "Bar1", L["Bar1"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar2", L["Bar2"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar3", L["Bar3"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar4", L["Bar4"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar5", L["Bar5"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "CustomBar", L["CustomBar"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
+	},
+	[2] = {
+		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},
+		{},
+		{3, "Bags", "BagsWidth", L["BagsWidth"], nil, {10, 20, 1}},
+		{3, "Bags", "IconSize", L["BagsIconSize"], true, {30, 42, 1}},
+	},
+	[3] = {
+		{1, "UnitFrames", "NameColor", L["NameColor"].."*", nil, nil, updateUFsNameText, L["NameColorTip"]},
+		{},
+		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, nil, updateUFsFader, L["UnitFramesFaderTip"]},
+		{},
+		{3, "UnitFrames", "Delay", L["Fade Delay"].."*", false, {0, 3, .1}, updateUFsFader},
+		{3, "UnitFrames", "Smooth", L["Smooth"].."*", true, {0, 1, .1}, updateUFsFader},
+		{3, "UnitFrames", "MinAlpha", L["MinAlpha"].."*", false, {0, 1, .1}, updateUFsFader},
+		{3, "UnitFrames", "MaxAlpha", L["MaxAlpha"].."*", true, {0, 1, .1}, updateUFsFader},
+		{},
+		{1, "UnitFrames", "Hover", L["Hover"].."*", nil, nil, updateUFsFader},
+		{1, "UnitFrames", "Combat", L["Combat"].."*", true, nil, updateUFsFader},
+		{1, "UnitFrames", "Target", L["Target"].."*", nil, nil, updateUFsFader},
+		{1, "UnitFrames", "Health", L["Health"].."*", true, nil, updateUFsFader},
+		{1, "UnitFrames", "Casting", L["Casting"].."*", nil, nil, updateUFsFader},
+	},
+	[4] = {
+		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
+		{1, "Chat", "ClassColor", L["ChatClassColor"], true, nil, nil, L["ChatClassColorTip"]},
+		{1, "Chat", "RaidIndex", L["ChatRaidIndex"].."*", nil, nil, nil, L["ChatRaidIndexTip"]},
+		{1, "Chat", "Icon", L["ChatLinkIcon"].."*", true},
+	},
+	[5] = {
+		{1, "TexStyle", "Enable", L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
+		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, setupTexStyle},
+		{L["Addon Skin"]},
+		{1, "Skins", "Ace3", "AceGUI-3.0"},
+		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
+		{1, "Skins", "MerInspect", "MerInspect"},
+		{1, "Skins", "alaGearMan", "alaGearMan", true},
+		{1, "Skins", "ClassicThreatMeter", "ThreatClassic2"},
+		{1, "Skins", "Spy", "Spy", true},
+		{1, "Skins", "ButtonForge", "Button Forge"},
+		{1, "Skins", "MeetingHorn", "MeetingHorn", true},
+		{1, "Skins", "GearMenu", "GearMenu"},
+		{1, "Skins", "alaCalendar", "alaCalendar", true},
+		{1, "Skins", "ls_Toasts", "ls_Toasts"},
+		{1, "Skins", "WIM", "WIM", true},
+		{1, "Skins", "ItemRack", "ItemRack"},
+		{1, "Skins", "WhisperPop", "WhisperPop", true},
+		{1, "Skins", "AutoBarClassic", "AutoBarClassic"},
+		{1, "Skins", "AtlasLootClassic", "AtlasLootClassic", true},
+		{1, "Skins", "Immersion", "Immersion"},
+		{1, "Skins", "Skillet", "Skillet", true},
+		{1, "Skins", "tdInspect", "tdInspect"},
+		{1, "Skins", "tdAuction", "tdAuction", true},
+	},
+	[6] = {
+		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
+		{1, "Loot", "Announce", L["LootAnnounceButton"]},
+		{1, "Loot", "AnnounceTitle", L["Announce Target Name"].."*"},
+		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, qualityTable},
+		{},
+		{1, "LootRoll", "Enable", HeaderTag..L["LootRoll"], nil, nil, nil, L["LootRollTip"], {OnHide = hideLootRoll}},
+		{4, "LootRoll", "Style", L["Style"], false, {L["Style 1"], L["Style 2"]}, updateLootRoll},
+		{4, "LootRoll", "Direction", L["Growth Direction"], true, {L["Up"], L["Down"]}},
+		{3, "LootRoll", "Width", L["Frame Width"], false, {200, 500, 1}, updateLootRoll},
+		{3, "LootRoll", "Height", L["Frame Height"], true, {20, 50, 1}, updateLootRoll},
+		{},
+		{1, "Misc", "EnhanceTrainers", L["EnhanceTrainers"]},
+		{1, "Misc", "ExtendedGuildUI", L["ExtendedGuildUI"], true, nil, nil, L["ExtendedGuildUITip"]},
+		{1, "Misc", "PauseToSlash", L["PauseToSlash"], nil, nil, nil, L["PauseToSlashTip"]},
+	},
+}
+
+local function SelectTab(i)
+	for num = 1, #G.TabList do
+		if num == i then
+			guiTab[num]:SetBackdropColor(cr, cg, cb, .25)
+			guiTab[num].checked = true
+			guiPage[num]:Show()
+		else
+			guiTab[num]:SetBackdropColor(0, 0, 0, .25)
+			guiTab[num].checked = false
+			guiPage[num]:Hide()
+		end
+	end
+end
+
+local function tabOnClick(self)
+	PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+	SelectTab(self.index)
+end
+
+local function tabOnEnter(self)
+	if self.checked then return end
+	self:SetBackdropColor(cr, cg, cb, .25)
+end
+
+local function tabOnLeave(self)
+	if self.checked then return end
+	self:SetBackdropColor(0, 0, 0, .25)
+end
+
+local function CreateTab(parent, i, name)
+	local tab = CreateFrame("Button", nil, parent)
+	tab:SetPoint("TOPLEFT", 10, -30*i - 20 + C.mult)
+	tab:SetSize(90, 28)
+	B.CreateBD(tab, .25)
+	B.CreateFS(tab, 14, name, "system", "LEFT", 10, 0)
+	tab.index = i
+
+	tab:SetScript("OnClick", tabOnClick)
+	tab:SetScript("OnEnter", tabOnEnter)
+	tab:SetScript("OnLeave", tabOnLeave)
+
+	return tab
+end
+
+local function NDUI_VARIABLE(key, value, newValue)
+	if key == "BLANK" then
+		if newValue ~= nil then
+			NDuiPlusDB[value] = newValue
+		else
+			return NDuiPlusDB[value]
+		end
+	else
+		if newValue ~= nil then
+			NDuiPlusDB[key][value] = newValue
+		else
+			return NDuiPlusDB[key][value]
+		end
+	end
+end
+
+local function CreateOption(i)
+	local parent, offset = guiPage[i].child, 20
+
+	for _, option in pairs(G.OptionList[i]) do
+		local optType, key, value, name, horizon, data, callback, tooltip, scripts = unpack(option)
+		-- Checkboxes
+		if optType == 1 then
+			local cb = B.CreateCheckBox(parent)
+			if horizon then
+				cb:SetPoint("TOPLEFT", 250, -offset + 35)
+			else
+				cb:SetPoint("TOPLEFT", 20, -offset)
+				offset = offset + 35
+			end
+			cb.name = B.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
+			cb:SetChecked(NDUI_VARIABLE(key, value))
+			cb:SetScript("OnClick", function()
+				NDUI_VARIABLE(key, value, cb:GetChecked())
+				if callback then callback() end
+			end)
+			if data and type(data) == "function" then
+				local bu = B.CreateGear(parent)
+				bu:SetPoint("LEFT", cb.name, "RIGHT", -2, 1)
+				bu:SetScript("OnClick", data)
+			end
+			if tooltip then
+				cb.title = L["Tips"]
+				B.AddTooltip(cb, "ANCHOR_RIGHT", tooltip, "info")
+			end
+		-- Editbox
+		elseif optType == 2 then
+			local eb = B.CreateEditBox(parent, 180, 28)
+			eb:SetMaxLetters(999)
+			if horizon then
+				eb:SetPoint("TOPLEFT", 345, -offset + 45)
+			else
+				eb:SetPoint("TOPLEFT", 25, -offset - 25)
+				offset = offset + 70
+			end
+			eb:SetText(NDUI_VARIABLE(key, value))
+			eb:HookScript("OnEscapePressed", function()
+				eb:SetText(NDUI_VARIABLE(key, value))
+			end)
+			eb:HookScript("OnEnterPressed", function()
+				NDUI_VARIABLE(key, value, eb:GetText())
+				if callback then callback() end
+			end)
+
+			B.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
+			eb.title = L["Tips"]
+			local tip = L["EditBox Tip"]
+			if tooltip then tip = tooltip.."|n"..tip end
+			B.AddTooltip(eb, "ANCHOR_RIGHT", tip, "info")
+		-- Slider
+		elseif optType == 3 then
+			local min, max, step = unpack(data)
+			local x, y
+			if horizon then
+				x, y = 245, -offset + 40
+			else
+				x, y = 15, -offset - 30
+				offset = offset + 70
+			end
+			local s = B.CreateSlider(parent, name, min, max, step, x, y)
+			s.__default = P.DefaultSettings[key][value]
+			s:SetValue(NDUI_VARIABLE(key, value))
+			s:SetScript("OnValueChanged", function(_, v)
+				local current = B:Round(tonumber(v), 2)
+				NDUI_VARIABLE(key, value, current)
+				s.value:SetText(current)
+				if callback then callback() end
+			end)
+			s.value:SetText(B:Round(NDUI_VARIABLE(key, value), 2))
+			if tooltip then
+				s.title = L["Tips"]
+				B.AddTooltip(s, "ANCHOR_RIGHT", tooltip, "info")
+			end
+		-- Dropdown
+		elseif optType == 4 then
+			if key == "TexStyle" then
+				initTexStyle()
+				data = G.TextureList
+			end
+
+			local dd = B.CreateDropDown(parent, 180, 28, data)
+			if horizon then
+				dd:SetPoint("TOPLEFT", 255, -offset + 45)
+			else
+				dd:SetPoint("TOPLEFT", 25, -offset - 25)
+				offset = offset + 70
+			end
+			dd.Text:SetText(data[NDUI_VARIABLE(key, value)])
+
+			local opt = dd.options
+			dd.button:HookScript("OnClick", function()
+				for num = 1, #data do
+					if num == NDUI_VARIABLE(key, value) then
+						opt[num]:SetBackdropColor(1, .8, 0, .3)
+						opt[num].selected = true
+					else
+						opt[num]:SetBackdropColor(0, 0, 0, .3)
+						opt[num].selected = false
+					end
+				end
+			end)
+			for i in pairs(data) do
+				opt[i]:HookScript("OnClick", function()
+					NDUI_VARIABLE(key, value, i)
+					if callback then callback() end
+				end)
+				if key == "TexStyle" then
+					AddTextureToOption(opt, i) -- texture preview
+				end
+			end
+
+			B.CreateFS(dd, 14, name, "system", "CENTER", 0, 25)
+			if tooltip then
+				dd.title = L["Tips"]
+				B.AddTooltip(dd, "ANCHOR_RIGHT", tooltip, "info")
+			end
+			if key == "TexStyle" then
+				local blank = CreateFrame("Frame", nil, dd.button.__list)
+				blank:SetSize(20, 20)
+				blank:SetPoint("TOPLEFT", dd.button.__list, "BOTTOMLEFT")
+			end
+		-- Colorswatch
+		elseif optType == 5 then
+			local swatch = B.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
+			local width = 25 + (horizon or 0)*155
+			if horizon then
+				swatch:SetPoint("TOPLEFT", width, -offset + 30)
+			else
+				swatch:SetPoint("TOPLEFT", width, -offset - 5)
+				offset = offset + 35
+			end
+			swatch.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
+		-- Blank, no optType
+		else
+			if not key then
+				if optType and type(optType) == "string" then
+					offset = offset + 10
+					B.CreateFS(parent, 14, optType, nil, "TOP", 0, -offset + 8)
+				end
+				local line = B.SetGradient(parent, "H", 1, 1, 1, .25, .25, 420, C.mult)
+				line:SetPoint("TOPLEFT", 20, -offset - 12)
+			end
+			offset = offset + 35
+		end
+		if scripts then
+			for type, handler in pairs(scripts) do
+				parent:HookScript(type, handler)
+			end
+		end
+	end
+
+	local footer = CreateFrame("Frame", nil, parent)
+	footer:SetSize(20, 20)
+	footer:SetPoint("TOPLEFT", 25, -offset)
+end
+
+local function scrollBarHook(self, delta)
+	local scrollBar = self.ScrollBar
+	scrollBar:SetValue(scrollBar:GetValue() - delta*50)
+end
+
+function P:OpenGUI()
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
+	if gui then gui:Show() return end
+
+	-- Main Frame
+	gui = CreateFrame("Frame", "NDuiPlusGUI", UIParent)
+	tinsert(UISpecialFrames, "NDuiPlusGUI")
+	gui:SetSize(600, 480)
+	gui:SetPoint("CENTER")
+	gui:SetFrameStrata("HIGH")
+	gui:SetFrameLevel(10)
+	B.CreateMF(gui)
+	B.SetBD(gui)
+	B.CreateFS(gui, 18, "NDui_Plus", true, "TOP", 0, -10)
+	B.CreateFS(gui, 16, format("v%s", P.Version), false, "TOP", 0, -30)
+
+	local close = P.CreateButton(gui, 80, 20, CLOSE)
+	close:SetPoint("BOTTOMRIGHT", -20, 15)
+	close:SetScript("OnClick", function() gui:Hide() end)
+
+	local ok = P.CreateButton(gui, 80, 20, OKAY)
+	ok:SetPoint("RIGHT", close, "LEFT", -5, 0)
+	ok:SetScript("OnClick", function()
+		gui:Hide()
+		StaticPopup_Show("RELOAD_NDUI")
+	end)
+
+	for i, name in pairs(G.TabList) do
+		guiTab[i] = CreateTab(gui, i, name)
+
+		guiPage[i] = CreateFrame("ScrollFrame", nil, gui, "UIPanelScrollFrameTemplate")
+		guiPage[i]:SetPoint("TOPLEFT", 110, -50)
+		guiPage[i]:SetPoint("BOTTOMRIGHT", -30, 50)
+		B.CreateBDFrame(guiPage[i], .25)
+		guiPage[i]:Hide()
+		guiPage[i].child = CreateFrame("Frame", nil, guiPage[i])
+		guiPage[i].child:SetSize(guiPage[i]:GetWidth(), 1)
+		guiPage[i]:SetScrollChild(guiPage[i].child)
+		B.ReskinScroll(guiPage[i].ScrollBar)
+		guiPage[i]:SetScript("OnMouseWheel", scrollBarHook)
+
+		CreateOption(i)
+	end
+
+	local helpInfo = B.CreateHelpInfo(gui)
+	helpInfo:SetPoint("TOPRIGHT", -10, -5)
+	helpInfo.title = L["Changelog"]
+	B.AddTooltip(helpInfo, "ANCHOR_RIGHT", L["Option Tips"], "info")
+	helpInfo:SetScript("OnClick", setupChangelog)
+
+	local credit = CreateFrame("Button", nil, gui)
+	credit:SetPoint("TOPRIGHT", -50, -5)
+	credit:SetSize(40, 40)
+	credit.Icon = credit:CreateTexture(nil, "ARTWORK")
+	credit.Icon:SetAllPoints()
+	credit.Icon:SetTexture(DB.creditTex)
+	credit:SetHighlightTexture(DB.creditTex)
+	credit.title = "Credits"
+	B.AddTooltip(credit, "ANCHOR_RIGHT", "|n"..GetAddOnMetadata(addonName, "X-Credits"), "info")
+
+	local toggle = CreateFrame("Button", nil, gui)
+	toggle:SetPoint("TOPLEFT", 25, -5)
+	toggle:SetSize(40, 40)
+	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
+	toggle.Icon:SetAllPoints()
+	toggle.Icon:SetTexture(P.SwapTex)
+	toggle:SetHighlightTexture(P.SwapTex)
+	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui", "info")
+	toggle:SetScript("OnClick", function()
+		_G.GameMenuFrameNDui:Click()
+		gui:Hide()
+	end)
+
+	if not NDuiPlusDB["Changelog"].Version or NDuiPlusDB["Changelog"].Version ~= P.Version then
+		setupChangelog()
+		NDuiPlusDB["Changelog"].Version = P.Version
+	end
+
+	local function showLater(event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			if gui:IsShown() then
+				gui:Hide()
+				B:RegisterEvent("PLAYER_REGEN_ENABLED", showLater)
+			end
+		else
+			gui:Show()
+			B:UnregisterEvent(event, showLater)
+		end
+	end
+	B:RegisterEvent("PLAYER_REGEN_DISABLED", showLater)
+
+	SelectTab(1)
+end
+
+function G:SetupToggle()
+	local NDuiGUI = _G.NDuiGUI
+	if not NDuiGUI or NDuiGUI.ToggleButton then return end
+
+	local toggle = CreateFrame("Button", nil, NDuiGUI)
+	toggle:SetPoint("TOPLEFT", 60, -5)
+	toggle:SetSize(40, 40)
+	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
+	toggle.Icon:SetAllPoints()
+	toggle.Icon:SetTexture(P.SwapTex)
+	toggle:SetHighlightTexture(P.SwapTex)
+	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui_Plus", "info")
+	toggle:SetScript("OnClick", function()
+		P:OpenGUI()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+		NDuiGUI:Hide()
+	end)
+
+	NDuiGUI.ToggleButton = toggle
+end
+
+function G:OnLogin()
+	P:Delay(.5, function()
+		local NDuiBtn = _G.GameMenuFrameNDui
+		if not NDuiBtn then return end
+		NDuiBtn:HookScript("PostClick",G.SetupToggle)
+	end)
+end
+
+SlashCmdList['NDUI_PLUS'] = function(msg)
+	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
+	if status == "IsOld" then
+		P:Print(format(L["Version Check"], P.SupportVersion))
+		return
+	end
+
+	if msg:lower() == "debug" then
+		NDuiPlusDB["Debug"] = not NDuiPlusDB["Debug"]
+		_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r Debug " .. format(NDuiPlusDB["Debug"] and "on" or "off"))
+	else
+		P:OpenGUI()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+	end
+end
+SLASH_NDUI_PLUS1 = "/ndp"
+SLASH_NDUI_PLUS2 = "/nduiplus"

@@ -49,9 +49,13 @@ function AB:Button_OnLeave()
 end
 
 function AB:FadeParent_OnEvent(event)
-	if CastingInfo() or ChannelInfo() or UnitExists("target")
-	or UnitAffectingCombat("player") or (UnitHealth("player") ~= UnitHealthMax("player"))
-	or event == "ACTIONBAR_SHOWGRID" then
+	if
+		(event == "ACTIONBAR_SHOWGRID") or
+		(AB.db["Combat"] and UnitAffectingCombat("player")) or
+		(AB.db["Target"] and UnitExists("target")) or
+		(AB.db["Cast"] and (CastingInfo() or ChannelInfo())) or
+		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player")))
+	then
 		self.mouseLock = true
 		ClearTimers(AB.fadeParent)
 		P:UIFrameFadeIn(self, .2, self:GetAlpha(), 1)
@@ -68,8 +72,9 @@ local options = {
 		enable = function(self)
 			self:RegisterEvent("PLAYER_REGEN_ENABLED")
 			self:RegisterEvent("PLAYER_REGEN_DISABLED")
+			self:RegisterUnitEvent("UNIT_FLAGS", "player")
 		end,
-		events = {"PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED"}
+		events = {"PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED", "UNIT_FLAGS"}
 	},
 	Target = {
 		enable = function(self)
@@ -84,7 +89,7 @@ local options = {
 			self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "player")
 			self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "player")
 		end,
-		events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP"}
+		events = {"UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_STOP"}
 	},
 	Health = {
 		enable = function(self)

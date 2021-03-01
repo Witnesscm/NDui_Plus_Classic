@@ -119,6 +119,17 @@ local function updateABFaderState()
 	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
 end
 
+local function openKeyBindingFrame()
+	_G.GameMenuButtonKeybindings:Click()
+
+	for _, button in ipairs(_G.KeyBindingFrame.categoryList.buttons) do
+    	if button.text:GetText() == ADDONS then
+			button:Click()
+			break
+		end
+	end
+end
+
 local function updateUFsNameText()
 	P:GetModule("UnitFrames"):UpdateNameText()
 end
@@ -178,6 +189,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},
+		{6, nil, nil, L["Set KeyBinding"], true, openKeyBindingFrame},
 		{},
 		{3, "Bags", "BagsWidth", L["BagsWidth"], nil, {10, 20, 1}},
 		{3, "Bags", "IconSize", L["BagsIconSize"], true, {30, 42, 1}},
@@ -443,6 +455,16 @@ local function CreateOption(i)
 				offset = offset + 35
 			end
 			swatch.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
+		-- Button
+		elseif optType == 6 then
+			local bu = P.CreateButton(parent, 120, 24, name)
+			if horizon then
+				bu:SetPoint("TOPLEFT", 250, -offset + 35)
+			else
+				bu:SetPoint("TOPLEFT", 25, -offset)
+				offset = offset + 35
+			end
+			bu:SetScript("OnClick", data)
 		-- Blank, no optType
 		else
 			if not key then
@@ -455,7 +477,7 @@ local function CreateOption(i)
 			end
 			offset = offset + 35
 		end
-		if scripts then
+		if scripts and type(scripts) == "table" then
 			for type, handler in pairs(scripts) do
 				parent:HookScript(type, handler)
 			end

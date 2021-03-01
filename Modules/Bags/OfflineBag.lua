@@ -679,9 +679,10 @@ local function CloseButton_OnClick(_, btn)
 end
 
 local function Backpack_OnShow(self)
-	if not self.hooked then
-		for i = 1, NDui_BackpackMain:GetNumChildren() do
-			local child = select(i, NDui_BackpackMain:GetChildren())
+	local bag = _G.NDui_BackpackBag
+	if bag and not self.hooked then
+		for i = 1, bag:GetNumChildren() do
+			local child = select(i, bag:GetChildren())
 			if child:GetObjectType() == "Button" and child.title and child.title == CLOSE then
 				child:RegisterForClicks("AnyUp")
 				child:HookScript("OnClick", CloseButton_OnClick)
@@ -709,12 +710,11 @@ function module:OnLogin()
 
 	if not C.db["Bags"]["Enable"] then return end
 
-	local function delayFunc()
+	P:Delay(.5, function()
 		local Backpack = BagsModule.Bags
 		if not Backpack then return end
 		Backpack:HookScript("OnShow", Backpack_OnShow)
-	end
-	C_Timer.After(.5, delayFunc)
+	end)
 end
 
 SlashCmdList['NDUI_PLUS_BAG'] = function(msg)

@@ -6,9 +6,9 @@ local _G = getfenv(0)
 ----------------------------
 -- Credit: Leatrix Plus
 ----------------------------
-function M:EnhanceTrainers()
+function M:EnhancedTrainers()
 	local function TrainerFunc()
-		if not M.db["EnhanceTrainers"] then return end
+		if not M.db["EnhancedTrainers"] then return end
 		if ClassTrainerFrame:GetWidth() > 700 then return end
 
 		UIPanelWindows["ClassTrainerFrame"] = {area = "override", pushable = 1, xoffset = -16, yoffset = 12, bottomClampOverride = 140 + 12, width = 714, height = 487, whileDead = 1}
@@ -109,7 +109,7 @@ function M:EnhanceTrainers()
 			for i = 12, 23 do
 				local bu = _G["ClassTrainerSkill"..i]
 				if bu then
-					B.ReskinExpandOrCollapse(bu)
+					B.ReskinCollapse(bu)
 				end
 			end
 		end
@@ -124,4 +124,4 @@ function M:EnhanceTrainers()
 	B:RegisterEvent("ADDON_LOADED", loadFunc)
 end
 
-M:RegisterMisc("EnhanceTrainers", M.EnhanceTrainers)
+M:RegisterMisc("EnhancedTrainers", M.EnhancedTrainers)

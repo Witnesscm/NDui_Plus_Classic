@@ -5,393 +5,362 @@ local cr, cg, cb = DB.r, DB.g, DB.b
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 
-local function expandOnEnter(self)
-	if self:IsEnabled() then
-		self.bg:SetBackdropColor(cr, cg, cb, .25)
-	end
-end
-
-local function expandOnLeave(self)
-	self.bg:SetBackdropColor(0, 0, 0, .25)
-end
-
-local function SetupTexture(self, texture)
-	if self.settingTexture then return end
-	self.settingTexture = true
-	self:SetNormalTexture("")
-
-	if texture and texture ~= "" then
-		if type(texture) == "number" then
-			if texture == 130838 then
-				self.expTex:SetTexCoord(0, .4375, 0, .4375)
-			elseif texture == 130821 then
-				self.expTex:SetTexCoord(.5625, 1, 0, .4375)
-			end
-		else
-			if texture:find("Plus") then
-				self.expTex:SetTexCoord(0, .4375, 0, .4375)
-			elseif texture:find("Minus") then
-				self.expTex:SetTexCoord(.5625, 1, 0, .4375)
-			end
-		end
-		self.bg:Show()
-	else
-		self.bg:Hide()
-	end
-	self.settingTexture = nil
-end
-
-function P:ReskinExpandOrCollapse()
-	self:SetNormalTexture("")
-	self:SetHighlightTexture("")
-	self:SetPushedTexture("")
-
-	local bg = B.CreateBDFrame(self, .25)
-	bg:ClearAllPoints()
-	bg:SetSize(13, 13)
-	bg:SetPoint("TOPLEFT", self:GetNormalTexture())
-	B.CreateGradient(bg)
-	self.bg = bg
-
-	self.expTex = bg:CreateTexture(nil, "OVERLAY")
-	self.expTex:SetSize(7, 7)
-	self.expTex:SetPoint("CENTER")
-	self.expTex:SetTexture("Interface\\Buttons\\UI-PlusMinus-Buttons")
-
-	self:HookScript("OnEnter", expandOnEnter)
-	self:HookScript("OnLeave", expandOnLeave)
-	hooksecurefunc(self, "SetNormalTexture", SetupTexture)
-end
-
-local function TexSetupTexture(self, texture)
-	local frame = self:GetParent()
-	if self.settingTexture then return end
-	self.settingTexture = true
-	self:SetTexture("")
-
-	if texture and texture ~= "" then
-		if type(texture) == "number" then
-			if texture == 130838 then
-				frame.expTex:SetTexCoord(0, .4375, 0, .4375)
-			elseif texture == 130821 then
-				frame.expTex:SetTexCoord(.5625, 1, 0, .4375)
-			end
-		else
-			if texture:find("plus") then
-				frame.expTex:SetTexCoord(0, .4375, 0, .4375)
-			elseif texture:find("minus") then
-				frame.expTex:SetTexCoord(.5625, 1, 0, .4375)
-			end
-		end
-		frame.bg:Show()
-	else
-		frame.bg:Hide()
-	end
-	self.settingTexture = nil
-end
-
-function P:ReskinExpandOrCollapseTex()
-	self:SetTexture("")
-	local frame = self:GetParent()
-
-	local bg = B.CreateBDFrame(frame, .25)
-	bg:ClearAllPoints()
-	bg:SetSize(13, 13)
-	bg:SetPoint("TOPLEFT", frame)
-	B.CreateGradient(bg)
-	frame.bg = bg
-
-	frame.expTex = bg:CreateTexture(nil, "OVERLAY")
-	frame.expTex:SetSize(7, 7)
-	frame.expTex:SetPoint("CENTER")
-	frame.expTex:SetTexture("Interface\\Buttons\\UI-PlusMinus-Buttons")
-
-	frame:HookScript("OnEnter", expandOnEnter)
-	frame:HookScript("OnLeave", expandOnLeave)
-	hooksecurefunc(self, "SetTexture", TexSetupTexture)
-	hooksecurefunc(self, "Show", function()
-		self:GetParent().bg:Show()
-		self:GetParent().expTex:Show()
-	end)
-	hooksecurefunc(self, "Hide", function()
-		self:GetParent().bg:Hide()
-		self:GetParent().expTex:Hide()
-	end)
-end
-
-function P:ReskinFrame()
-	B.StripTextures(self)
-	local bg = B.SetBD(self)
-
-	local frameName = self.GetName and self:GetName()
-	for _, key in pairs({"Header", "header"}) do
-		local frameHeader = self[key] or (frameName and _G[frameName..key])
-		if frameHeader then
-			B.StripTextures(frameHeader, 0)
-
-			frameHeader:ClearAllPoints()
-			frameHeader:SetPoint("TOP", bg, "TOP", 0, 5)
-		end
-	end
-	for _, key in pairs({"Portrait", "portrait"}) do
-		local framePortrait = self[key] or (frameName and _G[frameName..key])
-		if framePortrait then framePortrait:SetAlpha(0) end
-	end
-
-	local closeButton = self.CloseButton or (frameName and _G[frameName.."CloseButton"])
-	if closeButton then B.ReskinClose(closeButton) end
-
-	return bg
-end
-
-
-function P:ReskinDropDown()
-	B.StripTextures(self)
-
-	local frameName = self.GetName and self:GetName()
-	local down = self.Button or frameName and (_G[frameName.."Button"] or _G[frameName.."_Button"])
-	down:ClearAllPoints()
-	down:SetPoint("RIGHT", -18, 2)
-	B.ReskinArrow(down, "down")
-	down:SetSize(18, 18)
-
-	local bg = B.CreateBDFrame(self, 0)
-	bg:ClearAllPoints()
-	bg:SetPoint("LEFT", 16, 0)
-	bg:SetPoint("TOPRIGHT", down, "TOPRIGHT")
-	bg:SetPoint("BOTTOMRIGHT", down, "BOTTOMRIGHT")
-	B.CreateGradient(bg)
-	self.bg = bg
-end
-
-function P.ReskinFont(font, size)
-	local oldSize = select(2, font:GetFont())
-	size = size or oldSize
-	local fontSize = size*C.db["Skins"]["FontScale"]
-	font:SetFont(DB.Font[1], fontSize, DB.Font[3])
-	font:SetShadowColor(0, 0, 0, 0)
-end
-
-function P:ReskinTab(offset)
-	offset = offset or 0
-
-	self:DisableDrawLayer("BACKGROUND")
-
-	local bg = B.CreateBDFrame(self)
-	bg:SetPoint("TOPLEFT", 8 - offset, -3)
-	bg:SetPoint("BOTTOMRIGHT", -8 + offset, 0)
-
-	self:SetHighlightTexture(DB.bdTex)
-	local hl = self:GetHighlightTexture()
-	hl:ClearAllPoints()
-	hl:SetInside(bg)
-	hl:SetVertexColor(cr, cg, cb, .25)
-end
-
-function P:ReskinTooltip(a)
-	if not self then P:Debug("Unknown tooltip spotted.") return end
-	if self:IsForbidden() then return end
-
-	if not self.tipStyled then
-		if self.SetBackdrop then self:SetBackdrop(nil) end
-		self:DisableDrawLayer("BACKGROUND")
-		self.bg = B.SetBD(self, a or .7)
-		self.bg:SetInside(self)
-		self.bg:SetFrameLevel(self:GetFrameLevel())
-
-		local scrollBar = self.ScrollBar or self.scrollBar
-		if scrollBar then
-			B.ReskinScroll(scrollBar)
-		end
-
-		self.tipStyled = true
-	end
-end
-
-function P:AnchorTooltip()
-	if self:GetRight() >= (GetScreenWidth() / 2) then
-		GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
-	else
-		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-	end
-end
-
-function P.NameGenerator(name)
-	local index = 0
-	return function()
-		index = index + 1
-		return name .. index
-	end
-end
-
-function P.LeftButtonTip(text)
-	return P.LEFT_MOUSE_BUTTON .. text, 1, 1, 1
-end
-
-function P.RightButtonTip(text)
-	return P.RIGHT_MOUSE_BUTTON .. text, 1, 1, 1
-end
-
-function P:CreateButton(width, height, text, discolor, fontSize)
-	local bu = CreateFrame("Button", nil, self, "UIPanelButtonTemplate")
-	bu:SetSize(width, height)
-	bu.Text:SetFont(DB.Font[1], fontSize or 14, DB.Font[3])
-	bu.Text:SetWidth(width - 20)
-	bu.Text:SetWordWrap(false)
-	if discolor and type(discolor) == "boolean" then
-		bu.Text:SetTextColor(1, 1, 1)
-	else
-		bu.Text:SetTextColor(DB.r, DB.g, DB.b)
-	end
-	if text then
-		bu:SetText(text)
-	end
-	B.Reskin(bu)
-
-	return bu
-end
-
+-- Math
 do
-	local PIXEL_BORDERS = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}
-
-	function P:SetBackdrop(frame, a)
-		local borders = frame.pixelBorders
-		if not borders then return end
-		local size = C.mult
-		borders.CENTER:SetPoint("TOPLEFT", frame)
-		borders.CENTER:SetPoint("BOTTOMRIGHT", frame)
-
-		borders.TOPLEFT:SetSize(size, size)
-		borders.TOPRIGHT:SetSize(size, size)
-		borders.BOTTOMLEFT:SetSize(size, size)
-		borders.BOTTOMRIGHT:SetSize(size, size)
-
-		borders.TOP:SetHeight(size)
-		borders.BOTTOM:SetHeight(size)
-		borders.LEFT:SetWidth(size)
-		borders.RIGHT:SetWidth(size)
-		P:SetBackdropColor(frame, 0, 0, 0, a)
-		P:SetBackdropBorderColor(frame, 0, 0, 0)
-	end
-
-	function P:SetBackdropColor(frame, r, g, b, a)
-		if frame.pixelBorders then
-			frame.pixelBorders.CENTER:SetVertexColor(r, g, b, a)
-		end
-	end
-
-	function P:SetBackdropBorderColor(frame, r, g, b, a)
-		if frame.pixelBorders then
-			for _, v in pairs(PIXEL_BORDERS) do
-				frame.pixelBorders[v]:SetVertexColor(r or 0, g or 0, b or 0, a)
-			end
-		end
-	end
-
-	function P:SetBackdropColor_Hook(r, g, b, a)
-		P:SetBackdropColor(self, r, g, b, a)
-	end
-
-	function P:SetBackdropBorderColor_Hook(r, g, b, a)
-		P:SetBackdropBorderColor(self, r, g, b, a)
-	end
-
-	function P:PixelBorders(frame)
-		if frame and not frame.pixelBorders then
-			local borders = {}
-			for _, v in pairs(PIXEL_BORDERS) do
-				borders[v] = frame:CreateTexture(nil, "BORDER", nil, 1)
-				borders[v]:SetTexture(DB.bdTex)
-			end
-			borders.CENTER = frame:CreateTexture(nil, "BACKGROUND", nil, -1)
-			borders.CENTER:SetTexture(DB.bdTex)
-
-			borders.TOPLEFT:SetPoint("BOTTOMRIGHT", borders.CENTER, "TOPLEFT", C.mult, -C.mult)
-			borders.TOPRIGHT:SetPoint("BOTTOMLEFT", borders.CENTER, "TOPRIGHT", -C.mult, -C.mult)
-			borders.BOTTOMLEFT:SetPoint("TOPRIGHT", borders.CENTER, "BOTTOMLEFT", C.mult, C.mult)
-			borders.BOTTOMRIGHT:SetPoint("TOPLEFT", borders.CENTER, "BOTTOMRIGHT", -C.mult, C.mult)
-
-			borders.TOP:SetPoint("TOPLEFT", borders.TOPLEFT, "TOPRIGHT", 0, 0)
-			borders.TOP:SetPoint("TOPRIGHT", borders.TOPRIGHT, "TOPLEFT", 0, 0)
-
-			borders.BOTTOM:SetPoint("BOTTOMLEFT", borders.BOTTOMLEFT, "BOTTOMRIGHT", 0, 0)
-			borders.BOTTOM:SetPoint("BOTTOMRIGHT", borders.BOTTOMRIGHT, "BOTTOMLEFT", 0, 0)
-
-			borders.LEFT:SetPoint("TOPLEFT", borders.TOPLEFT, "BOTTOMLEFT", 0, 0)
-			borders.LEFT:SetPoint("BOTTOMLEFT", borders.BOTTOMLEFT, "TOPLEFT", 0, 0)
-
-			borders.RIGHT:SetPoint("TOPRIGHT", borders.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
-			borders.RIGHT:SetPoint("BOTTOMRIGHT", borders.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
-
-			hooksecurefunc(frame, "SetBackdropColor", P.SetBackdropColor_Hook)
-			hooksecurefunc(frame, "SetBackdropBorderColor", P.SetBackdropBorderColor_Hook)
-			frame.pixelBorders = borders
-		end
-	end
-
-	function P:CreateBD(a)
-		self:SetBackdrop(nil)
-		P:PixelBorders(self)
-		P:SetBackdrop(self, a or C.db["Skins"]["SkinAlpha"])
-	end
-end
-
-do
-	P.EasyMenu = CreateFrame("Frame", "NDuiPlus_EasyMenu", UIParent, "UIDropDownMenuTemplate")
-end
-
-function P:RawHook(name, func)
-	assert(type(_G[name])=="function", "Bad arg1, string function name expected")
-	assert(type(func)=="function", "Bad arg2, function expected")
-
-	self.origins = self.origins or {}
-	self.hooks = self.hooks or {}
-
-	if not self.origins[name] then
-		self.origins[name] = _G[name]
-		_G[name] = function(...) return self.hooks[name](...) end
-	end
-	self.hooks[name] = func
-end
-
-do	
+	-- AceTimer
 	LibStub("AceTimer-3.0"):Embed(P)
-end
 
-function P:WaitFunc(elapse)
-	local i = 1
-	while i <= #P.WaitTable do
-		local data = P.WaitTable[i]
-		if data[1] > elapse then
-			data[1], i = data[1] - elapse, i + 1
-		else
-			tremove(P.WaitTable, i)
-			data[2](unpack(data[3]))
+	function P:WaitFunc(elapse)
+		local i = 1
+		while i <= #P.WaitTable do
+			local data = P.WaitTable[i]
+			if data[1] > elapse then
+				data[1], i = data[1] - elapse, i + 1
+			else
+				tremove(P.WaitTable, i)
+				data[2](unpack(data[3]))
 
-			if #P.WaitTable == 0 then
-				P.WaitFrame:Hide()
+				if #P.WaitTable == 0 then
+					P.WaitFrame:Hide()
+				end
 			end
 		end
 	end
+
+	P.WaitTable = {}
+	P.WaitFrame = CreateFrame("Frame", "NDuiPlus_WaitFrame", _G.UIParent)
+	P.WaitFrame:SetScript("OnUpdate", P.WaitFunc)
+
+	function P:Delay(delay, func, ...)
+		if type(delay) ~= "number" or type(func) ~= "function" then
+			return false
+		end
+
+		if delay < 0.01 then delay = 0.01 end
+
+		if select("#", ...) <= 0 then
+			C_Timer.After(delay, func)
+		else
+			tinsert(P.WaitTable,{delay,func,{...}})
+			P.WaitFrame:Show()
+		end
+
+		return true
+	end
 end
 
-P.WaitTable = {}
-P.WaitFrame = CreateFrame('Frame', 'NDuiPlus_WaitFrame', _G.UIParent)
-P.WaitFrame:SetScript('OnUpdate', P.WaitFunc)
+-- UI widgets
+do 
+	P.EasyMenu = CreateFrame("Frame", "NDuiPlus_EasyMenu", UIParent, "UIDropDownMenuTemplate")
 
-function P:Delay(delay, func, ...)
-	if type(delay) ~= 'number' or type(func) ~= 'function' then
-		return false
+	function P:SetupBackdrop()
+		Mixin(self, BackdropTemplateMixin)
+		self:OnBackdropLoaded()
+		self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
 	end
 
-	if delay < 0.01 then delay = 0.01 end
+	function P:CreateButton(width, height, text, discolor, fontSize)
+		local bu = CreateFrame("Button", nil, self, "UIPanelButtonTemplate")
+		bu:SetSize(width, height)
+		bu.Text:SetFont(DB.Font[1], fontSize or 14, DB.Font[3])
+		bu.Text:SetWidth(width - 20)
+		bu.Text:SetWordWrap(false)
+		if discolor and type(discolor) == "boolean" then
+			bu.Text:SetTextColor(1, 1, 1)
+		else
+			bu.Text:SetTextColor(DB.r, DB.g, DB.b)
+		end
+		if text then
+			bu:SetText(text)
+		end
+		B.Reskin(bu)
 
-	if select('#', ...) <= 0 then
-		C_Timer.After(delay, func)
-	else
-		tinsert(P.WaitTable,{delay,func,{...}})
-		P.WaitFrame:Show()
+		return bu
+	end
+end
+
+-- UI skins
+do
+	local blizzRegions = {
+		"Left",
+		"Middle",
+		"Right",
+		"Mid",
+		"LeftDisabled",
+		"MiddleDisabled",
+		"RightDisabled",
+		"TopLeft",
+		"TopRight",
+		"BottomLeft",
+		"BottomRight",
+		"TopMiddle",
+		"MiddleLeft",
+		"MiddleRight",
+		"BottomMiddle",
+		"MiddleMiddle",
+		"TabSpacer",
+		"TabSpacer1",
+		"TabSpacer2",
+		"_RightSeparator",
+		"_LeftSeparator",
+		"Cover",
+		"Border",
+		"Background",
+		"TopTex",
+		"TopLeftTex",
+		"TopRightTex",
+		"LeftTex",
+		"BottomTex",
+		"BottomLeftTex",
+		"BottomRightTex",
+		"RightTex",
+		"MiddleTex",
+	}
+
+	function P:ReskinInput(height, width)
+		local frameName = self.GetName and self:GetName()
+		for _, region in pairs(blizzRegions) do
+			region = frameName and _G[frameName..region] or self[region]
+			if region then
+				region:SetAlpha(0)
+			end
+		end
+
+		local bg = B.CreateBDFrame(self, 0, true)
+		bg:SetPoint("TOPLEFT", -2, 0)
+		bg:SetPoint("BOTTOMRIGHT")
+		self.bg = bg
+
+		if height then self:SetHeight(height) end
+		if width then self:SetWidth(width) end
 	end
 
-	return true
+	local function updateCollapseTexture(texture, collapsed)
+		if collapsed then
+			texture:SetTexCoord(0, .4375, 0, .4375)
+		else
+			texture:SetTexCoord(.5625, 1, 0, .4375)
+		end
+	end
+
+	local function resetCollapseTexture(self, texture)
+		if self.settingTexture then return end
+		self.settingTexture = true
+		self:SetNormalTexture("")
+
+		if texture and texture ~= "" then
+			if strfind(texture, "Plus") or strfind(texture, "Closed") or texture == 130838 then
+				self.__texture:DoCollapse(true)
+			elseif strfind(texture, "Minus") or strfind(texture, "Open") or texture == 130821 then
+				self.__texture:DoCollapse(false)
+			end
+			self.bg:Show()
+		else
+			self.bg:Hide()
+		end
+		self.settingTexture = nil
+	end
+
+	function P:ReskinCollapse(isAtlas)
+		self:SetHighlightTexture("")
+		self:SetPushedTexture("")
+		self:SetDisabledTexture("")
+
+		local bg = B.CreateBDFrame(self, .25, true)
+		bg:ClearAllPoints()
+		bg:SetSize(13, 13)
+		bg:SetPoint("TOPLEFT", self:GetNormalTexture())
+		self.bg = bg
+
+		self.__texture = bg:CreateTexture(nil, "OVERLAY")
+		self.__texture:SetPoint("CENTER")
+		self.__texture:SetSize(7, 7)
+		self.__texture:SetTexture("Interface\\Buttons\\UI-PlusMinus-Buttons")
+		self.__texture.DoCollapse = updateCollapseTexture
+
+		self:HookScript("OnEnter", B.Texture_OnEnter)
+		self:HookScript("OnLeave", B.Texture_OnLeave)
+		if isAtlas then
+			hooksecurefunc(self, "SetNormalAtlas", resetCollapseTexture)
+		else
+			hooksecurefunc(self, "SetNormalTexture", resetCollapseTexture)
+		end
+
+		hooksecurefunc(self, "Enable", function()
+			self.__texture:SetDesaturated(false)
+		end)
+		hooksecurefunc(self, "Disable", function()
+			self.__texture:SetDesaturated(true)
+		end)
+	end
+
+	function P:ReskinFrame()
+		B.StripTextures(self)
+		local bg = B.SetBD(self)
+
+		local frameName = self.GetName and self:GetName()
+		for _, key in pairs({"Header", "header"}) do
+			local frameHeader = self[key] or (frameName and _G[frameName..key])
+			if frameHeader then
+				B.StripTextures(frameHeader, 0)
+
+				frameHeader:ClearAllPoints()
+				frameHeader:SetPoint("TOP", bg, "TOP", 0, 5)
+			end
+		end
+		for _, key in pairs({"Portrait", "portrait"}) do
+			local framePortrait = self[key] or (frameName and _G[frameName..key])
+			if framePortrait then framePortrait:SetAlpha(0) end
+		end
+
+		local closeButton = self.CloseButton or (frameName and _G[frameName.."CloseButton"]) or self.Close
+		if closeButton then B.ReskinClose(closeButton) end
+
+		return bg
+	end
+
+	function P:ReskinDropDown()
+		B.StripTextures(self)
+
+		local frameName = self.GetName and self:GetName()
+		local down = self.Button or frameName and (_G[frameName.."Button"] or _G[frameName.."_Button"])
+		down:ClearAllPoints()
+		down:SetPoint("RIGHT", -18, 2)
+		B.ReskinArrow(down, "down")
+		down:SetSize(18, 18)
+
+		local bg = B.CreateBDFrame(self, 0)
+		bg:ClearAllPoints()
+		bg:SetPoint("LEFT", 16, 0)
+		bg:SetPoint("TOPRIGHT", down, "TOPRIGHT")
+		bg:SetPoint("BOTTOMRIGHT", down, "BOTTOMRIGHT")
+		B.CreateGradient(bg)
+		self.bg = bg
+	end
+
+	function P.ReskinFont(font, size)
+		local oldSize = select(2, font:GetFont())
+		size = size or oldSize
+		local fontSize = size*C.db["Skins"]["FontScale"]
+		font:SetFont(DB.Font[1], fontSize, DB.Font[3])
+		font:SetShadowColor(0, 0, 0, 0)
+	end
+
+	function P:ReskinTab(offset)
+		offset = offset or 0
+
+		self:DisableDrawLayer("BACKGROUND")
+
+		local bg = B.CreateBDFrame(self)
+		bg:SetPoint("TOPLEFT", 8 - offset, -3)
+		bg:SetPoint("BOTTOMRIGHT", -8 + offset, 0)
+
+		self:SetHighlightTexture(DB.bdTex)
+		local hl = self:GetHighlightTexture()
+		hl:ClearAllPoints()
+		hl:SetInside(bg)
+		hl:SetVertexColor(cr, cg, cb, .25)
+	end
+
+	function P:ReskinTooltip(a)
+		if not self then P:Debug("Unknown tooltip spotted.") return end
+		if self:IsForbidden() then return end
+
+		if not self.tipStyled then
+			if self.SetBackdrop then self:SetBackdrop(nil) end
+			self:DisableDrawLayer("BACKGROUND")
+			self.bg = B.SetBD(self, a or .7)
+			self.bg:SetInside(self)
+			self.bg:SetFrameLevel(self:GetFrameLevel())
+
+			local scrollBar = self.ScrollBar or self.scrollBar
+			if scrollBar then
+				B.ReskinScroll(scrollBar)
+			end
+
+			self.tipStyled = true
+		end
+	end
+
+	function P:Button_OnEnter()
+		if not self:IsEnabled() then return end
+
+		if C.db["Skins"]["FlatMode"] then
+			self.__gradient:SetVertexColor(cr / 4, cg / 4, cb / 4)
+		else
+			self.__bg:SetBackdropColor(cr, cg, cb, .25)
+		end
+		self.__bg:SetBackdropBorderColor(cr, cg, cb)
+	end
+
+	function P:Button_OnLeave()
+		if C.db["Skins"]["FlatMode"] then
+			self.__gradient:SetVertexColor(.3, .3, .3, .25)
+		else
+			self.__bg:SetBackdropColor(0, 0, 0, 0)
+		end
+		self.__bg:SetBackdropBorderColor(0, 0, 0)
+	end
+end
+
+-- Misc
+do
+	function P:AnchorTooltip()
+		if self:GetRight() >= (GetScreenWidth() / 2) then
+			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+		else
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+		end
+	end
+
+	function P.NameGenerator(name)
+		local index = 0
+		return function()
+			index = index + 1
+			return name .. index
+		end
+	end
+
+	function P.LeftButtonTip(text)
+		return P.LEFT_MOUSE_BUTTON .. text, 1, 1, 1
+	end
+
+	function P.RightButtonTip(text)
+		return P.RIGHT_MOUSE_BUTTON .. text, 1, 1, 1
+	end
+
+	local t, d = "|T%s%s|t", ""
+	function P:TextureString(texture, data)
+		return format(t, texture, data or d)
+	end
+end
+
+do
+	function P:RawHook(object, method, func)
+		if type(object) ~= "table" then
+			object, method, func = nil, object, method
+		end
+
+		assert(type(func) == "function", "Bad arg, function expected")
+		if object then
+			assert(type(object[method]) == "function", "Bad arg, string function name expected")
+		else
+			assert(type(_G[method]) == "function", "Bad arg, string function name expected")
+		end
+
+		self.hooks = self.hooks or {}
+
+		if object then
+			self.hooks[object] = self.hooks[object] or {}
+			self.hooks[object][method] = object[method]
+			object[method] = function(...)
+				func(...)
+			end
+		else
+			self.hooks[method] = _G[method]
+			_G[method] = function(...)
+				func(...)
+			end
+		end
+	end
 end

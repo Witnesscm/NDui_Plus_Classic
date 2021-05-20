@@ -185,7 +185,7 @@ function S:alaGearMan()
 
 	-- pdf_menu
 	hooksecurefunc(_G.AGM_FUNC, "pdf_init", function()
-		B.SetBD(ui.pdf_menu, -2, 2, 2, -2)
+		B.SetBD(ui.pdf_menu, nil, -2, 2, 2, -2)
 	end)
 
 	local function hook_SetNormalTexture(self, texture)

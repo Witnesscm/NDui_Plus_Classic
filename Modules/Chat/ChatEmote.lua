@@ -186,18 +186,14 @@ function CH:ChatEmote()
 
 	local function findChatBubble()
 		for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
-			if chatBubble and not chatBubble:IsForbidden() then
-				for i = 1, chatBubble:GetNumRegions() do
-					local region = select(i, chatBubble:GetRegions())
-					if region:GetObjectType() == "FontString" then
-						local oldMessage = region:GetText() or ""
-						local afterMessage = TextToEmote(oldMessage)
-						if (oldMessage ~= afterMessage) then
-							region:SetText(afterMessage)
-						end
-						CH:HookBubble(chatBubble, region)
-					end
+			local frame = chatBubble:GetChildren()
+			if frame and not frame:IsForbidden() then
+				local oldMessage = frame.String:GetText()
+				local afterMessage = TextToEmote(oldMessage)
+				if oldMessage ~= afterMessage then
+					frame.String:SetText(afterMessage)
 				end
+				CH:HookBubble(chatBubble, frame)
 			end
 		end
 	end

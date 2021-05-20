@@ -1,10 +1,11 @@
 local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local LSM = LibStub("LibSharedMedia-3.0")
 
+local LSM = LibStub("LibSharedMedia-3.0")
 local Texture = "Interface\\Addons\\"..addonName.."\\Media\\Texture\\"
+
+-- Texture
 P.normTex = Texture.."normTex" -- 风行丨GG @ NGA
-P.RoleTex = Texture.."LFGROLE"
 
 local textureList = {
 	[addonName] = P.normTex,

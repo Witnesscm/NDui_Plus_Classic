@@ -54,19 +54,19 @@ local function ReskinWAOptions()
 				local tex = button:CreateTexture(nil, "ARTWORK")
 				tex:SetAllPoints()
 				B.SetupArrow(tex, "up")
-				button.bgTex = tex
+				button.__texture = tex
 
 				button:SetScript("OnEnter", B.Texture_OnEnter)
 				button:SetScript("OnLeave", B.Texture_OnLeave)
 				button:HookScript("OnClick",function(self)
 					if frame.minimized then
-						B.SetupArrow(self.bgTex, "down")
+						B.SetupArrow(self.__texture, "down")
 					else
-						B.SetupArrow(self.bgTex, "up")
+						B.SetupArrow(self.__texture, "up")
 					end
 				end)
 			else
-				B.ReskinClose(button, "TOPRIGHT", frame, "TOPRIGHT", -6, -6)
+				B.ReskinClose(button, frame)
 				button:SetSize(18, 18)
 			end
 		end

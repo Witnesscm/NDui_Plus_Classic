@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Misc.lua"/>
-	<Script file="EnhanceTrainers.lua"/>
-	<Script file="ExtendedGuildUI.lua"/>
+	<Script file="EnhancedTrainers.lua"/>
+	<Script file="EnhancedGuildUI.lua"/>
 	<Script file="Loot.lua"/>
 	<Script file="LootRoll.lua"/>
 	<Script file="Lockpicking.lua"/>

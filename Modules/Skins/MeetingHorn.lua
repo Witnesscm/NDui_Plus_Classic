@@ -360,7 +360,7 @@ function S:MeetingHorn()
 	if DataBroker then
 		DataBroker:DisableDrawLayer("BACKGROUND")
 		DataBroker:SetSize(158, 32)
-		B.SetBD(DataBroker, C.mult, -C.mult, -C.mult, C.mult)
+		B.SetBD(DataBroker, nil, C.mult, -C.mult, -C.mult, C.mult)
 		DataBroker.Text:SetPoint("CENTER", 16, 0)
 		local logo = DataBroker:CreateTexture(nil, "ARTWORK")
 		logo:SetTexture("Interface\\AddOns\\MeetingHorn\\Media\\Logo2")

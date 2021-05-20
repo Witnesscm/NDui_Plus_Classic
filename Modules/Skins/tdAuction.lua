@@ -4,7 +4,6 @@ local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
-local ipairs = ipairs
 
 function S:tdAuction()
 	if not IsAddOnLoaded("tdAuction") then return end

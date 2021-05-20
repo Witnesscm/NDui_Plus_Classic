@@ -18,12 +18,12 @@ function S:GearMenu()
 	end
 	hooksecurefunc(rggm.uiHelper, "UpdateSlotTextureAttributes", UpdateTexture)
 
-	local function SetKeyBindingFont(fontString)
-		local slotSize = rggm.configuration.GetSlotSize()
-		local fontSize = floor(slotSize/36 * 12)
-		fontString:SetFont(DB.Font[1], fontSize, DB.Font[3])
-	end
-	hooksecurefunc(rggm.gearBar, "SetKeyBindingFont", SetKeyBindingFont)
+	-- local function SetKeyBindingFont(fontString)
+		-- local slotSize = rggm.configuration.GetSlotSize()
+		-- local fontSize = floor(slotSize/36 * 12)
+		-- fontString:SetFont(DB.Font[1], fontSize, DB.Font[3])
+	-- end
+	-- hooksecurefunc(rggm.gearBar, "SetKeyBindingFont", SetKeyBindingFont)
 
 	local function reskinGear(slot)
 		slot:SetBackdrop(nil)

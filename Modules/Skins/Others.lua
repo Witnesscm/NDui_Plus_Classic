@@ -1,6 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local NS = B:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
@@ -271,7 +272,7 @@ function S:BuyEmAllClassic()
 	if not IsAddOnLoaded("BuyEmAllClassic") then return end
 
 	B.StripTextures(BuyEmAllFrame)
-	B.SetBD(BuyEmAllFrame, 10, -10, -10, 10)
+	B.SetBD(BuyEmAllFrame, nil, 10, -10, -10, 10)
 	B.Reskin(BuyEmAllOkayButton)
 	B.Reskin(BuyEmAllCancelButton)
 	B.Reskin(BuyEmAllStackButton)
@@ -355,14 +356,86 @@ function S:Elephant()
 	end)
 end
 
-S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
-S:RegisterSkin("honorspy", S.honorspy)
-S:RegisterSkin("BattleInfo", S.BattleInfo)
-S:RegisterSkin("Accountant", S.Accountant)
-S:RegisterSkin("BagSync", S.BagSync)
-S:RegisterSkin("GoodLeader", S.GoodLeader)
-S:RegisterSkin("FeatureFrame", S.FeatureFrame)
-S:RegisterSkin("buffOmat", S.buffOmat)
-S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
-S:RegisterSkin("xCT", S.xCT)
-S:RegisterSkin("Elephant", S.Elephant)
+function S:Hemlock()
+	if not IsAddOnLoaded("Hemlock") then return end
+	
+	local Hemlock = _G.Hemlock
+	if not Hemlock then return end
+
+	B.StripTextures(_G.HemlockFrame)
+	_G.HemlockFrame:SetPoint("LEFT", MerchantFrameCloseButton, "RIGHT", 0, 0)
+	hooksecurefunc(Hemlock, "MakeFrame", function(self)
+		for _, button in ipairs(self.frames) do
+			if not button.styled then
+				B.ReskinIcon(button:GetNormalTexture())
+				button:GetNormalTexture():SetInside()
+				button:SetHighlightTexture(DB.bdTex)
+				button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+				button:GetHighlightTexture():SetInside()
+				button.styled = true
+			end
+		end
+	end)
+end
+
+-- S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
+-- S:RegisterSkin("honorspy", S.honorspy)
+-- S:RegisterSkin("BattleInfo", S.BattleInfo)
+-- S:RegisterSkin("Accountant", S.Accountant)
+-- S:RegisterSkin("BagSync", S.BagSync)
+-- S:RegisterSkin("GoodLeader", S.GoodLeader)
+-- S:RegisterSkin("FeatureFrame", S.FeatureFrame)
+-- S:RegisterSkin("buffOmat", S.buffOmat)
+-- S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
+-- S:RegisterSkin("xCT", S.xCT)
+-- S:RegisterSkin("Elephant", S.Elephant)
+-- S:RegisterSkin("Hemlock", S.Hemlock)
+
+-- Hide Toggle Button
+S.ToggleFrames = {}
+
+do
+	hooksecurefunc(NS, "CreateToggle", function(self, frame)
+		local close = frame.closeButton
+		local open = frame.openButton
+
+		S:SetupToggle(close)
+		S:SetupToggle(open)
+
+		close:HookScript("OnClick", function() -- fix
+			open:Hide()
+			open:Show()
+		end)
+
+		tinsert(S.ToggleFrames, frame)
+		S:UpdateToggleVisible()
+	end)
+end
+
+function S:SetupToggle(bu)
+	bu:HookScript("OnEnter", function(self)
+		if S.db["HideToggle"] then
+			P:UIFrameFadeIn(self, 0.5, self:GetAlpha(), 1)
+		end
+	end)
+	bu:HookScript("OnLeave", function(self)
+		if S.db["HideToggle"] then
+			P:UIFrameFadeOut(self, 0.5, self:GetAlpha(), 0)
+		end
+	end)
+end
+
+function S:UpdateToggleVisible()
+	for _, frame in pairs(S.ToggleFrames) do
+		local close = frame.closeButton
+		local open = frame.openButton
+
+		if S.db["HideToggle"] then
+			P:UIFrameFadeOut(close, 0.5, close:GetAlpha(), 0)
+			open:SetAlpha(0)
+		else
+			P:UIFrameFadeIn(close, 0.5, close:GetAlpha(), 1)
+			open:SetAlpha(1)
+		end
+	end
+end

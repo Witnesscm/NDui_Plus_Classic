@@ -251,6 +251,7 @@ local function CreateItemButton(bag, slot)
 	button.bagID = bag
 	button.slotID = slot
 
+	P.SetupBackdrop(button)
 	B.CreateBD(button, .3)
 	button:SetBackdropColor(.3, .3, .3, .3)
 
@@ -596,10 +597,10 @@ local function CreateBankToggle(parent)
 	bu:SetScript("OnClick", function()
 		ToggleFrame(bankFrame)
 		if bankFrame:IsShown() then
-			bu:SetBackdropBorderColor(1, .8, 0)
+			bu.bg:SetBackdropBorderColor(1, .8, 0)
 			PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
 		else
-			bu:SetBackdropBorderColor(0, 0, 0)
+			bu.bg:SetBackdropBorderColor(0, 0, 0)
 			PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
 		end
 	end)
@@ -614,10 +615,10 @@ local function CreateKeyToggle(parent)
 	bu:SetScript("OnClick", function()
 		ToggleFrame(keyringFrame)
 		if keyringFrame:IsShown() then
-			bu:SetBackdropBorderColor(1, .8, 0)
+			bu.bg:SetBackdropBorderColor(1, .8, 0)
 			PlaySound(SOUNDKIT.KEY_RING_OPEN)
 		else
-			bu:SetBackdropBorderColor(0, 0, 0)
+			bu.bg:SetBackdropBorderColor(0, 0, 0)
 			PlaySound(SOUNDKIT.KEY_RING_CLOSE)
 		end
 	end)

@@ -34,5 +34,4 @@ function M:PauseToSlash()
 		end
 	end)
 end
-
 M:RegisterMisc("PauseToSlash", M.PauseToSlash)

@@ -4,7 +4,7 @@ local CH = P:GetModule("Chat")
 ------------------------
 -- Credit: BasicChatMods
 ------------------------
-function CH:UpdateGroupNames()
+function CH:UpdateGroupInfo()
 	wipe(CH.GroupNames)
 
 	if not IsInRaid() then return end
@@ -43,7 +43,7 @@ function CH:ChatRaidIndex()
 	}
 
 	for _, event in next, eventList do
-		B:RegisterEvent(event, CH.UpdateGroupNames)
+		B:RegisterEvent(event, CH.UpdateGroupInfo)
 	end
 
 	for i = 1, NUM_CHAT_WINDOWS do

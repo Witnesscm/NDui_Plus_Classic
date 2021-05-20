@@ -16,7 +16,7 @@ function S:MerInspect()
 		frame.SetBackdropColor = B.Dummy
         frame:SetBackdropBorderColor(0, 0, 0, 0)
 		frame.SetBackdropBorderColor = B.Dummy
-		B.SetBD(frame, 0, 0, 0, 0)
+		B.SetBD(frame, nil, 0, 0, 0, 0)
 	end
 
 	local function ToggleStatPanel(collapse)

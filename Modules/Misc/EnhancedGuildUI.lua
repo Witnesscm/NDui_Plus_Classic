@@ -9,8 +9,8 @@ local rankColor = {
 	0, 1, 0
 }
 
-function M:ExtendedGuildUI()
-	if not M.db["ExtendedGuildUI"] then return end
+function M:EnhancedGuildUI()
+	if not M.db["EnhancedGuildUI"] then return end
 
 	local UIWidth = 680
 	local UINameOffset = 40
@@ -168,9 +168,9 @@ function M:ExtendedGuildUI()
 
 	local function ToggleGuildUI(extended)
 		if extended then
-			B.SetupArrow(expand.bgTex , "down")
+			B.SetupArrow(expand.__texture , "down")
 		else
-			B.SetupArrow(expand.bgTex , "up")
+			B.SetupArrow(expand.__texture , "up")
 		end
 		ExtGuildUI_Update(extended)
 	end
@@ -196,4 +196,4 @@ function M:ExtendedGuildUI()
 	GuildListScrollFrame:SetPoint("TOPLEFT", 12, -87) -- fix scroll
 end
 
-M:RegisterMisc("ExtendedGuildUI", M.ExtendedGuildUI)
+M:RegisterMisc("EnhancedGuildUI", M.EnhancedGuildUI)

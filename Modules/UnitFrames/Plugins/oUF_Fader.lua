@@ -11,8 +11,8 @@ local next, tinsert, tremove = next, tinsert, tremove
 local CreateFrame = CreateFrame
 local GetMouseFocus = GetMouseFocus
 local UnitAffectingCombat = UnitAffectingCombat
-local CastingInfo = CastingInfo
-local ChannelInfo = ChannelInfo
+local UnitCastingInfo = UnitCastingInfo
+local UnitChannelInfo = UnitChannelInfo
 local UnitExists = UnitExists
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -76,7 +76,7 @@ local function Update(self, _, unit)
 	end
 
 	if
-		(element.Casting and (CastingInfo() or ChannelInfo())) or
+		(element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
 		(element.Combat and UnitAffectingCombat(unit)) or
 		(element.PlayerTarget and UnitExists('target')) or
 		(element.UnitTarget and UnitExists(unit..'target')) or
@@ -88,6 +88,10 @@ local function Update(self, _, unit)
 		ToggleAlpha(self, element, element.MaxAlpha)
 	else
 		if element.Delay then
+			if element.DelayAlpha then
+				ToggleAlpha(self, element, element.DelayAlpha)
+			end
+
 			element:ClearTimers()
 			element.delayTimer = P:ScheduleTimer(ToggleAlpha, element.Delay, self, element, element.MinAlpha)
 		else
@@ -197,21 +201,27 @@ local options = {
 
 			self:RegisterEvent('UNIT_TARGET', Update)
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
+			self:RegisterEvent('PLAYER_FOCUS_CHANGED', Update, true)
 		end,
-		events = {'UNIT_TARGET','PLAYER_TARGET_CHANGED'},
+		events = {'UNIT_TARGET','PLAYER_TARGET_CHANGED','PLAYER_FOCUS_CHANGED'},
 		disable = function(self)
 			if self.Fader.TargetHooked == 1 then
 				self.Fader.TargetHooked = 0 -- off state
 			end
 		end
 	},
+	Focus = {
+		enable = function(self)
+			self:RegisterEvent('PLAYER_FOCUS_CHANGED', Update, true)
+		end,
+		events = {'PLAYER_FOCUS_CHANGED'}
+	},
 	Health = {
 		enable = function(self)
 			self:RegisterEvent('UNIT_HEALTH', Update)
-			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Update)
 			self:RegisterEvent('UNIT_MAXHEALTH', Update)
 		end,
-		events = {'UNIT_HEALTH','UNIT_HEALTH_FREQUENT','UNIT_MAXHEALTH'}
+		events = {'UNIT_HEALTH','UNIT_MAXHEALTH'}
 	},
 	Power = {
 		enable = function(self)
@@ -244,6 +254,7 @@ local options = {
 		end
 	},
 	Smooth = {countIgnored = true},
+	DelayAlpha = {countIgnored = true},
 	Delay = {countIgnored = true},
 }
 

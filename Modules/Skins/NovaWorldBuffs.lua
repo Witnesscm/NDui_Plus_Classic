@@ -23,7 +23,7 @@ function S:NovaWorldBuffs()
 		local f = _G[frame]
 		if f then
 			B.StripTextures(f)
-			B.SetBD(f, -10, 10, 10, -10)
+			B.SetBD(f, nil, -10, 10, 10, -10)
 
 			local close = _G[frame.."Close"]
 			if close then
@@ -142,6 +142,24 @@ function S:NovaWorldBuffs()
 		if button then
 			B.Reskin(button)
 			TT.ReskinTooltip(button.tooltip)
+		end
+	end)
+
+	hooksecurefunc(NWB, "updateFelwoodWorldmapMarker", function(_, type)
+		local button = _G[type .. "NWB"]
+		if button then
+			local i = 2
+			local timer = button["timerFrame"..i]
+			while timer do
+				if not timer.styled then
+					B.StripTextures(timer)
+					timer.Background:SetAlpha(0)
+					timer.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3])
+					timer.styled = true
+				end
+				i = i + 1
+				timer = button["timerFrame"..i]
+			end
 		end
 	end)
 end

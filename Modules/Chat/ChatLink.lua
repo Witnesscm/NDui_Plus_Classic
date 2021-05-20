@@ -71,4 +71,15 @@ function CH:ChatLinkIcon()
 	for _, event in pairs(CH.ChatEvents) do
 		ChatFrame_AddMessageEventFilter(event, CH.ChatLinkfilter)
 	end
+
+	-- fix send message
+	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
+		local text = self:GetText()
+		if userInput and CH.db["Icon"] then
+			local newText, count = gsub(text, "|T.+|t", "")
+			if count > 0 then
+				self:SetText(newText)
+			end
+		end
+	end)
 end

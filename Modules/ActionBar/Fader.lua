@@ -53,7 +53,7 @@ function AB:FadeParent_OnEvent(event)
 		(event == "ACTIONBAR_SHOWGRID") or
 		(AB.db["Combat"] and UnitAffectingCombat("player")) or
 		(AB.db["Target"] and UnitExists("target")) or
-		(AB.db["Cast"] and (CastingInfo() or ChannelInfo())) or
+		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
 		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player")))
 	then
 		self.mouseLock = true
@@ -82,7 +82,7 @@ local options = {
 		end,
 		events = {"PLAYER_TARGET_CHANGED"}
 	},
-	Cast = {
+	Casting = {
 		enable = function(self)
 			self:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
 			self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "player")
@@ -127,11 +127,11 @@ local NDui_ActionBar = {
 }
 
 local function updateAfterCombat(event)
-	AB:UpdateActionBar()
+	AB:UpdateFaderState()
 	B:UnregisterEvent(event, updateAfterCombat)
 end
 
-function AB:UpdateActionBar()
+function AB:UpdateFaderState()
 	if InCombatLockdown() then
 		B:RegisterEvent("PLAYER_REGEN_ENABLED", updateAfterCombat)
 		return
@@ -166,7 +166,7 @@ function AB:GlobalFade()
 	AB:UpdateFaderSettings()
 
 	local function loadFunc(event, addon)
-		AB:UpdateActionBar()
+		AB:UpdateFaderState()
 		B:UnregisterEvent(event, loadFunc)
 	end
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)

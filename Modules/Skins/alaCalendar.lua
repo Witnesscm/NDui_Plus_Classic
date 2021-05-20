@@ -13,7 +13,7 @@ function S:alaCalendar()
 	local function reskinFunc()
 		local frame = _G.ALA_CALENDAR
 		B.StripTextures(frame)
-		B.SetBD(frame, 3, C.mult, -3, 3)
+		B.SetBD(frame, nil, 3, C.mult, -3, 3)
 		B.ReskinClose(frame.close, "TOPRIGHT", frame, "TOPRIGHT", -10, -6)
 		B.ReskinArrow(frame.prev, "left")
 		B.ReskinArrow(frame.next, "right")
@@ -84,7 +84,7 @@ function S:alaCalendar()
 
 		local board = _G.ALA_CALENDAR_BOARD
 		B.StripTextures(board)
-		B.SetBD(board, -C.mult*2, C.mult, C.mult, -27)
+		B.SetBD(board, nil, -C.mult*2, C.mult, C.mult, -27)
 		B.ReskinClose(board.close, "TOPLEFT", board, "TOPLEFT", 6, -6)
 		B.ReskinArrow(board.call_calendar, "left")
 		board.call_calendar:ClearAllPoints()
@@ -114,7 +114,7 @@ function S:alaCalendar()
 					for j = 1, child:GetNumChildren() do
 						local child2 = select(j, child:GetChildren())
 						if child2 and child2.collapse and not child2.styled then
-							P.ReskinExpandOrCollapseTex(child2.collapse)
+							--P.ReskinExpandOrCollapseTex(child2.collapse)
 							child2.styled = true
 						end
 					end

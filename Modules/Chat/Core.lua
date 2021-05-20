@@ -102,19 +102,21 @@ end
 function CH:UpdateBubbleColor()
 	if not CH.db["ClassColor"] then return end
 
-	local text = self.text:GetText()
+	local backdrop = self.backdrop
+	local str = backdrop and backdrop.String
+	local text = str and str:GetText()
 	local rebuiltString = text and CH:ClassFilter(text)
 
 	if rebuiltString then
-		self.text:SetText(RemoveExtraSpaces(rebuiltString))
+		str:SetText(RemoveExtraSpaces(rebuiltString))
 	end
 end
 
-function CH:HookBubble(frame, text)
+function CH:HookBubble(frame, backdrop)
 	if frame.isHooked then return end
 
-	if not frame.text then
-		frame.text = text
+	if not frame.backdrop then
+		frame.backdrop = backdrop
 		frame:HookScript('OnShow', CH.UpdateBubbleColor)
 		CH.UpdateBubbleColor(frame)
 	end
@@ -144,4 +146,5 @@ function CH:OnLogin()
 	self:ChatClassColor()
 	self:ChatRaidIndex()
 	self:ChatLinkIcon()
+	self:ChatHide()
 end

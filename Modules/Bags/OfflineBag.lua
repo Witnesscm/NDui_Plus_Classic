@@ -8,7 +8,7 @@ local strfind, strmatch = string.find, string.match
 -- Credit: tdBag2
 ----------------------------
 local BAGS = {0, 1, 2, 3, 4}
-local BANKS = {-1, 5, 6, 7, 8, 9, 10}
+local BANKS = {-1, 5, 6, 7, 8, 9, 10, 11}
 local KEYS = {-2}
 local PlayerDB
 local Owner, Owners

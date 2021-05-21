@@ -31,8 +31,8 @@ function S:ItemRack()
 		B.StripTextures(ItemRackOptFrame)
 		B.SetBD(ItemRackOptFrame)
 		B.ReskinClose(ItemRackOptClose)
-		B.ReskinIcon(ItemRackMinimapIcon)
-		ItemRackMinimapIcon.SetTexCoord = B.Dummy
+		-- B.ReskinIcon(ItemRackMinimapIcon)
+		-- ItemRackMinimapIcon.SetTexCoord = B.Dummy
 
 		for i = 0, 19 do
 			local inv = _G["ItemRackOptInv"..i]
@@ -131,6 +131,7 @@ function S:ItemRack()
 		for _, obj in pairs(Sliders) do
 			local slider = _G[obj]
 			if slider then
+				P.SetupBackdrop(slider)
 				B.ReskinSlider(slider)
 			end
 		end

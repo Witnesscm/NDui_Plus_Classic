@@ -273,11 +273,6 @@ do
 			self.bg:SetInside(self)
 			self.bg:SetFrameLevel(self:GetFrameLevel())
 
-			local scrollBar = self.ScrollBar or self.scrollBar
-			if scrollBar then
-				B.ReskinScroll(scrollBar)
-			end
-
 			self.tipStyled = true
 		end
 	end

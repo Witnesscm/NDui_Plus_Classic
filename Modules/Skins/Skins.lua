@@ -76,8 +76,6 @@ function S:OnLogin()
 			P:ThrowError(catch, format("%s Skin", name))
 		end
 	end
-
-	self:tdGUI()
 end
 
 -- Reskin Blizzard UIs
@@ -86,11 +84,30 @@ tinsert(C.defaultThemes, function()
 end)
 
 function S:tdGUI()
-	local GUI = LibStub and LibStub('tdGUI-1.0', true)
+	local GUI = LibStub and LibStub("tdGUI-1.0", true)
 	local DropMenu = GUI and GUI:GetClass("DropMenu")
 
 	if DropMenu then
-		hooksecurefunc(DropMenu, "Constructor", P.ReskinTooltip)
-		hooksecurefunc(DropMenu, "Toggle", P.ReskinTooltip)
+		hooksecurefunc(DropMenu, "Open", function(self, level, ...)
+			level = level or 1
+			local menu = self.menuList[level]
+			if menu and not menu.styled then
+				P.ReskinTooltip(menu, .5)
+				local scrollBar = menu.scrollBar or menu.ScrollBar
+				if scrollBar then
+					B.ReskinScroll(scrollBar)
+				end
+			end
+		end)
+	end
+
+	local DropMenuItem = GUI and GUI:GetClass("DropMenuItem")
+	if DropMenuItem then
+		hooksecurefunc(DropMenuItem, "SetHasArrow", function(self)
+			B.SetupArrow(self.Arrow, "right")
+			self.Arrow:SetSize(14, 14)
+		end)
 	end
 end
+
+S:RegisterSkin("tdGUI", S.tdGUI)

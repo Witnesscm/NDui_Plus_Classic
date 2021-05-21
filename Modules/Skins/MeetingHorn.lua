@@ -233,6 +233,7 @@ function S:MeetingHorn()
 				button.Text:SetTextColor(1, 1, 1)
 				button.Text.SetTextColor = B.Dummy
 				button.Creature:SetPoint("TOPLEFT", 0, -8)
+				P.SetupBackdrop(button)
 				B.CreateBD(button, .25)
 				B.CreateGradient(button)
 			end

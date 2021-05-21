@@ -8,27 +8,16 @@ local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
 
 function S:HandyNotes_NPCs()
-	if not IsAddOnLoaded("HandyNotes_NPCs (Classic)") then return end
+	if not IsAddOnLoaded("HandyNotes_NPCs (Burning Crusade Classic)") then return end
 
-	local function delayFunc()
-		local bu = LibDBIcon10_HandyNotes_NPCs	-- HandyNotes_NPCs 小地图按钮
-		if bu then
-			for i = 1, bu:GetNumRegions() do
-				local region = select(i, bu:GetRegions())
-				if region:GetTexture() and (region:GetTexture() == 136430 or region:GetTexture() == 136467)then
-					region:SetTexture("")
-				end
-			end
-		end
-
+	P:Delay(.5,function()
 		for i = 1, WorldMapFrame:GetNumChildren() do
 			local child = select(i, WorldMapFrame:GetChildren())
 			if child:GetObjectType() == "Button" and child:GetText() == "NPCs" then
 				B.Reskin(child)
 			end
 		end
-	end
-	C_Timer.After(.5, delayFunc)
+	end)
 end
 
 function S:honorspy()
@@ -105,24 +94,24 @@ function S:Accountant()
 
 	local row1 = _G.AccountantClassicFrameRow1In
 	
-	local vline1 = CreateFrame("Frame", nil, row1)
+	local vline1 = CreateFrame("Frame", nil, row1, "BackdropTemplate")
 	vline1:SetHeight(340)
 	vline1:SetWidth(1)
 	vline1:SetPoint("TOP", row1, "TOPLEFT", 16, 0)
-	P.CreateBD(vline1)
-	local vline2 = CreateFrame("Frame", nil, row1)
+	B.CreateBD(vline1)
+	local vline2 = CreateFrame("Frame", nil, row1, "BackdropTemplate")
 	vline2:SetHeight(340)
 	vline2:SetWidth(1)
 	vline2:SetPoint("TOP", row1, "TOPRIGHT", 16, 0)
-	P.CreateBD(vline2)
+	B.CreateBD(vline2)
 
 	for i = 1, 18 do
 		local row = _G["AccountantClassicFrameRow"..i]
-		local hline = CreateFrame("Frame", nil, row)
+		local hline = CreateFrame("Frame", nil, row, "BackdropTemplate")
 		hline:SetHeight(1)
 		hline:SetWidth(640)
 		hline:SetPoint("TOP")
-		P.CreateBD(hline)
+		B.CreateBD(hline)
 	end
 
 	for i = 1, 11 do
@@ -254,18 +243,27 @@ function S:FeatureFrame()
 end
 
 function S:buffOmat()
-	if not IsAddOnLoaded("buffOmat") then return end
+	if not IsAddOnLoaded("BuffomatClassicTBC") then return end
 
-	B.StripTextures(BuffOmat_MainWindow)
-	B.SetBD(BuffOmat_MainWindow)
-	B.ReskinTab(BuffOmat_MainWindowTab1)
-	B.ReskinTab(BuffOmat_MainWindowTab2)
-	B.Reskin(BuffOmat_ListTab_Button)
-	B.Reskin(BuffOmat_MainWindow_CloseButton)
-	B.Reskin(BuffOmat_MainWindow_SettingsButton)
-	B.Reskin(BuffOmat_MainWindow_MacroButton)
-	B.ReskinScroll(BuffOmat_SpellTab_Scroll.ScrollBar)
-	TT.ReskinTooltip(BuffOmat_Tooltip)
+	local frame = _G.BomC_MainWindow
+	if not frame then return end
+
+	for _, tab in ipairs(frame.Tabs) do
+		B.ReskinTab(tab)
+	end
+
+	for _, key in pairs({"CloseButton", "SettingsButton", "MacroButton"}) do
+		local bu = _G["BomC_MainWindow_"..key]
+		if bu then
+			B.Reskin(bu)
+		end
+	end
+
+	B.StripTextures(frame)
+	B.SetBD(frame)
+	B.Reskin(BomC_ListTab_Button)
+	B.ReskinScroll(BomC_SpellTab_Scroll.ScrollBar)
+	TT.ReskinTooltip(BomC_Tooltip)
 end
 
 function S:BuyEmAllClassic()
@@ -378,16 +376,16 @@ function S:Hemlock()
 	end)
 end
 
--- S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
+S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
 -- S:RegisterSkin("honorspy", S.honorspy)
 -- S:RegisterSkin("BattleInfo", S.BattleInfo)
--- S:RegisterSkin("Accountant", S.Accountant)
+S:RegisterSkin("Accountant", S.Accountant)
 -- S:RegisterSkin("BagSync", S.BagSync)
 -- S:RegisterSkin("GoodLeader", S.GoodLeader)
--- S:RegisterSkin("FeatureFrame", S.FeatureFrame)
--- S:RegisterSkin("buffOmat", S.buffOmat)
--- S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
--- S:RegisterSkin("xCT", S.xCT)
+S:RegisterSkin("FeatureFrame", S.FeatureFrame)
+S:RegisterSkin("buffOmat", S.buffOmat)
+S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
+S:RegisterSkin("xCT", S.xCT)
 -- S:RegisterSkin("Elephant", S.Elephant)
 -- S:RegisterSkin("Hemlock", S.Hemlock)
 

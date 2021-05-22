@@ -61,13 +61,12 @@ function S:BattleInfo()
 	end
 
 	local HonorFrameStat
-	for i = 1, HonorFrame:GetNumChildren() do
-		local child = GetChildFrame(i, HonorFrame)
+	for i = 1, PVPFrame:GetNumChildren() do
+		local child = GetChildFrame(i, PVPFrame)
 		if child then
 			B.StripTextures(child)
 			local bg = B.SetBD(child)
 			bg:SetInside(child, 0, 0)
-			child:SetHeight(424)
 			HonorFrameStat = child
 			break
 		end
@@ -155,9 +154,9 @@ function S:BagSync()
 	local function reskinFrame(frame)
 		if not frame then return end
 		if frame.bg then
-			-- B.CreateBD(frame.bg)
-			-- B.CreateSD(frame.bg)
-			-- B.CreateTex(frame.bg)
+			B.CreateBD(frame.bg)
+			B.CreateSD(frame.bg)
+			B.CreateTex(frame.bg)
 		else
 			B.StripTextures(frame)
 			B.SetBD(frame)
@@ -378,9 +377,9 @@ end
 
 S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
 -- S:RegisterSkin("honorspy", S.honorspy)
--- S:RegisterSkin("BattleInfo", S.BattleInfo)
+S:RegisterSkin("BattleInfo", S.BattleInfo)
 S:RegisterSkin("Accountant", S.Accountant)
--- S:RegisterSkin("BagSync", S.BagSync)
+S:RegisterSkin("BagSync", S.BagSync)
 -- S:RegisterSkin("GoodLeader", S.GoodLeader)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
 S:RegisterSkin("buffOmat", S.buffOmat)

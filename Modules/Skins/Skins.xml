@@ -7,8 +7,9 @@
 	<Script file="Atlas.lua"/>
 	<Script file="AtlasLootClassic.lua"/>
 	<Script file="Auctionator.lua"/>
-	<!-- <Script file="AutoBarClassic.lua"/> -->
+	<Script file="AutoBarClassic.lua"/>
 	<Script file="ButtonForge.lua"/>
+	<Script file="CharacterPanel.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="GearMenu.lua"/>
@@ -17,7 +18,7 @@
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingHorn.lua"/>
-	<!-- <Script file="MerInspect.lua"/> -->
+	<Script file="MerInspect.lua"/>
 	<Script file="Myslot.lua"/>
 	<Script file="NovaWorldBuffs.lua"/>
 	<Script file="Others.lua"/>

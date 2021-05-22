@@ -45,7 +45,7 @@ function S:alaGearMan()
 		local gearWin = ui.gearWin
 		B.StripTextures(gearWin)
 		gearWin:ClearAllPoints()
-		gearWin:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32, -16)
+		gearWin:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32, -15-C.mult)
 
 		local bg = CreateFrame("Frame", nil, gearWin)
 		bg:SetPoint("TOPLEFT")

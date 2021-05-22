@@ -1,34 +1,24 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 
+local function reskinFrame(frame)
+	frame:SetBackdrop(nil)
+	frame.SetBackdrop = B.Dummy
+	frame:SetBackdropColor(0, 0, 0, 0)
+	frame.SetBackdropColor = B.Dummy
+	frame:SetBackdropBorderColor(0, 0, 0, 0)
+	frame.SetBackdropBorderColor = B.Dummy
+	B.SetBD(frame, nil, 0, 0, 0, 0)
+end
+
 function S:MerInspect()
 	if not IsAddOnLoaded("MerInspect") then return end
 	if not S.db["MerInspect"] then return end
-
-	local function reskinFrame(frame)
-		frame:SetBackdrop(nil)
-		frame.SetBackdrop = B.Dummy
-        frame:SetBackdropColor(0, 0, 0, 0)
-		frame.SetBackdropColor = B.Dummy
-        frame:SetBackdropBorderColor(0, 0, 0, 0)
-		frame.SetBackdropBorderColor = B.Dummy
-		B.SetBD(frame, nil, 0, 0, 0, 0)
-	end
-
-	local function ToggleStatPanel(collapse)
-		if not PaperDollFrame.inspectFrame then return end
-		if collapse then
-			PaperDollFrame.inspectFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -33, -15)
-			CharacterModelFrame:SetSize(233, 224)
-		else
-			PaperDollFrame.inspectFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -33 + 203, -15)
-			CharacterModelFrame:SetSize(233, 304)
-		end
-	end
 
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
 		local frame = parent.inspectFrame
@@ -47,15 +37,6 @@ function S:MerInspect()
 		else
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
     	end
-
-		if IsAddOnLoaded("CharacterStatsClassic") and f == "PaperDollFrame" then -- 兼容NDui CharacterStatsClassic 拓展样式
-			for i = 1, PaperDollFrame:GetNumChildren() do
-				local child = select(i, PaperDollFrame:GetChildren())
-				if child and child.collapse == false then		
-					ToggleStatPanel(child.collapse)
-				end
-			end
-		end
 
 		if not frame.styled then
 			reskinFrame(frame)
@@ -79,22 +60,6 @@ function S:MerInspect()
 			self.styled = true
 		end
 	end)
-	
-	if IsAddOnLoaded("CharacterStatsClassic") then -- 兼容NDui CharacterStatsClassic 拓展样式
-		local done
-		PaperDollFrame:HookScript("OnShow", function()
-			if done then return end
-			for i = 1, PaperDollFrame:GetNumChildren() do
-				local child = select(i, PaperDollFrame:GetChildren())
-				if child and type(child.collapse) == "boolean" then		
-					child:HookScript("OnClick", function(self)
-						ToggleStatPanel(self.collapse)
-					end)
-				end
-			end
-			done = true
-		end)
-	end
 end
 
 S:RegisterSkin("MerInspect", S.MerInspect)

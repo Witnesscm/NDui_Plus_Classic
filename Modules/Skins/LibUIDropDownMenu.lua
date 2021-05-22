@@ -35,10 +35,10 @@ local function reskinDropDownMenu(level)
 		local bu = _G["L_DropDownList"..level.."Button"..i]
 		local _, _, _, x = bu:GetPoint()
 		if bu:IsShown() and x then
-			local hl = _G["L_DropDownList"..level.."Button"..i.."Highlight"]
 			local check = _G["L_DropDownList"..level.."Button"..i.."Check"]
-			hl:SetPoint("TOPLEFT", -x + 1, 0)
-			hl:SetPoint("BOTTOMRIGHT", listFrame:GetWidth() - bu:GetWidth() - x - 1, 0)
+			local uncheck = _G["L_DropDownList"..level.."Button"..i.."UnCheck"]
+			local hl = _G["L_DropDownList"..level.."Button"..i.."Highlight"]
+			local arrow = _G["L_DropDownList"..level.."Button"..i.."ExpandArrow"]
 
 			if not bu.bg then
 				bu.bg = B.CreateBDFrame(bu)
@@ -47,36 +47,32 @@ local function reskinDropDownMenu(level)
 				bu.bg:SetSize(12, 12)
 				hl:SetColorTexture(r, g, b, .25)
 
-				local arrow = _G["L_DropDownList"..level.."Button"..i.."ExpandArrow"]
-				B.SetupArrow(arrow:GetNormalTexture(), "right")
-				arrow:SetSize(14, 14)
-			end
-			toggleBackdrop(bu, false)
-
-			local uncheck = _G["L_DropDownList"..level.."Button"..i.."UnCheck"]
-			if isCheckTexture(uncheck) then uncheck:SetTexture("") end
-
-			if isCheckTexture(check) then
-				if not bu.notCheckable then
-					toggleBackdrop(bu, true)
-
-					local _, co = check:GetTexCoord()
-					if co == 0 then
-						check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
-						check:SetVertexColor(r, g, b, 1)
-						check:SetSize(20, 20)
-						check:SetDesaturated(true)
-					else
-						check:SetTexture(DB.bdTex)
-						check:SetVertexColor(r, g, b, .6)
-						check:SetSize(10, 10)
-						check:SetDesaturated(false)
-					end
-
-					check:SetTexCoord(0, 1, 0, 1)
+				if arrow then
+					B.SetupArrow(arrow:GetNormalTexture(), "right")
+					arrow:SetSize(14, 14)
 				end
-			else
-				check:SetSize(16, 16)
+			end
+
+			bu.bg:Hide()
+			hl:SetPoint("TOPLEFT", -x + C.mult, 0)
+			hl:SetPoint("BOTTOMRIGHT", listFrame:GetWidth() - bu:GetWidth() - x - C.mult, 0)
+			if uncheck then uncheck:SetTexture("") end
+
+			if not bu.notCheckable then
+				local _, co = check:GetTexCoord()
+				if co == 0 then
+					check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+					check:SetVertexColor(r, g, b, 1)
+					check:SetSize(20, 20)
+					check:SetDesaturated(true)
+				else
+					check:SetColorTexture(r, g, b, .6)
+					check:SetSize(10, 10)
+					check:SetDesaturated(false)
+				end
+
+				check:SetTexCoord(0, 1, 0, 1)
+				bu.bg:Show()
 			end
 		end
 	end

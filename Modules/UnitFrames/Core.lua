@@ -16,7 +16,7 @@ function UF:SetTag(frame)
 		elseif mystyle == "focus" then
 			frame:Tag(name, colorStr.."[name][afkdnd]")
 		elseif mystyle == "arena" then
-			frame:Tag(name, "[arenaspec] "..colorStr.."[name]")
+			frame:Tag(name, " "..colorStr.."[name]")
 		elseif mystyle == "raid" and C.db["UFs"]["SimpleMode"] and C.db["UFs"]["ShowTeamIndex"] and not frame.isPartyPet and not frame.isPartyFrame then
 			frame:Tag(name, "[group].[nplevel]"..colorStr.."[name]")
 		elseif mystyle ~= "nameplate" then

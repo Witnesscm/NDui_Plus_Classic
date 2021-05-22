@@ -8,47 +8,40 @@ local select = select
 function S:alaTalentEmu()
 	if not IsAddOnLoaded("alaTalentEmu") then return end
 
+	local styled
+	local function reskinBtn(self)
+		if styled or not self.__alaTalentEmuCall then return end
+
+		B.Reskin(self.__alaTalentEmuCall)
+		styled = true
+	end
+
 	local function loadFunc(event, addon)
 		if event == "ADDON_LOADED" and addon == "Blizzard_TalentUI" then
-			for i = 1, TalentFrame:GetNumChildren() do
-				local child = select(i, TalentFrame:GetChildren())
-				if child and child.information then
-					B.Reskin(child)
-				end
-			end
+			PlayerTalentFrame:HookScript("OnShow", reskinBtn)
 			B:UnregisterEvent(event, loadFunc)
 		end
 	end
-
 	B:RegisterEvent("ADDON_LOADED", loadFunc)
 
+	local alaPopup = _G.alaPopup
 	if not alaPopup then return end		-- version check
 
-	local alamenu
-	for i = 1, DropDownList1:GetNumChildren() do
-		local child = select(i, DropDownList1:GetChildren())
-		local _, _, relativePoint = child:GetPoint()
-		if child:IsShown() and relativePoint == "TOPRIGHT" then
-			child:ClearAllPoints()
-			child:SetPoint("TOPLEFT", DropDownList1, "TOPRIGHT", 2, -1)
-			child:SetBackdrop(nil)
-			child:DisableDrawLayer("BACKGROUND")
-			local bg = B.CreateBDFrame(child, .7)
-			B.CreateSD(bg)
-			alamenu = child
-		end
-	end
+	local menu = alaPopup.menu
+	P.ReskinTooltip(menu)
 
 	hooksecurefunc("ToggleDropDownMenu", function(level, ...)
-		if not alamenu then return end
-		if level == 1 and alamenu:IsShown() then
-			for i = 1, alamenu:GetNumChildren() do
-				local bu = select(i, alamenu:GetChildren())
+		level = level or 1
+
+		if menu:IsShown() then
+			for i = 1, menu:GetNumChildren() do
+				local bu = select(i, menu:GetChildren())
 				if bu:GetObjectType() == "Button" and bu:IsShown() and not bu.styled then
-					bu:GetHighlightTexture():SetVertexColor(1, 1, 1, 1)
-					bu:GetHighlightTexture():SetColorTexture(DB.r, DB.g, DB.b, .2)
-					bu:GetHighlightTexture():SetPoint("TOPLEFT", - (alamenu:GetWidth() - bu:GetWidth()) / 2, 0)
-					bu:GetHighlightTexture():SetPoint("BOTTOMRIGHT", (alamenu:GetWidth() - bu:GetWidth()) / 2, 0)
+					bu:SetHighlightTexture(DB.bdTex)
+					local hl = bu:GetHighlightTexture()
+					hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
+					hl:SetPoint("TOPLEFT", - (menu:GetWidth() - bu:GetWidth()) / 2 + 2, 0)
+					hl:SetPoint("BOTTOMRIGHT", (menu:GetWidth() - bu:GetWidth()) / 2 - 2, 0)
 					bu.styled = true
 				end
 			end

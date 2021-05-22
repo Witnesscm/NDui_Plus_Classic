@@ -6,6 +6,9 @@ local _G = getfenv(0)
 
 function S:PallyPower()
 	if not IsAddOnLoaded("PallyPower") then return end
+	
+	local PallyPower = _G.PallyPower
+	if not PallyPower then return end
 
 	B.StripTextures(PallyPowerBlessingsFrame)
 	B.SetBD(PallyPowerBlessingsFrame)
@@ -56,23 +59,6 @@ function S:PallyPower()
 		end
 	end
 
-	local function hook_SetBackdropColor(self, r, g, b, a)
-		self.bg:SetVertexColor(r, g, b, a)
-	end
-
-	local function reskinBackdrop(frame)
-		frame:SetBackdrop(nil)
-		frame.SetBackdrop = B.Dummy
-		frame.bg = frame:CreateTexture(nil, "BACKGROUND")
-		frame.bg:SetAllPoints()
-		frame.bg:SetTexture(DB.normTex)
-		hooksecurefunc(frame, "SetBackdropColor", hook_SetBackdropColor)
-	end
-
-	reskinBackdrop(PallyPowerAura)
-	reskinBackdrop(PallyPowerRF)
-	reskinBackdrop(PallyPowerAuto)
-
 	local icons = {
 		"PallyPowerAutoIcon",
 		"PallyPowerRFIcon",
@@ -84,11 +70,9 @@ function S:PallyPower()
 	end
 
 	for cbNum = 1, PALLYPOWER_MAXCLASSES do
-		reskinBackdrop(_G["PallyPowerC"..cbNum])
 		reskinIcon(_G["PallyPowerC"..cbNum.."ClassIcon"])
 		reskinIcon(_G["PallyPowerC"..cbNum.."BuffIcon"])
 		for pbNum = 1, PALLYPOWER_MAXPERCLASS do
-			reskinBackdrop(_G["PallyPowerC"..cbNum.."P"..pbNum])
 			reskinIcon(_G["PallyPowerC"..cbNum.."P"..pbNum.."BuffIcon"])
 		end
 	end

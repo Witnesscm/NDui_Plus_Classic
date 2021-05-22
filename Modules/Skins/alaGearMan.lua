@@ -17,9 +17,6 @@ function S:alaGearMan()
 
 	local ui = ALA.gear.ui
 
-	local gearWin, statPanel
-	local gearWidth = 200
-
 	local function reskinQuick()
 		for _, button in ipairs(ui.secureButtons) do
 			if not button.styled then
@@ -45,11 +42,10 @@ function S:alaGearMan()
 		end)
 
 		-- gearWin
-		gearWin = ui.gearWin
+		local gearWin = ui.gearWin
 		B.StripTextures(gearWin)
 		gearWin:ClearAllPoints()
 		gearWin:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32, -16)
-		gearWidth = gearWin:GetWidth()
 
 		local bg = CreateFrame("Frame", nil, gearWin)
 		bg:SetPoint("TOPLEFT")
@@ -83,75 +79,6 @@ function S:alaGearMan()
 		hooksecurefunc(ui.secure, "Create", reskinQuick)
 	end
 	hooksecurefunc(_G.AGM_FUNC, "initUI", reskinFunc)
-
-	local function delayFunc()
-		for i = 1, PaperDollFrame:GetNumChildren() do
-			local child = select(i, PaperDollFrame:GetChildren())
-			for j = 1, child:GetNumChildren() do
-				local child2 = select(j, child:GetChildren())
-				if child2.ScrollBar then
-					statPanel = child
-				end
-			end
-		end
-	end
-
-	if IsAddOnLoaded("CharacterStatsClassic") then
-		C_Timer.After(.5, delayFunc)
-	end
-
-	local function TogglestatPanel(a)
-		if not statPanel then P:Debug("not statPanel") return end
-		statPanel:SetAlpha(a)
-	end
-
-	local function ToggleinspectFrame(xOffset)
-		if not PaperDollFrame.inspectFrame then P:Debug("not PaperDollFrame.inspectFrame") return end
-		if xOffset == 0 and statPanel and statPanel:IsShown() then 
-			xOffset = statPanel:GetWidth() + 3
-		end
-		PaperDollFrame.inspectFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -33 + xOffset, -15)
-	end
-
-	if IsAddOnLoaded("MerInspect") then
-		hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
-			local frame = parent.inspectFrame
-			if not frame then return end
-			local f = parent:GetName()
-    		if f == "PaperDollFrame" and gearWin and gearWin:IsShown() then
-				ToggleinspectFrame(gearWidth + 3)
-    		end
-		end)
-
-		PaperDollFrame:HookScript("OnHide", function()
-			if gearWin and gearWin:IsShown() then
-				gearWin:Hide()
-			end
-		end)
-	end
-
-	local function gearWinShow()
-		P:Debug("gearWin Show")
-		ToggleinspectFrame(gearWidth + 3)
-		TogglestatPanel(0)
-	end
-
-	local function gearWinHide()
-		P:Debug("gearWin Hide")
-		ToggleinspectFrame(0)
-		TogglestatPanel(1)
-	end
-
-	local done
-	PaperDollFrame:HookScript("OnShow", function()
-		P:Debug("PaperDollFrame OnShow")
-		if done then return end
-		if not gearWin then P:Debug("not gearWin") return end
-		gearWin:HookScript("OnShow", gearWinShow)
-		gearWin:HookScript("OnHide", gearWinHide)
-		P:Debug("gearWin HookScript")
-		done = true
-	end)
 
 	hooksecurefunc(_G.AGM_FUNC, "gm_SetButton", function(button, index)
 		if button.icon and not button.styled then

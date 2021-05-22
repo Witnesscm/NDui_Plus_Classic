@@ -104,7 +104,7 @@ function S:SkilletClassic()
 				B.StripTextures(frame)
 				local bg = B.CreateBDFrame(frame, .25)
 				bg:SetInside()
-				frame.SetBackdrop = B.Dummy
+				--frame.SetBackdrop = B.Dummy
 			end
 		end
 
@@ -113,7 +113,7 @@ function S:SkilletClassic()
 			if frame then
 				P.ReskinFrame(frame)
 				frame:DisableDrawLayer("BACKGROUND")
-				frame.SetBackdrop = B.Dummy
+				--frame.SetBackdrop = B.Dummy
 			end
 		end
 
@@ -155,7 +155,7 @@ function S:SkilletClassic()
 		B.ReskinInput(SkilletSearchBox)
 		SkilletSearchBox.bg:SetPoint("TOPLEFT", -8, 0)
 		SkilletSearchBox.bg:SetPoint("BOTTOMRIGHT", -1, 1)
-		B.ReskinClose(SkilletSearchClear, "LEFT", SkilletSearchBox, "RIGHT", 0, 0)
+		--B.ReskinClose(SkilletSearchClear, "LEFT", SkilletSearchBox, "RIGHT", 0, 0)
 
 		B.ReskinArrow(SkilletSortAscButton, "up")
 		SkilletSortAscButton:SetPoint("LEFT", SkilletSortDropdownButton, "RIGHT", 2, 0)
@@ -168,7 +168,7 @@ function S:SkilletClassic()
 		B.ReskinArrow(SkilletPreviousItemButton, "left")
 
 		B.ReskinInput(SkilletItemCountInputBox)
-		B.ReskinClose(SkilletClearNumButton, "LEFT", SkilletItemCountInputBox, "RIGHT", 2, 0)
+		--B.ReskinClose(SkilletClearNumButton, "LEFT", SkilletItemCountInputBox, "RIGHT", 2, 0)
 		P.ReskinDropDown(SkilletQueueLoadDropdown)
 		SkilletQueueLoadDropdown.Button:SetPoint("RIGHT", 105, 2)
 		B.ReskinInput(SkilletQueueSaveEditBox)

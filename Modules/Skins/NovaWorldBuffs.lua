@@ -18,16 +18,17 @@ function S:NovaWorldBuffs()
 		"NWBbuffListFrame",
 		"NWBVersionFrame",
 		"NWBCopyFrame",
+		"NWBTimerLogFrame",
 	}
 	for _, frame in next, frames do
 		local f = _G[frame]
 		if f then
 			B.StripTextures(f)
-			B.SetBD(f, nil, -10, 10, 10, -10)
+			B.SetBD(f, nil, -12, 12, 12, -12)
 
 			local close = _G[frame.."Close"]
 			if close then
-				B.ReskinClose(close, "TOPLEFT", f, "TOPRIGHT", -14, 0)
+				B.ReskinClose(close, 0, 0)
 			end
 
 			local scroll = _G[frame.."ScrollBar"]
@@ -50,6 +51,8 @@ function S:NovaWorldBuffs()
 		"NWBlayerFrameBuffsButton",
 		"NWBlayerFrameMapButton",
 		"NWBlayerFrameCopyButton",
+		"NWBlayerFrameTimerLogButton",
+		"NWBTimerLogRefreshButton",
 	}
 	for _, button in next, buttons do
 		local bu = _G[button]
@@ -70,6 +73,36 @@ function S:NovaWorldBuffs()
 			TT.ReskinTooltip(tip)
 		end
 	end
+
+	-- for _, key in pairs({"NWBCopyDiscordButton", "NWBShowStatsButton", "NWBShowStatsAllButton", "NWBtimerLogMergeLayersButton"}) do
+		-- local check = _G[key]
+		-- if check then
+			-- B.ReskinCheck(check)
+		-- end
+	-- end
+	hooksecurefunc(NWB, "createShowStatsButton", function()
+		B.ReskinCheck(NWB.showStatsButton)
+		B.ReskinCheck(NWB.showStatsAllButton)
+	end)
+
+	hooksecurefunc(NWB, "createCopyFormatButton", function()
+		B.ReskinCheck(NWB.copyDiscordButton)
+	end)
+
+	hooksecurefunc(NWB, "createDmfHelperButtons", function()
+		B.ReskinCheck(NWB.dmfChatCountdown)
+		B.ReskinCheck(NWB.dmfAutoResButton)
+	end)
+
+	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
+		B.ReskinCheck(NWB.timerLogShowRendButton)
+		B.ReskinCheck(NWB.timerLogShowOnyButton)
+		B.ReskinCheck(NWB.timerLogShowNefButton)
+	end)
+
+	hooksecurefunc(NWB, "createTimerLogMergeLayersCheckbox", function()
+		B.ReskinCheck(NWB.timerLogMergeLayersButton)
+	end)
 
 	local minimap = _G.MinimapLayerFrame
 	if minimap then

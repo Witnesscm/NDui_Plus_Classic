@@ -5,16 +5,19 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local pairs = pairs
 
+local function hook_SetNormalTexture(self)
+	local icon = self:GetNormalTexture()
+	if icon then
+		icon:SetTexCoord(.08, .92, .08, .92)
+		icon:SetInside()
+	end
+end
+
 function S:Auctionator()
 	if not IsAddOnLoaded("Auctionator") then return end
-
-	local function hook_SetNormalTexture(self)
-		local icon = self:GetNormalTexture()
-		if icon then
-			icon:SetTexCoord(.08, .92, .08, .92)
-			icon:SetInside()
-		end
-	end
+	
+	local Atr_Init = _G.Atr_Init
+	if not Atr_Init then return end
 
 	hooksecurefunc("Atr_Init", function()
 		B.ReskinCheck(Atr_Adv_Search_Button)
@@ -133,9 +136,11 @@ function S:Auctionator()
 		UIDropDownMenu_SetWidth(Atr_ASDD_Subclass, 160)
 		Atr_Duration:SetPoint("TOPLEFT", Atr_Duration_Text, "TOPLEFT", 45, 7)
 
+		P.SetupBackdrop(Atr_RecommendItem_Tex)
 		B.CreateBD(Atr_RecommendItem_Tex, .25)
 		hooksecurefunc(Atr_RecommendItem_Tex, "SetNormalTexture", hook_SetNormalTexture)
 
+		P.SetupBackdrop(Atr_SellControls_Tex)
 		B.CreateBD(Atr_SellControls_Tex, .25)
 		hooksecurefunc(Atr_SellControls_Tex, "SetNormalTexture", hook_SetNormalTexture)
 		local hl = Atr_SellControls_Tex:GetHighlightTexture()

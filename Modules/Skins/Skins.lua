@@ -1,6 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:RegisterModule("Skins")
+local r, g, b = DB.r, DB.g, DB.b
 
 S.BarConfig = {
 	icon = {
@@ -91,11 +92,27 @@ function S:tdGUI()
 		hooksecurefunc(DropMenu, "Open", function(self, level, ...)
 			level = level or 1
 			local menu = self.menuList[level]
-			if menu and not menu.styled then
-				P.ReskinTooltip(menu, .5)
-				local scrollBar = menu.scrollBar or menu.ScrollBar
-				if scrollBar then
-					B.ReskinScroll(scrollBar)
+			if menu then
+				if not menu.styled then
+					P.ReskinTooltip(menu)
+					local scrollBar = menu.scrollBar or menu.ScrollBar
+					if scrollBar then
+						B.ReskinScroll(scrollBar)
+					end
+					menu.styled = true
+				end
+			end
+		end)
+
+		hooksecurefunc(DropMenu, "UpdateItems", function(self)
+			for i = 1, #self._buttons do
+				local bu = self:GetButton(i)
+				if bu:IsShown() and not bu.styled then
+					local hl = bu:GetHighlightTexture()
+					hl:SetColorTexture(r, g, b, .25)
+					hl:SetPoint("TOPLEFT", -16, 0)
+					hl:SetPoint("BOTTOMRIGHT", 16, 0)
+					bu.styled = true
 				end
 			end
 		end)
@@ -106,6 +123,29 @@ function S:tdGUI()
 		hooksecurefunc(DropMenuItem, "SetHasArrow", function(self)
 			B.SetupArrow(self.Arrow, "right")
 			self.Arrow:SetSize(14, 14)
+		end)
+
+		hooksecurefunc(DropMenuItem, "SetCheckState", function(self, checkable, _, checked)
+			local check = self.CheckBox
+
+			if not self.bg then
+				self.bg = B.CreateBDFrame(self)
+				self.bg:ClearAllPoints()
+				self.bg:SetPoint("CENTER", check)
+				self.bg:SetSize(12, 12)
+
+				check:SetTexture(DB.bdTex)
+				check:SetVertexColor(r, g, b, .6)
+				check:SetSize(10, 10)
+			end
+
+			if checkable then
+				if checked then
+					check:Show()
+				else
+					check:Hide()
+				end
+			end
 		end)
 	end
 end

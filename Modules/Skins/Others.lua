@@ -28,9 +28,9 @@ function S:honorspy()
 
 	local function delayFunc()
 		if mainFrame.frame.bg then
-			B.CreateBD(mainFrame.frame.bg)
-			B.CreateSD(mainFrame.frame.bg)
-			B.CreateTex(mainFrame.frame.bg)
+			-- B.CreateBD(mainFrame.frame.bg)
+			-- B.CreateSD(mainFrame.frame.bg)
+			-- B.CreateTex(mainFrame.frame.bg)
 		end
 	end
 	C_Timer.After(.5, delayFunc)
@@ -155,9 +155,9 @@ function S:BagSync()
 	local function reskinFrame(frame)
 		if not frame then return end
 		if frame.bg then
-			B.CreateBD(frame.bg)
-			B.CreateSD(frame.bg)
-			B.CreateTex(frame.bg)
+			-- B.CreateBD(frame.bg)
+			-- B.CreateSD(frame.bg)
+			-- B.CreateTex(frame.bg)
 		else
 			B.StripTextures(frame)
 			B.SetBD(frame)

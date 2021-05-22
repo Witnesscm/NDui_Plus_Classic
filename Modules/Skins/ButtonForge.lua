@@ -5,7 +5,7 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:ButtonForge()
-	if not IsAddOnLoaded("ButtonForge-classic") then return end
+	if not IsAddOnLoaded("ButtonForge") then return end
 	if not S.db["ButtonForge"] then return end
 
 	local Bar = B:GetModule("Actionbar")

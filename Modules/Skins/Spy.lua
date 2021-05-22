@@ -60,7 +60,7 @@ function S:Spy()
 
 	local alert = _G.Spy_AlertWindow
 	if alert and alert.Icon then
-		B.CreateBD(alert)
+		--B.CreateBD(alert)
 		B.CreateBDFrame(alert.Icon, .25)
 		hooksecurefunc(alert.Icon, "SetBackdrop", function(self)
 			local icon = select(1, self:GetRegions())

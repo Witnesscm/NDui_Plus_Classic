@@ -79,7 +79,7 @@ function S:WIM()
 				if type(texture) == "number" and texture == 136430 then
 					region:SetTexture("")
 				end
-				if type(texture) == "string" and texture:find("TempPortraitAlphaMask") then
+				if type(texture) == "string" and (texture:find("TempPortraitAlphaMask") or texture:find("TrackingBorder")) then
 					region:SetTexture("")
 				end
 			end

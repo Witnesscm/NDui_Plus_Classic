@@ -1,50 +1,106 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local r, g, b = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
+
+local function reskinDropDown(self)
+	B.StripTextures(self)
+	local down = self.button
+	B.ReskinArrow(down, "down")
+	down:SetSize(20, 20)
+
+	local bg = B.CreateBDFrame(self, 0)
+	bg:ClearAllPoints()
+	bg:SetPoint("LEFT", 2, 0)
+	bg:SetPoint("TOPRIGHT", down, "TOPRIGHT")
+	bg:SetPoint("BOTTOMRIGHT", down, "BOTTOMRIGHT")
+	B.CreateGradient(bg)
+end
+
+local function reskinCatFrame(self)
+	local index = 1
+	local frame = _G["AtlasLoot-DropDown-CatFrame"..index]
+	while frame do
+		if not frame.__bg then
+			B.StripTextures(frame)
+			frame.__bg = B.SetBD(frame, .7)
+		end
+
+		for i = 1, #frame.buttons do
+			local bu = frame.buttons[i]
+			local _, _, _, x = bu:GetPoint()
+			if bu:IsShown() and x then
+				local check = bu.check
+				local hl = bu:GetHighlightTexture()
+
+				if not bu.bg then
+					bu.bg = B.CreateBDFrame(bu)
+					bu.bg:ClearAllPoints()
+					bu.bg:SetPoint("CENTER", check)
+					bu.bg:SetSize(12, 12)
+					hl:SetColorTexture(r, g, b, .25)
+
+					check:SetColorTexture(r, g, b, .6)
+					check:SetSize(10, 10)
+					check:SetDesaturated(false)
+				end
+
+				bu.bg:Hide()
+				check:Hide()
+				hl:ClearAllPoints()
+				hl:SetPoint("TOP")
+				hl:SetPoint("BOTTOM")
+				hl:SetPoint("LEFT", frame.__bg,"LEFT")
+				hl:SetPoint("RIGHT", frame.__bg,"RIGHT")
+
+				if self.par.selectable then
+					local co = check:GetTexCoord()
+					if co == 0 then
+						check:Show()
+					end
+
+					bu.bg:Show()
+				end
+			end
+		end
+
+		index = index + 1
+		frame = _G["AtlasLoot-DropDown-CatFrame"..index]
+	end
+end
+
+local function reskinSubFrame(frame)
+	B.StripTextures(frame)
+	local bg = B.CreateBDFrame(frame)
+	bg:SetAllPoints() 
+end
+
+local function reskinFilter(self)
+	local frame = self.selectionFrame
+	if frame and not frame.styled then
+		B.StripTextures(frame, 0)
+		B.SetBD(frame, .7)
+
+		for _, button in ipairs(frame.buttons) do
+			B.ReskinIcon(button.icon)
+		end
+
+		frame.styled = true
+	end
+end
 
 function S:AtlasLootClassic()
 	if not IsAddOnLoaded("AtlasLootClassic") then return end
 	if not S.db["AtlasLootClassic"] then return end
 
-	local function reskinDropDown(self)
-		B.StripTextures(self)
-		local down = self.button
-		B.ReskinArrow(down, "down")
-		down:SetSize(20, 20)
-
-		local bg = B.CreateBDFrame(self, 0)
-		bg:SetPoint("TOPLEFT", 0, -3)
-		bg:SetPoint("BOTTOMRIGHT", -17, 2)
-		B.CreateGradient(bg)
-	end
-
-	local function reskinCatFrame()
-		local index = 1
-		local frame = _G["AtlasLoot-DropDown-CatFrame"..index]
-		while frame do
-			if not frame.styled then
-				B.StripTextures(frame)
-				B.SetBD(frame)
-				frame.styled = true
-			end
-			index = index + 1
-			frame = _G["AtlasLoot-DropDown-CatFrame"..index]
-		end
-	end
-
-	local function reskinSubFrame(frame)
-		B.StripTextures(frame)
-		local bg = B.CreateBDFrame(frame)
-		bg:SetAllPoints() 
-	end
-
 	local AtlasLoot = _G.AtlasLoot
 	AtlasLoot.db.Tooltip.useGameTooltip = true
 
 	local frame = _G["AtlasLoot_GUI-Frame"]
-	B.StripTextures(frame)
+	B.StripTextures(frame, 0)
+	frame.gameVersionLogo:SetAlpha(1)
 	B.SetBD(frame)
 	B.StripTextures(frame.titleFrame)
 	B.ReskinClose(frame.CloseButton)
@@ -72,6 +128,17 @@ function S:AtlasLootClassic()
 	B.Reskin(frame.contentFrame.itemsButton)
 	B.Reskin(frame.contentFrame.modelButton)
 	B.Reskin(frame.contentFrame.soundsButton)
+
+	local filterButton = frame.contentFrame.clasFilterButton
+	B.ReskinIcon(filterButton.texture)
+	filterButton.HL = filterButton:CreateTexture(nil, "HIGHLIGHT")
+	filterButton.HL:SetColorTexture(1, 1, 1, .25)
+	filterButton.HL:SetAllPoints(filterButton.texture)
+	filterButton:HookScript("PostClick", reskinFilter)
+
+	for _, button in ipairs(AtlasLoot.GUI.ItemFrame.frame.ItemButtons) do
+		B.ReskinIcon(button.icon)
+	end
 
 	local Set = AtlasLoot.Button:GetType("Set")
 	hooksecurefunc(Set, "ShowToolTipFrame", function()
@@ -114,6 +181,14 @@ function S:AtlasLootClassic()
 			extraFrame.styled = true
 		end
 	end)
+
+	local origCreateSecOnly = Button.CreateSecOnly
+	Button.CreateSecOnly = function(self, ...)
+		local bu = origCreateSecOnly(self, ...)
+		B.ReskinIcon(bu.secButton.icon)
+
+		return bu
+	end
 end
 
 S:RegisterSkin("AtlasLootClassic", S.AtlasLootClassic)

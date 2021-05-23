@@ -7,6 +7,8 @@ local select, pairs, type = select, pairs, type
 ----------------------------
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 ----------------------------
+local mainFrame
+
 local function reskinDropDown(dropdown)
 	B.StripTextures(dropdown)
 	local down = dropdown.MenuButton
@@ -22,7 +24,7 @@ local function reskinDropDown(dropdown)
 end
 
 local function reskinQRTooltip()
-	local tooltip = _G.MeetingHornMainPanel.Browser.QRTooltip
+	local tooltip = mainFrame.Browser.QRTooltip
 	if tooltip and not tooltip.styled then
 		B.StripTextures(tooltip)
 		B.SetBD(tooltip, .7)
@@ -65,14 +67,34 @@ local function reskinSummary(summary)
 	summary.Overview.Text.SetTextColor = B.Dummy
 end
 
+local function strToPath(str)
+	local path = {}
+	for v in string.gmatch(str, "([^\.]+)") do 
+		table.insert(path, v)
+	end
+	return path
+end
+
+local function getValue(pathStr, tbl)
+	local keys = strToPath(pathStr) 
+	local value
+	for _, key in pairs(keys) do
+		value = value and value[key] or tbl[key]
+	end
+	return value
+end
+
 function S:MeetingHorn()
 	if not IsAddOnLoaded("MeetingHorn") then return end
 	if not S.db["MeetingHorn"] then return end
 
-	local mainFrame = _G.MeetingHornMainPanel
+	local MeetingHorn = LibStub("AceAddon-3.0"):GetAddon("MeetingHorn", true)
+	if not MeetingHorn then return end
+
+	mainFrame = _G.MeetingHornMainPanel or MeetingHorn.MainPanel
 	if not mainFrame then return end
 	B.ReskinPortraitFrame(mainFrame)
-	MeetingHornMainPanelPortraitFrame:SetAlpha(0)
+	mainFrame.PortraitFrame:SetAlpha(0)
 
 	for _, tab in ipairs(mainFrame.Tabs) do
 		B.ReskinTab(tab)
@@ -80,23 +102,6 @@ function S:MeetingHorn()
 		if text then
 			text:SetPoint("CENTER", tab)
 		end
-	end
-
-	local function strToPath(str)
-		local path = {}
-		for v in string.gmatch(str, "([^\.]+)") do 
-			table.insert(path, v)
-		end
-		return path
-	end
-
-	local function getValue(pathStr, tbl)
-		local keys = strToPath(pathStr) 
-		local value
-		for _, key in pairs(keys) do
-			value = value and value[key] or tbl[key]
-		end
-		return value
 	end
 
 	local Dropdowns = {
@@ -208,9 +213,7 @@ function S:MeetingHorn()
 		B.ReskinInput(input)
 	end
 
-	local MeetingHorn = LibStub('AceAddon-3.0'):GetAddon('MeetingHorn')
-	local ListView = MeetingHorn:GetClass('UI.ListView')
-
+	local ListView = MeetingHorn:GetClass("UI.ListView")
 	hooksecurefunc(ListView, "GetButton", function(self, index)
 		local button = self._buttons[index]
 		if button and not button.styled then
@@ -277,7 +280,7 @@ function S:MeetingHorn()
 		end
 	end
 
-	local EncounterInfo = MeetingHorn:GetClass('UI.EncounterInfo')
+	local EncounterInfo = MeetingHorn:GetClass("UI.EncounterInfo")
 	local origEncounterInfoCreate = EncounterInfo.Create
 	EncounterInfo.Create = function(self, parent)
 		local header = origEncounterInfoCreate(self, parent)
@@ -285,7 +288,7 @@ function S:MeetingHorn()
 		return header
 	end
 
-	local EncounterInfoSummary = MeetingHorn:GetClass('UI.EncounterInfoSummary')
+	local EncounterInfoSummary = MeetingHorn:GetClass("UI.EncounterInfoSummary")
 	local origEncounterInfoSummaryCreate = EncounterInfoSummary.Create
 	EncounterInfoSummary.Create = function(self, parent)
 		local summary = origEncounterInfoSummaryCreate(self, parent)
@@ -320,7 +323,7 @@ function S:MeetingHorn()
 		progressBar:DisableDrawLayer("BACKGROUND")
 		B.CreateBDFrame(progressBar, .25)
 
-		local UIChallenge = MeetingHorn:GetClass('UI.Challenge')
+		local UIChallenge = MeetingHorn:GetClass("UI.Challenge")
 		hooksecurefunc(UIChallenge, "GetChallengeButton", function(self, i)
 			local button = self.challengeButtons[i]
 			if button and not button.styled then
@@ -332,9 +335,9 @@ function S:MeetingHorn()
 	end
 
 	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
-		local tdInspect = LibStub('AceAddon-3.0'):GetAddon('tdInspect')
-		local Browser = MeetingHorn:GetClass('UI.Browser')
-		local Inspect = tdInspect:GetModule('Inspect')
+		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
+		local Browser = MeetingHorn:GetClass("UI.Browser")
+		local Inspect = tdInspect:GetModule("Inspect")
 
 		local origCreateActivityMenu = Browser.CreateActivityMenu
 		Browser.CreateActivityMenu = function(self, activity)

@@ -36,6 +36,14 @@ function S:tdAuction()
 			B.ReskinIcon(button.Icon)
 		end
 
+		--BrowseDropDown
+		for i = 1, BrowseDropDown:GetNumChildren() do
+			local child = select(i, BrowseDropDown:GetChildren())
+			if child:GetObjectType() == "Frame" and child.backdropInfo then
+				child:SetPoint("BOTTOMRIGHT", BrowseDropDown.Button, "BOTTOMRIGHT")
+			end
+		end
+
 		-- FullScan
 		local FullScan = tdAuction.FullScan
 		B.StripTextures(FullScan)

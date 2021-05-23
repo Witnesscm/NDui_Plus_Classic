@@ -107,12 +107,17 @@ function S:tdGUI()
 		hooksecurefunc(DropMenu, "UpdateItems", function(self)
 			for i = 1, #self._buttons do
 				local bu = self:GetButton(i)
-				if bu:IsShown() and not bu.styled then
+				local _, _, _, x = bu:GetPoint()
+				if bu:IsShown() and x then
 					local hl = bu:GetHighlightTexture()
-					hl:SetColorTexture(r, g, b, .25)
-					hl:SetPoint("TOPLEFT", -16, 0)
-					hl:SetPoint("BOTTOMRIGHT", 16, 0)
-					bu.styled = true
+
+					if not bu.styled then
+						hl:SetColorTexture(r, g, b, .25)
+						bu.styled = true
+					end
+
+					hl:SetPoint("TOPLEFT", -x + C.mult, 0)
+					hl:SetPoint("BOTTOMRIGHT", self:GetWidth() - bu:GetWidth() - x - C.mult, 0)
 				end
 			end
 		end)
@@ -139,12 +144,15 @@ function S:tdGUI()
 				check:SetSize(10, 10)
 			end
 
+			self.bg:Hide()
+
 			if checkable then
 				if checked then
 					check:Show()
 				else
 					check:Hide()
 				end
+				self.bg:Show()
 			end
 		end)
 	end

@@ -3,6 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 local NS = B:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
+local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
@@ -173,43 +174,6 @@ function S:BagSync()
 	C_Timer.After(.5, delayFunc)
 end
 
-function S:GoodLeader()
-	if not IsAddOnLoaded("GoodLeader") then return end
-
-	local GoodLeader = _G.GoodLeader
-
-	local function reskinFrame(frame)
-		if not frame then return end
-		B.StripTextures(frame)
-		frame.bg = B.CreateBDFrame(frame, .25)
-		frame.bg:SetPoint("TOPLEFT", 3, -1)
-		frame.bg:SetPoint("BOTTOMRIGHT", -1, 1)
-	end
-
-	local function delayFunc()
-		local mainPanel = GoodLeader.MainPanel
-		B.ReskinPortraitFrame(mainPanel)
-
-		local mainFrame = select(3, mainPanel:GetChildren())
-		local first = mainFrame.First
-		local result = mainFrame.Result
-		local feedback = mainPanel.FeedBack
-
-		reskinFrame(first.Header)
-		reskinFrame(first.Footer)
-		reskinFrame(first.Inset)
-		reskinFrame(result.Info)
-		result.Info.bg:SetPoint("TOPLEFT", 2, -1)
-		reskinFrame(result.Raids)
-		reskinFrame(result.Score)
-
-		B.Reskin(feedback.AcceptButton)
-		B.Reskin(feedback.CancelButton)
-		B.ReskinScroll(feedback.EditBox.ScrollFrame.ScrollBar)
-	end
-	C_Timer.After(.5, delayFunc)
-end
-
 function S:FeatureFrame()
 	if not IsAddOnLoaded("FeatureFrame") then return end
 
@@ -375,18 +339,64 @@ function S:Hemlock()
 	end)
 end
 
+function S:TotemTimers()
+	if not IsAddOnLoaded("TotemTimers") then return end
+	if DB.MyClass ~= "SHAMAN" then return end
+
+	local function GetCheckedTexture(self)
+		return self._checkedTexture
+	end
+
+	local function hook_SetTexture(self, texture)
+		local bg = self:GetParent().icbg
+		if not bg then return end
+
+		if texture and texture ~= "" then
+			bg:Show()
+		else
+			bg:Hide()
+		end
+	end
+
+	hooksecurefunc(_G.XiTimers, "new", function(self, ...)
+		local timer = XiTimers.timers[#XiTimers.timers]
+
+		local button = timer.button
+		button._checkedTexture = button:CreateTexture()
+		button.GetCheckedTexture = GetCheckedTexture
+		Bar:StyleActionButton(button, S.BarConfig)
+
+		local mini = button.miniIconFrame
+		mini.icbg = B.ReskinIcon(button.miniIcon)
+		mini.icbg:SetBackdropColor(0, 0, 0, 0)
+		mini.icbg:Hide()
+		hooksecurefunc(button.miniIcon, "SetTexture", hook_SetTexture)
+		mini:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
+	end)
+
+	hooksecurefunc(_G.TTActionBars, "new", function(self, ...)
+		local bar = TTActionBars.bars[#TTActionBars.bars]
+
+		for _, button in ipairs(bar.buttons) do
+			button._checkedTexture = button:CreateTexture()
+			button.GetCheckedTexture = GetCheckedTexture
+			Bar:StyleActionButton(button, S.BarConfig)
+		end
+	end)
+end
+
 S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
 -- S:RegisterSkin("honorspy", S.honorspy)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
 S:RegisterSkin("Accountant", S.Accountant)
 S:RegisterSkin("BagSync", S.BagSync)
--- S:RegisterSkin("GoodLeader", S.GoodLeader)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
 S:RegisterSkin("buffOmat", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
 S:RegisterSkin("xCT", S.xCT)
 -- S:RegisterSkin("Elephant", S.Elephant)
 -- S:RegisterSkin("Hemlock", S.Hemlock)
+S:RegisterSkin("TotemTimers", S.TotemTimers)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

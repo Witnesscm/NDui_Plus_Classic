@@ -138,6 +138,7 @@ function S:AtlasLootClassic()
 
 	for _, button in ipairs(AtlasLoot.GUI.ItemFrame.frame.ItemButtons) do
 		B.ReskinIcon(button.icon)
+		button.overlay:SetOutside(button.icon)
 	end
 
 	local Set = AtlasLoot.Button:GetType("Set")
@@ -145,7 +146,9 @@ function S:AtlasLootClassic()
 		local tip = Set.tooltipFrame
 		if tip and not tip.styled then
 			tip.modelFrame:SetBackdrop(nil)
-			B.SetBD(tip)
+			tip.bonusDataFrame:SetBackdrop(nil)
+			B.SetBD(tip.modelFrame)
+			B.SetBD(tip.bonusDataFrame)
 			tip.styled = true
 		end
 	end)
@@ -185,7 +188,14 @@ function S:AtlasLootClassic()
 	local origCreateSecOnly = Button.CreateSecOnly
 	Button.CreateSecOnly = function(self, ...)
 		local bu = origCreateSecOnly(self, ...)
-		B.ReskinIcon(bu.secButton.icon)
+		bu.secButton.icon:SetInside()
+		bu.secButton.icbg = B.ReskinIcon(bu.secButton.icon)
+		bu.secButton.overlay:SetOutside(bu.secButton.icon)
+
+		bu.secButton:SetHighlightTexture(DB.bdTex)
+		local hl = bu.secButton:GetHighlightTexture()
+		hl:SetInside(bu.secButton.icbg)
+		hl:SetVertexColor(r, g, b, .25)
 
 		return bu
 	end

@@ -52,6 +52,12 @@ function S:CharacterPanel()
 		local inspectFrame = ShowInspectItemListFrame("player", PaperDollFrame, ilevel, maxLevel)
 
 		tinsert(addonFrames, {frame = inspectFrame, order = 3})
+
+		hooksecurefunc("ShowInspectItemListFrame", function(unit, ...)
+			if unit and unit == "player" and CharacterFrame:IsShown() then
+				UpdatePanelsPosition()
+			end
+		end)
 	end
 
 	-- alaGearMan

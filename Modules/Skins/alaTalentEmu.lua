@@ -5,24 +5,23 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local select = select
 
+local function loadFunc(event, addon)
+	if event == "ADDON_LOADED" and addon == "Blizzard_TalentUI" then
+		P:Delay(.5, function()
+			local bu = _G.PlayerTalentFrame.__alaTalentEmuCall
+			if bu then
+				B.Reskin(bu)
+				bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -22, 0)
+			end
+		end)
+
+		B:UnregisterEvent(event, loadFunc)
+	end
+end
+B:RegisterEvent("ADDON_LOADED", loadFunc)
+
 function S:alaTalentEmu()
 	if not IsAddOnLoaded("alaTalentEmu") then return end
-
-	local styled
-	local function reskinBtn(self)
-		if styled or not self.__alaTalentEmuCall then return end
-
-		B.Reskin(self.__alaTalentEmuCall)
-		styled = true
-	end
-
-	local function loadFunc(event, addon)
-		if event == "ADDON_LOADED" and addon == "Blizzard_TalentUI" then
-			PlayerTalentFrame:HookScript("OnShow", reskinBtn)
-			B:UnregisterEvent(event, loadFunc)
-		end
-	end
-	B:RegisterEvent("ADDON_LOADED", loadFunc)
 
 	local alaPopup = _G.alaPopup
 	if not alaPopup then return end		-- version check

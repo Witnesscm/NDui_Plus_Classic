@@ -25,6 +25,7 @@ function S:Auctionator()
 		B.ReskinScroll(Atr_Hlist_ScrollFrameScrollBar)
 		B.ReskinScroll(AuctionatorScrollFrameScrollBar)
 		B.StripTextures(Atr_Hlist)
+		Atr_Hlist.SetBackdrop = B.Dummy
 
 		local bg = B.CreateBDFrame(Atr_Hlist, .25)
 		bg:SetPoint("TOPLEFT", -2, -2)

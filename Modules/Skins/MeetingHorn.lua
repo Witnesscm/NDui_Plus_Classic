@@ -69,7 +69,7 @@ end
 
 local function strToPath(str)
 	local path = {}
-	for v in string.gmatch(str, "([^\.]+)") do 
+	for v in string.gmatch(str, "([^%.]+)") do 
 		table.insert(path, v)
 	end
 	return path

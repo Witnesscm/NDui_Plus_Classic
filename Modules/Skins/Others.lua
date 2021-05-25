@@ -323,18 +323,30 @@ function S:Hemlock()
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
 
+	local function reskinButton(button)
+		B.ReskinIcon(button:GetNormalTexture())
+		button:GetNormalTexture():SetInside()
+		button:SetHighlightTexture(DB.bdTex)
+		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+		button:GetHighlightTexture():SetInside()
+	end
+
 	B.StripTextures(_G.HemlockFrame)
 	_G.HemlockFrame:SetPoint("LEFT", MerchantFrameCloseButton, "RIGHT", 0, 0)
 	hooksecurefunc(Hemlock, "MakeFrame", function(self)
 		for _, button in ipairs(self.frames) do
 			if not button.styled then
-				B.ReskinIcon(button:GetNormalTexture())
-				button:GetNormalTexture():SetInside()
-				button:SetHighlightTexture(DB.bdTex)
-				button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
-				button:GetHighlightTexture():SetInside()
+				reskinButton(button)
 				button.styled = true
 			end
+		end
+	end)
+
+	hooksecurefunc(Hemlock, "MakeScanFrame", function(self)
+		local button = _G.HemlockPoisonButtonOpen
+		if button and not button.styled then
+			reskinButton(button)
+			button.styled = true
 		end
 	end)
 end
@@ -395,7 +407,7 @@ S:RegisterSkin("buffOmat", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
 S:RegisterSkin("xCT", S.xCT)
 -- S:RegisterSkin("Elephant", S.Elephant)
--- S:RegisterSkin("Hemlock", S.Hemlock)
+S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 
 -- Hide Toggle Button

@@ -1,6 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
 
@@ -9,6 +10,10 @@ function S:GearMenu()
 	if not S.db["GearMenu"] then return end
 
 	local rggm = _G.rggm
+	if not rggm then return end
+
+	local fontScale = .37
+
 	local function UpdateTexture(slot)
 		local texture = slot:GetNormalTexture()
 		if texture and slot.bg then
@@ -18,39 +23,48 @@ function S:GearMenu()
 	end
 	hooksecurefunc(rggm.uiHelper, "UpdateSlotTextureAttributes", UpdateTexture)
 
-	-- local function SetKeyBindingFont(fontString)
-		-- local slotSize = rggm.configuration.GetSlotSize()
-		-- local fontSize = floor(slotSize/36 * 12)
-		-- fontString:SetFont(DB.Font[1], fontSize, DB.Font[3])
-	-- end
-	-- hooksecurefunc(rggm.gearBar, "SetKeyBindingFont", SetKeyBindingFont)
+	local function SetKeyBindingFont(slot, size)
+		slot.keyBindingText:SetFont(DB.Font[1], size * fontScale, DB.Font[3])
+	end
+	hooksecurefunc(rggm.gearBar, "UpdateGearSlotKeyBindingTextSize", SetKeyBindingFont)
 
 	local function reskinGear(slot)
 		slot:SetBackdrop(nil)
 		slot.SetBackdrop = B.Dummy
 		slot.bg = B.SetBD(slot)
 		slot.bg:SetInside()
-		slot.cooldownOverlay:SetInside()
-		slot.highlightFrame:SetInside()
+		slot.cooldownOverlay:SetInside(slot.bg)
+		slot.highlightFrame:SetAlpha(0)
+
+		local hl= slot:CreateTexture(nil, "HIGHLIGHT")
+		hl:SetColorTexture(1, 1, 1, .25)
+		hl:SetInside(slot.bg)
 		UpdateTexture(slot)
-		if slot.keyBindingText then
-			SetKeyBindingFont(slot.keyBindingText)
-		end
 	end
 
-	local function delayFunc()
-		for i = 1, 20 do
-			local gearSlot = _G["GM_GearBarSlot_"..i]
-			if gearSlot then
-				reskinGear(gearSlot)
-			end
-			local changeSlot = _G["GM_ChangeMenuSlot_"..i]
-			if changeSlot then
-				reskinGear(changeSlot)
-			end
-		end
+	local origCreateGearSlot = rggm.gearBar.CreateGearSlot
+	rggm.gearBar.CreateGearSlot = function (...)
+		local slot = origCreateGearSlot(...)
+		reskinGear(slot)
+
+		return slot
 	end
-	C_Timer.After(.5, delayFunc)
+
+	local origCreateKeyBindingText = rggm.gearBar.CreateKeyBindingText
+	rggm.gearBar.CreateKeyBindingText = function(slot, size)
+		local keybinding = origCreateKeyBindingText(slot, size)
+		keybinding:SetFont(DB.Font[1], size * fontScale, DB.Font[3])
+
+		return keybinding
+	end
+
+	local origCreateChangeSlot = rggm.gearBarChangeMenu.CreateChangeSlot
+	rggm.gearBarChangeMenu.CreateChangeSlot = function(...)
+		local slot = origCreateChangeSlot(...)
+		reskinGear(slot)
+
+		return slot
+	end
 end
 
 S:RegisterSkin("GearMenu", S.GearMenu)

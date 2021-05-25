@@ -100,6 +100,8 @@ P.DefaultSettings = {
 		GuildExtended = false,
 		EnhancedGuildUI = true,
 		PauseToSlash = true,
+		EnhancedTalentUI = true,
+		ExpandTalent = false,
 	},
 }
 

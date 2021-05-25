@@ -163,14 +163,14 @@ function M:EnhancedGuildUI()
 
 	local expand = CreateFrame("Button", nil, GuildFrame)
 	expand:SetPoint("RIGHT", FriendsFrame.CloseButton, "LEFT", -2, 0)
-	B.ReskinArrow(expand, "up")
+	B.ReskinArrow(expand, "right")
 	GuildFrame.ExpandButton = expand
 
 	local function ToggleGuildUI(extended)
 		if extended then
 			B.SetupArrow(expand.__texture , "down")
 		else
-			B.SetupArrow(expand.__texture , "up")
+			B.SetupArrow(expand.__texture , "right")
 		end
 		ExtGuildUI_Update(extended)
 	end

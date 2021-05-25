@@ -206,7 +206,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "Misc", "EnhancedTrainers", L["EnhancedTrainers"]},
 		{1, "Misc", "EnhancedGuildUI", L["EnhancedGuildUI"], true, nil, nil, L["ExtendedGuildUITip"]},
-		{1, "Misc", "PauseToSlash", L["PauseToSlash"], nil, nil, nil, L["PauseToSlashTip"]},
+		{1, "Misc", "EnhancedTalentUI", L["EnhancedTalentUI"], nil, nil, nil, L["EnhancedTalentUITip"]},
+		{1, "Misc", "PauseToSlash", L["PauseToSlash"], true, nil, nil, L["PauseToSlashTip"]},
 	},
 }
 

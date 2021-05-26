@@ -17,9 +17,7 @@ function S:tdInspect()
 
 	local function reskinFunc()
 		local numTabs = _G.InspectFrame.numTabs
-		for i = 3, numTabs do
-			B.ReskinTab(_G["InspectFrameTab"..i])
-		end
+		B.ReskinTab(_G["InspectFrameTab"..numTabs])
 
 		B.ReskinCheck(InspectPaperDollFrame.ToggleButton)
 		InspectPaperDollFrame.RaceBackground:SetAlpha(0)
@@ -43,11 +41,17 @@ function S:tdInspect()
 
 		local talentFrame = _G.InspectFrame.TalentFrame
 		B.StripTextures(talentFrame)
+
 		for i, tab in ipairs(talentFrame.Tabs) do
 			if i == 1 then
 				tab:SetPoint('TOPLEFT', 70, -45)
 			end
 			B.ReskinTab(tab)
+		end
+
+		local scrollBar = talentFrame.TalentFrame.ScrollBar
+		if scrollBar then
+			B.ReskinScroll(scrollBar)
 		end
 
 		local equipButtons = InspectPaperDollFrame.EquipFrame.buttons

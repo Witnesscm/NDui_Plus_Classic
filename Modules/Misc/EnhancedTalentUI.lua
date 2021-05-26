@@ -163,7 +163,6 @@ function M:TalentUI_GetButton(i)
 		button:SetScript("OnEvent", Talent_OnEvent)
 		button:SetScript("OnEnter", Talent_OnEnter)
 		button:SetScript("OnLeave", B.HideTooltip)
-		-- OnClick
 
 		local Slot = button:CreateTexture(nil, "BACKGROUND")
 		Slot:SetSize(64, 64)
@@ -633,7 +632,7 @@ function M:TalentUI_Init()
 		M.db["ExpandTalent"] = not M.db["ExpandTalent"]
 		ToggleTalentUI()
 	end)
-	frame.Expand = Close
+	frame.Expand = Expand
 
 	local Points = frame:CreateFontString(nil, "OVERLAY")
 	Points:SetFont(DB.Font[1], 16, DB.Font[3])

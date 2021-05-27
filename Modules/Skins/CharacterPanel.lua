@@ -10,26 +10,7 @@ local select, pairs, type = select, pairs, type
 
 local addonFrames = {}
 
-local function ToggleModel()
-	CharacterModelFrame:SetHeight(C.db["Misc"]["ExpandStat"] and 304 or 224)
-end
-
--- CharacterStatePanel
-local function loadFunc(event, addon)
-	local statPanel = M.StatPanel
-	if statPanel then
-		ToggleModel()
-		statPanel:HookScript("OnShow", function() ToggleModel() end)
-		statPanel:HookScript("OnHide", function() ToggleModel() end)
-
-		tinsert(addonFrames, {frame = statPanel, order = 2})
-	end
-
-	B:UnregisterEvent(event, loadFunc)
-end
-B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
-
-local function UpdatePanelsPosition()
+function S:UpdatePanelsPosition()
 	local offset = 0
 	for _, panels in ipairs(addonFrames) do
 		local frame = panels.frame
@@ -44,6 +25,17 @@ local function UpdatePanelsPosition()
 	end
 end
 
+-- CharacterStatePanel
+local function loadFunc(event, addon)
+	local statPanel = M.StatPanel
+	if statPanel then
+		tinsert(addonFrames, {frame = statPanel, order = 2})
+	end
+
+	B:UnregisterEvent(event, loadFunc)
+end
+B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
+
 function S:CharacterPanel()
 	-- MerInspect
 	local LibItemInfo = LibStub("LibItemInfo.1000", true)
@@ -55,7 +47,7 @@ function S:CharacterPanel()
 
 		hooksecurefunc("ShowInspectItemListFrame", function(unit, ...)
 			if unit and unit == "player" and CharacterFrame:IsShown() then
-				UpdatePanelsPosition()
+				S:UpdatePanelsPosition()
 			end
 		end)
 	end
@@ -81,14 +73,14 @@ function S:CharacterPanel()
 			end)
 
 			for _, panels in ipairs(addonFrames) do
-				panels.frame:HookScript("OnShow", UpdatePanelsPosition)
-				panels.frame:HookScript("OnHide", UpdatePanelsPosition)
+				panels.frame:HookScript("OnShow", S.UpdatePanelsPosition)
+				panels.frame:HookScript("OnHide", S.UpdatePanelsPosition)
 			end
 
 			done = true
 		end
 
-		UpdatePanelsPosition()
+		S:UpdatePanelsPosition()
 	end)
 end
 

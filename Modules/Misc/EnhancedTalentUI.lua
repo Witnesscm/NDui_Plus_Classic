@@ -591,15 +591,18 @@ function M:TalentUI_UpdateAll()
 	end
 end
 
-local function ToggleTalentUI()
-	if M.db["ExpandTalent"] then
+function M:TalentUI_Toggle(expand)
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
+
+	if expand then
 		M.TalentUI:Show()
 		HideUIPanel(PlayerTalentFrame);
 	else
 		M.TalentUI:Hide()
 		ShowUIPanel(PlayerTalentFrame);
 	end
-	
+
+	M.db["ExpandTalent"] = expand
 end
 
 function M:TalentUI_Init()
@@ -629,8 +632,7 @@ function M:TalentUI_Init()
 	Expand:SetPoint("RIGHT", Close, "LEFT", -3, 0)
 	B.ReskinArrow(Expand, "down")
 	Expand:SetScript("OnClick", function()
-		M.db["ExpandTalent"] = not M.db["ExpandTalent"]
-		ToggleTalentUI()
+		M:TalentUI_Toggle(false)
 	end)
 	frame.Expand = Expand
 
@@ -663,14 +665,6 @@ end
 
 function M:TalentUI_Load(addon)
 	if addon == "Blizzard_TalentUI" then
-		local bu = CreateFrame("Button", nil, PlayerTalentFrame)
-		bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
-		B.ReskinArrow(bu, "right")
-		bu:SetScript("OnClick", function(self)
-			M.db["ExpandTalent"] = not M.db["ExpandTalent"]
-			ToggleTalentUI()
-		end)
-
 		P:Delay(.5,function ()
 			for i = 1, MAX_NUM_TALENTS do
 				local talent = _G["PlayerTalentFrameTalent"..i]
@@ -681,6 +675,15 @@ function M:TalentUI_Load(addon)
 				end
 			end
 		end)
+
+		if M.db["EnhancedTalentUI"] then
+			local bu = CreateFrame("Button", nil, PlayerTalentFrame)
+			bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
+			B.ReskinArrow(bu, "right")
+			bu:SetScript("OnClick", function(self)
+				M:TalentUI_Toggle(true)
+			end)
+		end
 
 		B:UnregisterEvent(self, M.TalentUI_Load)
 	end
@@ -693,9 +696,14 @@ function M:EnhancedTalentUI()
 	local method = "ToggleTalentFrame"
 	if _G[method] then
 		P:RawHook(method, function()
-			if M.db["ExpandTalent"] then
+			if M.db["ExpandTalent"] or InCombatLockdown() then
 				B:TogglePanel(M.TalentUI)
 			else
+				if M.TalentUI:IsShown() then 
+					M.TalentUI:Hide()
+					return
+				end
+
 				P.hooks[method]()
 			end
 		 end)

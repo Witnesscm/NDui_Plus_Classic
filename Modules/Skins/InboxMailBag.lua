@@ -41,10 +41,10 @@ function S:InboxMailBag()
 			local bu = _G["InboxMailbagFrameItem"..i]
 
 			if bu.qualityOverlay:IsShown() then
-			    local r, g, b = bu.qualityOverlay:GetVertexColor()
-			    bu.bg:SetBackdropBorderColor(r, g, b)
+				local r, g, b = bu.qualityOverlay:GetVertexColor()
+				bu.bg:SetBackdropBorderColor(r, g, b)
 			else
-			    bu.bg:SetBackdropBorderColor(0, 0, 0)
+				bu.bg:SetBackdropBorderColor(0, 0, 0)
 			end
 		end
 	end)
@@ -54,9 +54,9 @@ function S:InboxMailBag()
 			local bu = _G["InboxMailbagFrameItem"..i]
 
 			if bu.searchOverlay:IsShown() then
-			    bu.bg:SetAlpha(0.2)
+				bu.bg:SetAlpha(0.2)
 			else
-			    bu.bg:SetAlpha(1)
+				bu.bg:SetAlpha(1)
 			end
 		end
 	end)

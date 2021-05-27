@@ -55,7 +55,7 @@ local function openKeyBindingFrame()
 	_G.GameMenuButtonKeybindings:Click()
 
 	for _, button in ipairs(_G.KeyBindingFrame.categoryList.buttons) do
-    	if button.text:GetText() == ADDONS then
+		if button.text:GetText() == ADDONS then
 			button:Click()
 			break
 		end

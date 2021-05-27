@@ -680,7 +680,7 @@ function M:TalentUI_Load(addon)
 			local bu = CreateFrame("Button", nil, PlayerTalentFrame)
 			bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
 			B.ReskinArrow(bu, "right")
-			bu:SetScript("OnClick", function(self)
+			bu:SetScript("OnClick", function()
 				M:TalentUI_Toggle(true)
 			end)
 		end
@@ -699,7 +699,7 @@ function M:EnhancedTalentUI()
 			if M.db["ExpandTalent"] or InCombatLockdown() then
 				B:TogglePanel(M.TalentUI)
 			else
-				if M.TalentUI:IsShown() then 
+				if M.TalentUI:IsShown() then
 					M.TalentUI:Hide()
 					return
 				end

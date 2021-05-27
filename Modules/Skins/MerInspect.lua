@@ -32,11 +32,11 @@ function S:MerInspect()
 		end
 
 		local f = parent:GetName()
-    	if (f == "InspectFrame" or f == "PaperDollFrame") then
+		if (f == "InspectFrame" or f == "PaperDollFrame") then
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15)
 		else
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
-    	end
+		end
 
 		if not frame.styled then
 			reskinFrame(frame)

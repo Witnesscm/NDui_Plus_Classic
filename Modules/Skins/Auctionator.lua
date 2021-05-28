@@ -109,16 +109,13 @@ function S:Auctionator()
 			B.ReskinInput(_G[MoneyEditBox..'Copper'])
 		end
 
-		local frames = {
-			Atr_FullScanResults,
-			Atr_Adv_Search_Dialog,
-			Atr_FullScanFrame,
-			Atr_Buy_Confirm_Frame,
-		}
-
-		for _, frame in pairs(frames) do
-			B.StripTextures(frame)
-			B.SetBD(frame)
+		for _, key in pairs({"Atr_FullScanFrame", "Atr_FullScanResults", "Atr_Adv_Search_Dialog", "Atr_Buy_Confirm_Frame"}) do
+			local frame = _G[key]
+			if frame then
+				B.StripTextures(frame)
+				B.SetBD(frame)
+				frame.SetBackdrop = B.Dummy
+			end
 		end
 
 		local DropDownBoxes = {

@@ -8,19 +8,18 @@ function S:InboxMailBag()
 	if not IsAddOnLoaded("InboxMailBag") then return end
 	if not S.db["InboxMailBag"] then return end
 
-	local function delayFunc()
-		local index = 3
-		while _G['MailFrameTab'..index] do
-			B.ReskinTab(_G["MailFrameTab"..index])
-			index = index + 1
-		end
-	end
-	C_Timer.After(.5, delayFunc)
 	B.ReskinCheck(InboxMailbagFrameItemGroupStacksCheckBox)
 	B.ReskinInput(InboxMailbagFrameItemSearchBox)
 	B.ReskinScroll(InboxMailbagFrameScrollFrameScrollBar)
-	InboxMailbagFrameScrollFrame:GetRegions():Hide()
 	B.StripTextures(InboxMailbagFrame)
+
+	P:Delay(.5, function()
+		local index = 3
+		while _G["MailFrameTab"..index] do
+			B.ReskinTab(_G["MailFrameTab"..index])
+			index = index + 1
+		end
+	end)
 
 	local num = _G.BAGITEMS_ICON_DISPLAYED or 42
 

@@ -26,11 +26,8 @@ local ShowInspectCursor = ShowInspectCursor
 
 local C_LootHistoryGetItem = C_LootHistory.GetItem
 local C_LootHistoryGetPlayerInfo = C_LootHistory.GetPlayerInfo
-local GREED = GREED
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
-local MAX_PLAYER_LEVEL = MAX_PLAYER_LEVEL
-local NEED = NEED
-local PASS = PASS
+local NEED, PASS, GREED = NEED, PASS, GREED
 
 local fontSize = 14
 local cancelled_rolls = {}
@@ -131,19 +128,22 @@ function LR:CreateRollFrame(name)
 	frame:Hide()
 
 	local button = CreateFrame("Button", nil, frame)
-	button:SetPoint("RIGHT", frame, 'LEFT', - (C.mult*2), 0)
+	button:SetPoint("RIGHT", frame, "LEFT", - (C.mult*2), 0)
 	button:SetSize(frame:GetHeight() - (C.mult*2), frame:GetHeight() - (C.mult*2))
-	--B.CreateSD(button, 3, 3)
 	button:SetScript("OnEnter", SetItemTip)
 	button:SetScript("OnLeave", HideTip2)
 	button:SetScript("OnUpdate", ItemOnUpdate)
 	button:SetScript("OnClick", LootClick)
 	frame.button = button
 
-	button.icon = button:CreateTexture(nil, 'OVERLAY')
+	button.icon = button:CreateTexture(nil, "OVERLAY")
 	button.icon:SetAllPoints()
 	button.icon:SetTexCoord(unpack(DB.TexCoord))
 	B.SetBD(button.icon)
+
+	button.stack = button:CreateFontString(nil, "OVERLAY")
+	button.stack:SetPoint("BOTTOMRIGHT", -1, 2)
+	button.stack:SetFont(unpack(DB.Font))
 
 	local tfade = frame:CreateTexture(nil, "BORDER")
 	tfade:SetPoint("TOPLEFT", frame, "TOPLEFT", 4, 0)
@@ -153,7 +153,6 @@ function LR:CreateRollFrame(name)
 	tfade:SetGradientAlpha("VERTICAL", .1, .1, .1, 0, .1, .1, .1, 0)
 
 	local status = CreateFrame("StatusBar", nil, frame)
-	-- status:SetInside()
 	status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and frame:GetHeight() / 1.6 or C.mult))
 	status:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
 	status:SetScript("OnUpdate", StatusUpdate)
@@ -217,9 +216,10 @@ function LR:LootRoll_Start(rollID, time)
 	f.greed:SetText(0)
 	f.pass:SetText(0)
 
-	local texture, name, _, quality, bop, canNeed, canGreed, _, reasonNeed, reasonGreed = GetLootRollItemInfo(rollID)
+	local texture, name, count, quality, bop, canNeed, canGreed, _, reasonNeed, reasonGreed = GetLootRollItemInfo(rollID)
 
 	f.button.icon:SetTexture(texture)
+	f.button.stack:SetText(count > 1 and count or "")
 	f.button.link = GetLootRollItemLink(rollID)
 
 	SetDesaturation(f.needbutt:GetNormalTexture(), not canNeed)

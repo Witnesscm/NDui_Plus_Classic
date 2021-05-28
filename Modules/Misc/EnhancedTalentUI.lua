@@ -85,7 +85,7 @@ function M:TalentUI_CreatePanel(i)
 	local TopBG = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
 	TopBG:SetPoint("TOPLEFT")
 	TopBG:SetPoint("TOPRIGHT")
-	TopBG:SetHeight(443)
+	TopBG:SetHeight(.775 * frame:GetHeight())
 
 	local BottomBG = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
 	BottomBG:SetPoint("TOPLEFT", TopBG, "BOTTOMLEFT")

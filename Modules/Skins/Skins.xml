@@ -3,7 +3,7 @@
 	<Script file="Ace3.lua"/>
 	<Script file="alaGearMan.lua"/>
 	<Script file="alaTalentEmu.lua"/>
-	<!-- <Script file="alaCalendar.lua"/> -->
+	<Script file="alaCalendar.lua"/>
 	<Script file="Atlas.lua"/>
 	<Script file="AtlasLootClassic.lua"/>
 	<Script file="Auctionator.lua"/>

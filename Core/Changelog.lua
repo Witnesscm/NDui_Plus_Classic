@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.0.6
+[美化] 部分美化调整
+[美化] 更新alaCalendar美化
+[美化] 修复WeakAurasOptions报错
+
 v2.0.5
 [美化] 添加CChatNotifier美化
 [美化] 修复tdInspect美化

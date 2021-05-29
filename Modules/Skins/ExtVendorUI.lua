@@ -7,6 +7,7 @@ local _G = getfenv(0)
 function S:ExtVendorUI()
 	if not IsAddOnLoaded("ExtVendorUI_Classic") then return end
 
+	-- MerchantFrame
 	B.Reskin(MerchantFrameFilterButton)
 	B.ReskinInput(MerchantFrameSearchBox)
 
@@ -46,6 +47,7 @@ function S:ExtVendorUI()
 		end
 	end
 
+	-- ExtVendor_QVConfigFrame
 	P.ReskinFrame(ExtVendor_QVConfigFrame)
 	ExtVendor_QVConfigFrameDarkenBG:SetAlpha(0)
 	B.Reskin(ExtVendor_QVConfigFrame_OptionContainer_SaveButton)

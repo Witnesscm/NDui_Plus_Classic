@@ -99,7 +99,6 @@ P.DefaultSettings = {
 		EnhancedTrainers = true,
 		GuildExtended = false,
 		EnhancedGuildUI = true,
-		PauseToSlash = true,
 		EnhancedTalentUI = true,
 		ExpandTalent = false,
 	},

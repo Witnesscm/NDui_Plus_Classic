@@ -20,18 +20,3 @@ function M:OnLogin()
 		end
 	end
 end
-
--- Credit: ElvUI_WindTools
-function M:PauseToSlash()
-	if not M.db["PauseToSlash"] then return end
-
-	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
-		local text = self:GetText()
-		if userInput then
-			if text == "、" then
-				self:SetText("/")
-			end
-		end
-	end)
-end
-M:RegisterMisc("PauseToSlash", M.PauseToSlash)

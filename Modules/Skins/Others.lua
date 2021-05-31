@@ -355,9 +355,9 @@ function S:TotemTimers()
 	if not IsAddOnLoaded("TotemTimers") then return end
 	if DB.MyClass ~= "SHAMAN" then return end
 
-	local function GetCheckedTexture(self)
-		return self._checkedTexture
-	end
+	local TotemTimers = _G.TotemTimers
+	local TTActionBars = _G.TTActionBars
+	local XiTimers = TotemTimers.timers
 
 	local function hook_SetTexture(self, texture)
 		local bg = self:GetParent().icbg
@@ -370,29 +370,41 @@ function S:TotemTimers()
 		end
 	end
 
-	hooksecurefunc(_G.XiTimers, "new", function(self, ...)
+	local function reskinTotemButton(self)
+		Bar:StyleActionButton(self, S.BarConfig)
+
+		local icon = _G[self:GetName().."Icon"]
+		if icon then
+			icon:SetTexCoord(unpack(DB.TexCoord))
+			icon.SetTexCoord = B.Dummy
+		end
+
+		local mini = self.miniIconFrame
+		if mini then
+			mini.icbg = B.ReskinIcon(self.miniIcon)
+			mini.icbg:SetBackdropColor(0, 0, 0, 0)
+			mini.icbg:Hide()
+			mini:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
+			hooksecurefunc(self.miniIcon, "SetTexture", hook_SetTexture)
+		end
+	end
+
+	hooksecurefunc(XiTimers, "new", function(self, ...)
 		local timer = XiTimers.timers[#XiTimers.timers]
 
-		local button = timer.button
-		button._checkedTexture = button:CreateTexture()
-		button.GetCheckedTexture = GetCheckedTexture
-		Bar:StyleActionButton(button, S.BarConfig)
+		reskinTotemButton(timer.button)
+		reskinTotemButton(timer.animation.button)
 
-		local mini = button.miniIconFrame
-		mini.icbg = B.ReskinIcon(button.miniIcon)
-		mini.icbg:SetBackdropColor(0, 0, 0, 0)
-		mini.icbg:Hide()
-		hooksecurefunc(button.miniIcon, "SetTexture", hook_SetTexture)
-		mini:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
+		for i = 1, #timer.timerBars do
+			timer.timerBars[i].icon:SetTexCoord(unpack(DB.TexCoord))
+		end
 	end)
 
 	hooksecurefunc(_G.TTActionBars, "new", function(self, ...)
 		local bar = TTActionBars.bars[#TTActionBars.bars]
 
 		for _, button in ipairs(bar.buttons) do
-			button._checkedTexture = button:CreateTexture()
-			button.GetCheckedTexture = GetCheckedTexture
-			Bar:StyleActionButton(button, S.BarConfig)
+			reskinTotemButton(button)
 		end
 	end)
 end

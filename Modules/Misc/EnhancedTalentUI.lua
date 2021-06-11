@@ -183,7 +183,6 @@ function M:TalentUI_GetButton(i)
 		local hl = button:GetHighlightTexture()
 		hl:SetColorTexture(1, 1, 1, .25)
 
-		button.__owner = self
 		button.Slot = Slot
 		button.RankBorder = RankBorder
 		button.Rank = Rank
@@ -255,9 +254,9 @@ function M:TalentUI_SetPrereqs(buttonTier, buttonColumn, forceDesaturated, tierU
 	local requirementsMet = tierUnlocked and not forceDesaturated
 
 	for i=1, select("#", ...), 3 do
-		tier, column, isLearnable = select(i, ...);
+		tier, column, isLearnable = select(i, ...)
 		if ( not isLearnable or forceDesaturated ) then
-			requirementsMet = nil;
+			requirementsMet = nil
 		end
 		M.TalentUI_DrawLines(self, buttonTier, buttonColumn, tier, column, requirementsMet)
 	end
@@ -412,12 +411,12 @@ function M:TalentUI_Update()
 	local buttonSpacingX = self.buttonSpacingX or (2 * talentButtonSize - 1)
 	local buttonSpacingY = self.buttonSpacingY or (2 * talentButtonSize - 1)
 
-	local base;
+	local base
 	local name, _, points, fileName = GetTalentTabInfo(self.talentTree)
 	if ( name ) then
-		base = "Interface\\TalentFrame\\"..fileName.."-";
+		base = "Interface\\TalentFrame\\"..fileName.."-"
 	else
-		base = "Interface\\TalentFrame\\MageFire-";
+		base = "Interface\\TalentFrame\\MageFire-"
 	end
 
 	self.TopBG:SetTexture(base .. "TopLeft")
@@ -596,10 +595,10 @@ function M:TalentUI_Toggle(expand)
 
 	if expand then
 		M.TalentUI:Show()
-		HideUIPanel(PlayerTalentFrame);
+		HideUIPanel(PlayerTalentFrame)
 	else
 		M.TalentUI:Hide()
-		ShowUIPanel(PlayerTalentFrame);
+		ShowUIPanel(PlayerTalentFrame)
 	end
 
 	M.db["ExpandTalent"] = expand

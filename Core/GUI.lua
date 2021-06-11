@@ -183,7 +183,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Skins", "WIM", "WIM", true},
 		{1, "Skins", "ItemRack", "ItemRack"},
 		{1, "Skins", "WhisperPop", "WhisperPop", true},
-		{1, "Skins", "AutoBarClassic", "AutoBarClassic"},
+		{1, "Skins", "AutoBar", "AutoBar"},
 		{1, "Skins", "AtlasLootClassic", "AtlasLootClassic", true},
 		{1, "Skins", "Immersion", "Immersion"},
 		{1, "Skins", "Skillet", "Skillet", true},

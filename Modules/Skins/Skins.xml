@@ -7,7 +7,7 @@
 	<Script file="Atlas.lua"/>
 	<Script file="AtlasLootClassic.lua"/>
 	<Script file="Auctionator.lua"/>
-	<Script file="AutoBarClassic.lua"/>
+	<Script file="AutoBar.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CChatNotifier.lua"/>
 	<Script file="CharacterPanel.lua"/>

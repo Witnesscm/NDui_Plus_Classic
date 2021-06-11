@@ -94,11 +94,64 @@ function S:Immersion()
 
 	hooksecurefunc(ImmersionFrame, "AddQuestInfo", function(self)
 		local rewardsFrame = self.TalkBox.Elements.Content.RewardsFrame
+
+		-- Item Rewards
 		reskinItemButton(rewardsFrame.Buttons)
+
+		-- Honor Rewards
+		local honorFrame = rewardsFrame.HonorFrame
+		if honorFrame then
+			local faction = UnitFactionGroup("player")
+			local icon = honorFrame.Icon
+			icon:SetTexture(format("Interface\\TargetingFrame\\UI-PVP-%s", faction))
+			icon:SetTexCoord(0, 0.66, 0, 0.66)
+
+			if not honorFrame.textBg then
+				honorFrame.Border:Hide()
+				honorFrame.Mask:Hide()
+				honorFrame.NameFrame:Hide()
+				honorFrame.bg = B.CreateBDFrame(icon, .25)
+				honorFrame.textBg = B.CreateBDFrame(honorFrame, .25)
+				honorFrame.textBg:SetPoint("TOPLEFT", honorFrame.bg, "TOPRIGHT", 2, 0)
+				honorFrame.textBg:SetPoint("BOTTOMRIGHT", -5, 1)
+			end
+		end
+
+		-- Spell Rewards
+		if GetNumRewardSpells() > 0 then
+			for spellReward in rewardsFrame.spellRewardPool:EnumerateActive() do
+				if not spellReward.styled then
+					local icon = spellReward.Icon
+					local nameFrame = spellReward.NameFrame
+					B.ReskinIcon(icon)
+					nameFrame:Hide()
+					local bg = B.CreateBDFrame(nameFrame, .25)
+					bg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, 1)
+					bg:SetPoint("BOTTOMRIGHT", nameFrame, "BOTTOMRIGHT", -24, 15)
+
+					spellReward.styled = true
+				end
+			end
+		end
 	end)
 
 	hooksecurefunc(ImmersionFrame, "QUEST_PROGRESS", function(self)
 		reskinItemButton(self.TalkBox.Elements.Progress.Buttons)
+	end)
+
+	hooksecurefunc(ImmersionFrame, "ShowItems", function(self)
+		for tooltip in self.Inspector.tooltipFramePool:EnumerateActive() do
+			if not tooltip.styled then
+				B.StripTextures(tooltip)
+				local bg = B.SetBD(tooltip)
+				bg:SetPoint("TOPLEFT", 0, 0)
+				bg:SetPoint("BOTTOMRIGHT", 6, 0)
+				tooltip.Icon.Border:SetAlpha(0)
+				B.ReskinIcon(tooltip.Icon.Texture)
+				tooltip.Hilite:SetOutside(bg, 2, 2)
+				tooltip.styled = true
+			end
+		end
 	end)
 end
 

@@ -334,6 +334,28 @@ function S:MeetingHorn()
 		end)
 	end
 
+	-- GoodLeader
+	local GoodLeader = mainFrame.GoodLeader
+	if GoodLeader then
+		for _, v in ipairs({"First.Footer", "First.Header", "First.Inset", "Result.Info", "Result.Raids", "Result.Score"}) do
+			local subFrame = getValue(v, GoodLeader)
+			if subFrame then
+				B.StripTextures(subFrame)
+				subFrame.bg = B.CreateBDFrame(subFrame, .25)
+				subFrame.bg:SetInside()
+			end
+		end
+
+		local instances = GoodLeader.Result.Raids.instances
+		if instances then
+			for _, button in ipairs(instances) do
+				button.Mask:Hide()
+				B.CreateBD(button)
+				button.Image:SetInside()
+			end
+		end
+	end
+
 	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")

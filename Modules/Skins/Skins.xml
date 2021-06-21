@@ -4,6 +4,7 @@
 	<Script file="alaGearMan.lua"/>
 	<Script file="alaTalentEmu.lua"/>
 	<Script file="alaCalendar.lua"/>
+	<Script file="AllTheThings.lua"/>
 	<Script file="Atlas.lua"/>
 	<Script file="AtlasLootClassic.lua"/>
 	<Script file="Auctionator.lua"/>
@@ -25,7 +26,7 @@
 	<Script file="Others.lua"/>
 	<Script file="PallyPower.lua"/>
 	<Script file="Skillet.lua"/>
-	<!-- <Script file="Spy.lua"/> -->
+	<Script file="Spy.lua"/>
 	<Script file="tdAuction.lua"/>
 	<Script file="tdInspect.lua"/>
 	<Script file="ThreatClassic2.lua"/>

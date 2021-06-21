@@ -36,6 +36,11 @@ function S:tdAuction()
 			B.ReskinIcon(button.Icon)
 		end
 
+		local ExactCheckButton = Browse.ExactCheckButton
+		if ExactCheckButton then
+			B.ReskinCheck(ExactCheckButton)
+		end
+
 		--BrowseDropDown
 		for i = 1, BrowseDropDown:GetNumChildren() do
 			local child = select(i, BrowseDropDown:GetChildren())

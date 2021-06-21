@@ -9,7 +9,7 @@ local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
 
 function S:HandyNotes_NPCs()
-	if not IsAddOnLoaded("HandyNotes_NPCs (Burning Crusade Classic)") then return end
+	if not IsAddOnLoaded("HandyNotes_NPCs (Classic)") and not IsAddOnLoaded("HandyNotes_NPCs (Burning Crusade Classic)") then return end
 
 	P:Delay(.5,function()
 		for i = 1, WorldMapFrame:GetNumChildren() do
@@ -319,7 +319,7 @@ end
 
 function S:Hemlock()
 	if not IsAddOnLoaded("Hemlock") then return end
-	
+
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
 

@@ -6,7 +6,7 @@ local _G = getfenv(0)
 local select = select
 
 function S:ResetSpyFont()
-	for _, row in pairs(Spy.MainWindow.Rows) do
+	for _, row in pairs(_G.Spy.MainWindow.Rows) do
 		local font, fontSize = row.LeftText:GetFont()
 		row.LeftText:SetFont(font, fontSize, DB.Font[3])
 		row.RightText:SetFont(font, fontSize-2, DB.Font[3])
@@ -40,34 +40,51 @@ function S:Spy()
 	S:ResetSpyFont()
 	hooksecurefunc(Spy, "BarsChanged", S.ResetSpyFont)
 
-	B.StripTextures(SpyStatsFrame)
-	B.SetBD(SpyStatsFrame)
-	SpyStatsFrame_Title:SetPoint("TOP", 0, -4)
-	B.StripTextures(SpyStatsTabFrameTabContentFrame)
-	B.StripTextures(SpyStatsFilterBox)
+	local statsFrame = _G.SpyStatsFrame
+	B.StripTextures(statsFrame)
+	B.SetBD(statsFrame)
+	if statsFrame.StatsFrame then
+		B.StripTextures(statsFrame.StatsFrame)
+	end
+	_G.SpyStatsFrame_Title:SetPoint("TOP", 0, -4)
 
-	local filterBG = B.CreateBDFrame(SpyStatsFilterBox, .25)
+	local contentFrame = _G.SpyStatsTabFrameTabContentFrame
+	B.StripTextures(contentFrame)
+	if contentFrame.ContentFrame then
+		B.StripTextures(contentFrame.ContentFrame)
+	end
+
+	local filter = _G.SpyStatsFilterBox
+	B.StripTextures(filter)
+	if filter.FilterBox then
+		B.StripTextures(filter.FilterBox)
+	end
+	local filterBG = B.CreateBDFrame(filter, .25)
 	filterBG:SetPoint("TOPLEFT", 0, -3)
 	filterBG:SetPoint("BOTTOMRIGHT", 0, 1)
 
-	B.ReskinCheck(SpyStatsKosCheckbox)
-	B.ReskinCheck(SpyStatsWinsLosesCheckbox)
-	B.ReskinCheck(SpyStatsReasonCheckbox)
-	B.Reskin(SpyStatsRefreshButton)
-	B.ReskinClose(SpyStatsFrameTopCloseButton)
-	SpyStatsFrameTopCloseButton:SetPoint("TOPRIGHT", -6, -6)
-	B.ReskinScroll(SpyStatsTabFrameTabContentFrameScrollFrameScrollBar)
+	B.ReskinCheck(_G.SpyStatsKosCheckbox)
+	B.ReskinCheck(_G.SpyStatsWinsLosesCheckbox)
+	B.ReskinCheck(_G.SpyStatsReasonCheckbox)
+	B.Reskin(_G.SpyStatsRefreshButton)
+	B.ReskinClose(_G.SpyStatsFrameTopCloseButton)
+	_G.SpyStatsFrameTopCloseButton:SetPoint("TOPRIGHT", -6, -6)
+	B.ReskinScroll(_G.SpyStatsTabFrameTabContentFrameScrollFrameScrollBar)
 
 	local alert = _G.Spy_AlertWindow
 	if alert and alert.Icon then
-		--B.CreateBD(alert)
-		B.CreateBDFrame(alert.Icon, .25)
-		hooksecurefunc(alert.Icon, "SetBackdrop", function(self)
-			local icon = select(1, self:GetRegions())
-			if icon then
-				icon:SetTexCoord(unpack(DB.TexCoord))
+		B.CreateBD(alert)
+
+		alert.Icon:SetAlpha(0)
+		alert.__icon = alert:CreateTexture(nil, "ARTWORK")
+		alert.__icon:SetInside(alert.Icon)
+		B.ReskinIcon(alert.__icon)
+		hooksecurefunc(alert.Icon, "SetBackdrop", function(self, backdrop)
+			if backdrop and backdrop.bgFile then
+				alert.__icon:SetTexture(backdrop.bgFile)
 			end
 		end)
+
 		P.ReskinFont(alert.Title)
 		P.ReskinFont(alert.Name)
 		P.ReskinFont(alert.Location)

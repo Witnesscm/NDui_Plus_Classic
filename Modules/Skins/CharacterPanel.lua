@@ -6,7 +6,7 @@ local M = B:GetModule("Misc")
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 
--- Compatible with CharacterStatePanel, MerInspect, alaGearMan.
+-- Compatible with CharacterStatPanel, MerInspect, alaGearMan.
 
 local addonFrames = {}
 
@@ -25,11 +25,31 @@ function S:UpdatePanelsPosition()
 	end
 end
 
--- CharacterStatePanel
+-- CharacterStatPanel
 local function loadFunc(event, addon)
 	local statPanel = M.StatPanel
 	if statPanel then
 		tinsert(addonFrames, {frame = statPanel, order = 2})
+
+		local index = 1
+		local category = _G["NDuiStatCategory"..index]
+		while category do
+			for i = 1, category:GetNumChildren() do
+				local child = select(i, category:GetChildren())
+				if child.__texture and child.__owner then
+					child:SetAlpha(0)
+					child:HookScript("OnEnter", function(self)
+						P:UIFrameFadeIn(self, 0.3, self:GetAlpha(), 1)
+					end)
+					child:HookScript("OnLeave", function(self)
+						P:UIFrameFadeOut(self, 0.3, self:GetAlpha(), 0)
+					end)
+				end
+			end
+
+			index = index + 1
+			category = _G["NDuiStatCategory"..index]
+		end
 	end
 
 	B:UnregisterEvent(event, loadFunc)

@@ -301,7 +301,6 @@ end
 
 function LR:OnLogin()
 	if not LR.db["Enable"] then return end
-	if IsAddOnLoaded("teksLoot") then P:Print("检测到启用了teksLoot插件，自动禁用Roll点增强。") return end
 
 	parentFrame = CreateFrame("Frame", nil, UIParent)
 	parentFrame:SetSize(LR.db["Width"], LR.db["Height"])

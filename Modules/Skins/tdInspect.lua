@@ -6,23 +6,63 @@ local M = B:GetModule("Misc")
 local _G = getfenv(0)
 local ipairs = ipairs
 
+local gemSlotBlackList = {
+	[16]=true, [17]=true, [18]=true,
+}
+
+local tip = B.ScanTip
+
+function S:ItemLevel_UpdateGemInfo(link, index, slotFrame, refresh)
+	if C.db["Misc"]["GemNEnchant"] and not gemSlotBlackList[index] then
+		tip:SetOwner(UIParent, "ANCHOR_NONE")
+		tip:SetHyperlink(link)
+
+		if not tip.slotInfo then tip.slotInfo = {} else wipe(tip.slotInfo) end
+
+		tip.slotInfo.gems = B:InspectItemTextures()
+
+		if next(tip.slotInfo.gems) then
+			local gemStep = 1
+			for i = 1, 5 do
+				local texture = slotFrame["textureIcon"..i]
+				local bg = texture.bg
+				local gem = tip.slotInfo.gems[gemStep]
+				if gem then
+					texture:SetTexture(gem)
+					bg:SetBackdropBorderColor(0, 0, 0)
+					bg:Show()
+
+					gemStep = gemStep + 1
+				end
+			end
+
+			if not refresh then
+				P:Delay(.1, S.ItemLevel_UpdateGemInfo, self, link, index, slotFrame, true)
+			end
+		end
+	end
+end
+
 function S:tdInspect()
 	if not IsAddOnLoaded("tdInspect") then return end
 	if not S.db["tdInspect"] then return end
 
-	local tdInspect = LibStub('AceAddon-3.0'):GetAddon('tdInspect')
-	local Inspect = tdInspect:GetModule('Inspect')
-	local UITalentFrame = tdInspect:GetClass('UI.TalentFrame')
-	local UISlotItem = tdInspect:GetClass('UI.SlotItem')
+	local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
+	local Inspect = tdInspect:GetModule("Inspect")
+	local UITalentFrame = tdInspect:GetClass("UI.TalentFrame")
+	local UISlotItem = tdInspect:GetClass("UI.SlotItem")
+	local UIInspectFrame = tdInspect:GetClass("UI.InspectFrame")
 
-	local function reskinFunc()
-		local numTabs = _G.InspectFrame.numTabs
-		B.ReskinTab(_G["InspectFrameTab"..numTabs])
+	hooksecurefunc(tdInspect, "SetupUI", function()
+		local tab = _G.InspectFrameTab4
+		if tab then
+			B.ReskinTab(tab)
+		end
 
 		B.ReskinCheck(InspectPaperDollFrame.ToggleButton)
 		InspectPaperDollFrame.RaceBackground:SetAlpha(0)
 		InspectPaperDollFrame.LastUpdate:ClearAllPoints()
-		InspectPaperDollFrame.LastUpdate:SetPoint('BOTTOMLEFT', InspectPaperDollFrame, 'BOTTOMRIGHT', -130, 80) 
+		InspectPaperDollFrame.LastUpdate:SetPoint("BOTTOMLEFT", InspectPaperDollFrame, "BOTTOMRIGHT", -130, 80) 
 
 		local slots = {
 			"Head", "Neck", "Shoulder", "Shirt", "Chest", "Waist", "Legs", "Feet", "Wrist",
@@ -44,7 +84,7 @@ function S:tdInspect()
 
 		for i, tab in ipairs(talentFrame.Tabs) do
 			if i == 1 then
-				tab:SetPoint('TOPLEFT', 70, -45)
+				tab:SetPoint("TOPLEFT", 70, -45)
 			end
 			B.ReskinTab(tab)
 		end
@@ -54,18 +94,34 @@ function S:tdInspect()
 			B.ReskinScroll(scrollBar)
 		end
 
+		local bottomFrame = talentFrame.Summary and talentFrame.Summary:GetParent()
+		if bottomFrame then
+			B.StripTextures(bottomFrame)
+		end
+
 		local equipButtons = InspectPaperDollFrame.EquipFrame.buttons
 		for _, item in pairs(equipButtons) do
 			P.ReskinFont(item.Name)
 		end
-	end
-	hooksecurefunc(tdInspect, "SetupUI", reskinFunc)
+	end)
 
 	hooksecurefunc(UISlotItem, "Update", function(self)
 		if self.iLvlText then
 			self.iLvlText:SetText("")
 		end
-		local item = Inspect:GetItemLink(self:GetID())
+
+		for i = 1, 5 do
+			local texture = self["textureIcon"..i]
+			if texture then
+				texture:SetTexture(nil)
+				texture.bg:Hide()
+			end
+		end
+
+		M:ItemBorderSetColor(self, 0, 0, 0)
+
+		local slot = self:GetID()
+		local item = Inspect:GetItemLink(slot)
 		if item then
 			local quality, level = select(3, GetItemInfo(item))
 			if quality and quality > 1 then
@@ -75,12 +131,11 @@ function S:tdInspect()
 					self.iLvlText:SetText(level)
 					self.iLvlText:SetTextColor(color.r, color.g, color.b)
 				end
-			else
-				M:ItemBorderSetColor(self, 0, 0, 0)
+
+				S:ItemLevel_UpdateGemInfo(item, slot, self)
 			end
 		else
 			SetItemButtonTexture(self, "")
-			M:ItemBorderSetColor(self, 0, 0, 0)
 		end
 	end)
 
@@ -90,8 +145,22 @@ function S:tdInspect()
 		for _, button in ipairs(_G.InspectFrame.TalentFrame.TalentFrame.buttons) do
 			B.StripTextures(button, 1)
 			B.ReskinIcon(button.icon)
+			local hl = button:GetHighlightTexture()
+			hl:SetColorTexture(1, 1, 1, .25)
 		end
 		done = true
+	end)
+
+	local anchored
+	hooksecurefunc(UIInspectFrame, "OnShow", function()
+		if anchored then return end
+
+		if M.InspectILvl then
+			InspectModelFrameRotateRightButton:Hide()
+			InspectModelFrameRotateLeftButton:Hide()
+
+			anchored = true
+		end
 	end)
 end
 

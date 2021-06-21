@@ -28,21 +28,6 @@ local function setupUFsFader()
 	G:SetupUFsFader(guiPage[3])
 end
 
-local function updateABFaderAlpha()
-	local AB = P:GetModule("ActionBar")
-	if not AB.fadeParent then return end
-
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
-end
-
-local function updateABFaderSettings()
-	local AB = P:GetModule("ActionBar")
-	if not AB.fadeParent then return end
-
-	AB:UpdateFaderSettings()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
-end
-
 local function updateABFaderState()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
@@ -144,6 +129,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "CustomBar", L["CustomBar"].."*", true, nil, updateABFaderState},
 		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},

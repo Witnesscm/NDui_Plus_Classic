@@ -56,6 +56,7 @@ L["Bar5"] = "Bar5"
 L["CustomBar"] = "CustomBar"
 L["PetBar"] = "PetBar"
 L["StanceBar"] = "StanceBar"
+L["AspectBar"] = "AspectBar"
 
 L["Bags"] = "Bags"
 L["OfflineBag"] = "Offline Bag"

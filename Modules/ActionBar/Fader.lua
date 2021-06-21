@@ -124,6 +124,7 @@ local NDui_ActionBar = {
 	["CustomBar"] = "NDui_CustomBar",
 	["PetBar"] = "NDui_ActionBarPet",
 	["StanceBar"] = "NDui_ActionBarStance",
+	["AspectBar"] = "NDuiHunterAspectFrame",
 }
 
 local function updateAfterCombat(event)
@@ -147,9 +148,21 @@ function AB:UpdateFaderState()
 	if not AB.isHooked then
 		for _, button in ipairs(Bar.buttons) do
 			button:HookScript("OnEnter", AB.Button_OnEnter)
-			button:HookScript("OnLeave", AB.Button_OnLeave)	
+			button:HookScript("OnLeave", AB.Button_OnLeave)
 		end
 		AB.isHooked = true
+	end
+end
+
+do
+	if Bar.CreateAspectButton then
+		hooksecurefunc(Bar, "CreateAspectButton", function (self, _, index)
+			local button = _G["NDuiHunterAspectFrameButton"..index]
+			if button and AB.db["GlobalFade"] then
+				button:HookScript("OnEnter", AB.Button_OnEnter)
+				button:HookScript("OnLeave", AB.Button_OnLeave)
+			end
+		end)
 	end
 end
 

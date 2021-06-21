@@ -56,6 +56,7 @@ L["Bar5"] = "动作条5"
 L["CustomBar"] = "附加动作条"
 L["PetBar"] = "宠物动作条"
 L["StanceBar"] = "姿态动作条"
+L["AspectBar"] = "猎人守护条"
 
 L["Bags"] = "背包"
 L["OfflineBag"] = "离线背包"

@@ -72,6 +72,9 @@ P.DefaultSettings = {
 		Style = 1,
 		Direction = 2,
 	},
+	AFK = {
+		Enable = true,
+	},
 	Skins = {
 		Ace3 = true,
 		InboxMailBag = true,
@@ -157,10 +160,10 @@ function P:ThrowError(err, message)
 
 	err = format("NDui_Plus: %s Error\n%s", message, err)
 
-	if BaudErrorFrameHandler then
-		BaudErrorFrameHandler(err)
+	if _G.BaudErrorFrameHandler then
+		_G.BaudErrorFrameHandler(err)
 	else
-		ScriptErrorsFrame:OnError(err, false, false)
+		_G.ScriptErrorsFrame:OnError(err, false, false)
 	end
 end
 

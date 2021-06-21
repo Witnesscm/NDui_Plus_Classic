@@ -94,6 +94,10 @@ local function updateLootRoll()
 	P:GetModule("LootRoll"):UpdateLootRollTest()
 end
 
+local function updateAFKMode()
+	P:GetModule("AFK"):Toggle()
+end
+
 local function setupTexStyle()
 	NDuiPlusDB["TexStyle"]["Index"] = 0
 
@@ -207,6 +211,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "EnhancedTrainers", L["EnhancedTrainers"]},
 		{1, "Misc", "EnhancedGuildUI", L["EnhancedGuildUI"], true, nil, nil, L["ExtendedGuildUITip"]},
 		{1, "Misc", "EnhancedTalentUI", L["EnhancedTalentUI"], nil, nil, nil, L["EnhancedTalentUITip"]},
+		{1, "AFK", "Enable", L["AFK Mode"].."*", true, nil, updateAFKMode},
 	},
 }
 

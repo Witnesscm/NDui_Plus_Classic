@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
+local LibShowUIPanel = LibStub("LibShowUIPanel-1.0")
+local ShowUIPanel = LibShowUIPanel.ShowUIPanel
+local HideUIPanel = LibShowUIPanel.HideUIPanel
+
 local MAX_NUM_TALENT_TIERS = 9
 local NUM_TALENT_COLUMNS = 4
 local MAX_NUM_TALENTS = 40
@@ -591,8 +595,6 @@ function M:TalentUI_UpdateAll()
 end
 
 function M:TalentUI_Toggle(expand)
-	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
-
 	if expand then
 		M.TalentUI:Show()
 		HideUIPanel(PlayerTalentFrame)
@@ -695,15 +697,14 @@ function M:EnhancedTalentUI()
 	local method = "ToggleTalentFrame"
 	if _G[method] then
 		P:RawHook(method, function()
-			if M.db["ExpandTalent"] or InCombatLockdown() then
+			if M.db["ExpandTalent"] then
 				B:TogglePanel(M.TalentUI)
 			else
-				if M.TalentUI:IsShown() then
-					M.TalentUI:Hide()
-					return
+				if PlayerTalentFrame:IsShown() then
+					HideUIPanel(PlayerTalentFrame)
+				else
+					ShowUIPanel(PlayerTalentFrame)
 				end
-
-				P.hooks[method]()
 			end
 		 end)
 	end

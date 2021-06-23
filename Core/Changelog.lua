@@ -2,6 +2,19 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.0.7
+[|cffFF1414重要|r] 需要NDui v2.2.0 以上版本
+[动作条] 添加法师动作条
+[动作条] 渐隐支持猎人守护条
+[美化] 更新部分插件美化
+[美化] tdInspect观察面板兼容NDui宝石信息
+[易用性] 添加LibShowUIPanel库支持战斗中切换暴雪UI面板
+[易用性] 启用teksLoot插件时不再禁用Roll点增强
+[其他] 添加暂离界面
+[其他] 移除顿号转斜杠
+[其他] 不再移动NDui属性面板(v2.2.1)
+[其他] 渐隐NDui属性面板箭头
+
 v2.0.6
 [美化] 部分美化调整
 [美化] 更新alaCalendar美化

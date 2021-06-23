@@ -36,6 +36,7 @@ function AB:MageButton_UpdateSize()
 	self.Name:SetScale(scale)
 	self.Count:SetScale(scale)
 	self.HotKey:SetScale(scale)
+	self.FlyoutArrow:SetScale(scale)
 end
 
 function AB:MageButton_UpdateSpell(spellID)
@@ -137,7 +138,6 @@ function AB:CreateMageButton(name, parent, spellID)
 	button:RegisterForClicks("AnyUp")
 	Bar:StyleActionButton(button, P.BarConfig)
 
-	AB.MageButton_UpdateSize(button)
 	AB.MageButton_UpdateSpell(button, spellID)
 	button:SetScript("OnEnter", buttonOnEnter)
 	button:SetScript("OnLeave", buttonOnLeave)

@@ -125,6 +125,7 @@ local NDui_ActionBar = {
 	["PetBar"] = "NDui_ActionBarPet",
 	["StanceBar"] = "NDui_ActionBarStance",
 	["AspectBar"] = "NDuiHunterAspectFrame",
+	["MageBarFade"] = "NDuiPlus_MageBar",
 }
 
 local function updateAfterCombat(event)
@@ -185,6 +186,7 @@ function AB:GlobalFade()
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
 end
 
-function AB:OnLogin()	
+function AB:OnLogin()
 	AB:GlobalFade()
+	AB:MageBar()
 end

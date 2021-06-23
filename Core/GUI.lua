@@ -36,6 +36,18 @@ local function updateABFaderState()
 	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
+local function toggleMageBar()
+	P:GetModule("ActionBar"):ToggleMageBar()
+end
+
+local function updateMageBar()
+	P:GetModule("ActionBar"):UpdateMageBar()
+end
+
+local function updateMageBarSize()
+	P:GetModule("ActionBar"):UpdateMageBarSize()
+end
+
 local function openKeyBindingFrame()
 	_G.GameMenuButtonKeybindings:Click()
 
@@ -130,6 +142,11 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
 		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "MageBarFade", L["MageBar"].."*", true, nil, updateABFaderState},
+		{},
+		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, nil, toggleMageBar, L["MageBarTip"]},
+		{1, "ActionBar", "MageBarVertical", L["MageBarVertical"].."*", nil, nil, updateMageBar},
+		{3, "ActionBar", "MageBarSize", L["MageBarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},

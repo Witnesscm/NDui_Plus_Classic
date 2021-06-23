@@ -1,4 +1,4 @@
-local _, ns = ...
+local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 local pairs, type, pcall= pairs, type, pcall
@@ -13,21 +13,26 @@ P.DefaultSettings = {
 		Index = 0,
 	},
 	ActionBar = {
-		GlobalFade = false,
+		GlobalFade = true,
 		Alpha = .1,
 		Delay = 0,
 		Combat = true,
 		Target = true,
 		Casting = true,
 		Health = true,
-		Bar1 = true,
-		Bar2 = true,
-		Bar3 = true,
-		Bar4 = true,
-		Bar5 = true,
-		CustomBar = true,
-		PetBar = true,
-		StanceBar = true
+		Bar1 = false,
+		Bar2 = false,
+		Bar3 = false,
+		Bar4 = false,
+		Bar5 = false,
+		CustomBar = false,
+		PetBar = false,
+		StanceBar = false,
+		AspectBar = false,
+		MageBarFade = false,
+		MageBar = true,
+		MageBarVertical = false,
+		MageBarSize = 34,
 	},
 	Bags = {
 		OfflineBag = false,
@@ -191,6 +196,22 @@ function P:VersionCheck_Compare(new, old)
 	end
 end
 
+function P:Notifications()
+	local frame = CreateFrame("Frame", nil, UIParent)
+	frame:SetPoint("CENTER")
+	frame:SetSize(300, 150)
+	frame:SetFrameStrata("HIGH")
+	B.CreateMF(frame)
+	B.SetBD(frame)
+
+	local close = B.CreateButton(frame, 16, 16, true, DB.closeTex)
+	close:SetPoint("TOPRIGHT", -10, -10)
+	close:SetScript("OnClick", function() frame:Hide() end)
+
+	B.CreateFS(frame, 18, addonName, true, "TOP", 0, -10)
+	B.CreateFS(frame, 16, format(L["Version Check"], P.SupportVersion), false, "CENTER")
+end
+
 -- Modules
 function P:RegisterModule(name)
 	if modules[name] then P:Print("Module <"..name.."> has been registered.") return end
@@ -212,6 +233,7 @@ B:RegisterEvent("PLAYER_LOGIN", function()
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(format(L["Version Check"], P.SupportVersion))
+		P:Notifications()
 		return
 	end
 

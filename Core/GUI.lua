@@ -83,6 +83,10 @@ local function updateToggleVisible()
 	P:GetModule("Skins"):UpdateToggleVisible()
 end
 
+local function updateArrowVisible()
+	P:GetModule("Skins"):UpdateArrowVisible()
+end
+
 local function hideLootRoll()
 	if _G.NDuiPlus_LootRoll then _G.NDuiPlus_LootRoll:Hide() end
 end
@@ -198,6 +202,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Skins", "tdAuction", "tdAuction", true},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
+		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
 	},
 	[6] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},

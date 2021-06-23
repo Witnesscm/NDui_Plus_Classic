@@ -102,6 +102,7 @@ P.DefaultSettings = {
 		tdInspect = true,
 		tdAuction = true,
 		HideToggle = false,
+		CategoryArrow = false,
 	},
 	Misc = {
 		EnhancedTrainers = true,

@@ -26,31 +26,56 @@ function S:UpdatePanelsPosition()
 end
 
 -- CharacterStatPanel
-local function loadFunc(event, addon)
-	local statPanel = M.StatPanel
-	if statPanel then
-		tinsert(addonFrames, {frame = statPanel, order = 2})
+local arrowButtons = {}
 
-		local index = 1
-		local category = _G["NDuiStatCategory"..index]
-		while category do
-			for i = 1, category:GetNumChildren() do
-				local child = select(i, category:GetChildren())
-				if child.__texture and child.__owner then
-					child:SetAlpha(0)
-					child:HookScript("OnEnter", function(self)
-						P:UIFrameFadeIn(self, 0.3, self:GetAlpha(), 1)
-					end)
-					child:HookScript("OnLeave", function(self)
-						P:UIFrameFadeOut(self, 0.3, self:GetAlpha(), 0)
-					end)
-				end
-			end
-
-			index = index + 1
-			category = _G["NDuiStatCategory"..index]
+function S:UpdateArrowVisible()
+	for _, button in ipairs(arrowButtons) do
+		if S.db["CategoryArrow"] then
+			P:UIFrameFadeOut(button, 0.5, button:GetAlpha(), 0)
+			button:SetAlpha(0)
+		else
+			P:UIFrameFadeIn(button, 0.5, button:GetAlpha(), 1)
+			button:SetAlpha(1)
 		end
 	end
+end
+
+local function loadFunc(event, addon)
+	local status = P:VersionCheck_Compare(DB.Version, "2.2.1")
+	if status == "IsOld" then
+		local statPanel = M.StatPanel
+		if statPanel then
+			tinsert(addonFrames, {frame = statPanel, order = 2})
+		end
+	end
+
+	-- 渐隐箭头按钮
+	local index = 1
+	local category = _G["NDuiStatCategory"..index]
+	while category do
+		for i = 1, category:GetNumChildren() do
+			local child = select(i, category:GetChildren())
+			if child.__texture and child.__owner then
+				child:HookScript("OnEnter", function(self)
+					if S.db["HideToggle"] then
+						P:UIFrameFadeIn(self, 0.3, self:GetAlpha(), 1)
+					end
+				end)
+				child:HookScript("OnLeave", function(self)
+					if S.db["HideToggle"] then
+						P:UIFrameFadeOut(self, 0.3, self:GetAlpha(), 0)
+					end
+				end)
+
+				tinsert(arrowButtons, child)
+			end
+		end
+
+		index = index + 1
+		category = _G["NDuiStatCategory"..index]
+	end
+
+	S:UpdateArrowVisible()
 
 	B:UnregisterEvent(event, loadFunc)
 end

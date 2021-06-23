@@ -125,12 +125,18 @@ local function buttonOnEnter(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	GameTooltip:SetSpellByID(self.spellID)
 	GameTooltip:Show()
-	AB.Button_OnEnter(self)
+
+	if AB.fadeParent then
+		AB.Button_OnEnter(self)
+	end
 end
 
 local function buttonOnLeave(self)
 	GameTooltip:Hide()
-	AB.Button_OnLeave(self)
+
+	if AB.fadeParent then
+		AB.Button_OnLeave(self)
+	end
 end
 
 function AB:CreateMageButton(name, parent, spellID)

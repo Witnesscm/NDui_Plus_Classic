@@ -51,6 +51,7 @@ function S:SkilletClassic()
 		"SkilletQueueDeleteButton",
 		"SkilletQueueSaveButton",
 		"SkilletMerchantBuyFrameButton",
+		"SkilletIgnoreListButton",
 	}
 
 	local Parents = {
@@ -101,19 +102,21 @@ function S:SkilletClassic()
 		for _, v in pairs(Parents) do
 			local frame = _G[v]
 			if frame then
+				P.SetupBackdrop(frame)
+				frame.SetBackdrop = B.Dummy
 				B.StripTextures(frame)
 				local bg = B.CreateBDFrame(frame, .25)
 				bg:SetInside()
-				--frame.SetBackdrop = B.Dummy
 			end
 		end
 
 		for _, v in pairs(Frames) do
 			local frame = _G[v]
 			if frame then
+				P.SetupBackdrop(frame)
+				frame.SetBackdrop = B.Dummy
 				P.ReskinFrame(frame)
 				frame:DisableDrawLayer("BACKGROUND")
-				--frame.SetBackdrop = B.Dummy
 			end
 		end
 

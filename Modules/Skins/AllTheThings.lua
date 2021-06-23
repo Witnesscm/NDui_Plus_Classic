@@ -5,7 +5,10 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 local function reanchorSkillFrame(self)
-	if CraftFrame and CraftFrame:IsVisible() then
+	if SkilletFrame then
+		self:SetPoint("TOPLEFT", SkilletFrame, "TOPRIGHT", 4, 0)
+		self:SetPoint("BOTTOMLEFT", SkilletFrame, "BOTTOMRIGHT", 4, 0)
+	elseif CraftFrame and CraftFrame:IsVisible() then
 		self:ClearAllPoints()
 		self:SetPoint("TOPLEFT", CraftFrame, "TOPRIGHT", -27, -11)
 		self:SetPoint("BOTTOMLEFT", CraftFrame, "BOTTOMRIGHT", -27, 71)

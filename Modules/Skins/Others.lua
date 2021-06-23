@@ -371,7 +371,7 @@ function S:TotemTimers()
 	end
 
 	local function reskinTotemButton(self)
-		Bar:StyleActionButton(self, S.BarConfig)
+		Bar:StyleActionButton(self, P.BarConfig)
 
 		local icon = _G[self:GetName().."Icon"]
 		if icon then

@@ -21,7 +21,7 @@ function S:ItemRack()
 	for i = 0, 20 do
 		local bu = _G["ItemRackButton"..i]
 		if bu then
-			Bar:StyleActionButton(bu, S.BarConfig)
+			Bar:StyleActionButton(bu, P.BarConfig)
 		end
 	end
 
@@ -37,7 +37,7 @@ function S:ItemRack()
 		for i = 0, 19 do
 			local inv = _G["ItemRackOptInv"..i]
 			if inv then
-				Bar:StyleActionButton(inv, S.BarConfig)
+				Bar:StyleActionButton(inv, P.BarConfig)
 				setBorder(inv)
 			end
 		end
@@ -218,7 +218,7 @@ function S:ItemRack()
 			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		end
 
-		Bar:StyleActionButton(ItemRackOptSetsCurrentSet, S.BarConfig)
+		Bar:StyleActionButton(ItemRackOptSetsCurrentSet, P.BarConfig)
 
 		for i = 1, 10 do
 			local icon = _G["ItemRackOptSetList"..i.."Icon"]
@@ -237,7 +237,7 @@ function S:ItemRack()
 	local function reskinMenu(idx)
 		local button = _G["ItemRackMenu"..idx]
 		if button and not button.styled then
-			Bar:StyleActionButton(button, S.BarConfig)
+			Bar:StyleActionButton(button, P.BarConfig)
 			setBorder(button)
 			button.styled = true
 		end

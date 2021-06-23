@@ -2,9 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
-local LibShowUIPanel = LibStub("LibShowUIPanel-1.0")
-local ShowUIPanel = LibShowUIPanel.ShowUIPanel
-local HideUIPanel = LibShowUIPanel.HideUIPanel
+local LSP = LibStub("LibShowUIPanel-1.0")
+local ShowUIPanel = LSP.ShowUIPanel
+local HideUIPanel = LSP.HideUIPanel
 
 local MAX_NUM_TALENT_TIERS = 9
 local NUM_TALENT_COLUMNS = 4

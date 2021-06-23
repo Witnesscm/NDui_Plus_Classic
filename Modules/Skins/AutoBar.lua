@@ -14,7 +14,7 @@ local function reskinButton(self)
 	if button then
 		button.__checkedTexture = button:CreateTexture()
 		button.GetCheckedTexture = GetCheckedTexture
-		Bar:StyleActionButton(button, S.BarConfig)
+		Bar:StyleActionButton(button, P.BarConfig)
 	end
 end
 

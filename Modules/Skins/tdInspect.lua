@@ -155,12 +155,10 @@ function S:tdInspect()
 	hooksecurefunc(UIInspectFrame, "OnShow", function()
 		if anchored then return end
 
-		if M.InspectILvl then
-			InspectModelFrameRotateRightButton:Hide()
-			InspectModelFrameRotateLeftButton:Hide()
+		InspectModelFrameRotateRightButton:Hide()
+		InspectModelFrameRotateLeftButton:Hide()
 
-			anchored = true
-		end
+		anchored = true
 	end)
 end
 

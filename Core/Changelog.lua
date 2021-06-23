@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.0.8
+[动作条] 修复法师动作条在未启用全局渐隐时的报错
+
 v2.0.7
 [|cffFF1414重要|r] 需要NDui v2.2.0 以上版本
 [动作条] 添加法师动作条

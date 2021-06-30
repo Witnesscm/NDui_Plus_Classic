@@ -4,9 +4,11 @@ local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
+local format = string.format
 local CooldownFrame_Set = CooldownFrame_Set
 local GetMouseFocus = GetMouseFocus
 local GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell = GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell
+local Spell = Spell
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 
@@ -56,14 +58,22 @@ function AB:MageButton_UpdateSize()
 end
 
 function AB:MageButton_UpdateSpell(spellID)
-	local name, _, texture = GetSpellInfo(spellID)
-	self.spellID = spellID
-	self.icon:SetTexture(texture)
-	self:SetAttribute("type", "spell")
-	self:SetAttribute("spell", name)
+	local spell = Spell:CreateFromSpellID(spellID)
+	spell:ContinueOnSpellLoad(function()
+		local name, _, texture = GetSpellInfo(spellID)
+		local rank = GetSpellSubtext(spellID)
+		if rank and rank ~= "" then
+			name = format("%s(%s)", name, rank)
+		end
 
-	AB.MageButton_UpdateCount(self)
-	AB.MageButton_UpdateUsable(self)
+		self.spellID = spellID
+		self.icon:SetTexture(texture)
+		self:SetAttribute("type", "spell")
+		self:SetAttribute("spell", name)
+
+		AB.MageButton_UpdateCount(self)
+		AB.MageButton_UpdateUsable(self)
+	end)
 end
 
 function AB:MageButton_UpdateCount()

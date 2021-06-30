@@ -24,6 +24,10 @@ local function setupABFader()
 	G:SetupABFader(guiPage[1])
 end
 
+local function setupMageBar()
+	G:SetupMageBar(guiPage[1])
+end
+
 local function setupUFsFader()
 	G:SetupUFsFader(guiPage[3])
 end
@@ -148,7 +152,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "MageBarFade", L["MageBar"].."*", true, nil, updateABFaderState},
 		{},
-		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, nil, toggleMageBar, L["MageBarTip"]},
+		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, setupMageBar, toggleMageBar, L["MageBarTip"]},
 		{1, "ActionBar", "MageBarVertical", L["MageBarVertical"].."*", nil, nil, updateMageBar},
 		{3, "ActionBar", "MageBarSize", L["MageBarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
 	},

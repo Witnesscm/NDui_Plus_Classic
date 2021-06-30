@@ -2,13 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
----------------------
--- Credit: AutoBar
----------------------
-local ipairs, tinsert = ipairs, tinsert
+
+local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
 local CooldownFrame_Set = CooldownFrame_Set
-local SecureHandlerWrapScript = SecureHandlerWrapScript
-local RegisterAutoHide = RegisterAutoHide
+local GetMouseFocus = GetMouseFocus
 local GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell = GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell
 
 local margin, padding = C.Bars.margin, C.Bars.padding
@@ -22,11 +19,30 @@ local mageSpellData = {
 		name = "Portal",
 		spell = {10059, 11416, 11417, 11418, 11419, 11420, 32266, 32267, 49360, 49361, 33691, 35717}
 	},
+	[3] = {
+		name = "Food",
+		spell = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
+	},
+	[4] = {
+		name = "Water",
+		spell = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 27090}
+	},
+	[5] = {
+		name = "Gem",
+		spell = {759, 3552, 10053, 10054, 27101}
+	},
 }
 
 local mageBar
 local mageButtons = {}
 local mainButtons = {}
+
+local PopupHandler = CreateFrame("Frame", "NDuiPlus_MageBarHandler", UIParent, "SecureHandlerBaseTemplate")
+PopupHandler:Hide()
+PopupHandler:Execute([=[
+	PopupHandler = self
+	BAR_MAP = newtable()
+]=])
 
 function AB:MageButton_UpdateSize()
 	local size = AB.db["MageBarSize"]
@@ -140,7 +156,8 @@ local function buttonOnLeave(self)
 end
 
 function AB:CreateMageButton(name, parent, spellID)
-	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate, SecureHandlerBaseTemplate")
+	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate")
+	button:SetHitRectInsets(-margin/2, -margin/2, -margin/2, -margin/2)
 	button:RegisterForClicks("AnyUp")
 	Bar:StyleActionButton(button, P.BarConfig)
 
@@ -153,7 +170,8 @@ function AB:CreateMageButton(name, parent, spellID)
 	return button
 end
 
-function AB:CreateMainButton(index, info)
+function AB:CreateMainButton(info)
+	local index = info.index
 	local buttonName = "NDuiPlus_MageBarButton"..index
 	local button = _G[buttonName]
 	if not button then
@@ -164,57 +182,68 @@ function AB:CreateMainButton(index, info)
 
 		tinsert(mainButtons, {button, index})
 	else
+		button:Show()
 		AB.MageButton_UpdateSpell(button, info.mainSpell)
 	end
 
 	button.Category = info.name
 	AB.MageButton_UpdateFlyout(button)
 
-	local popupHeader = button.popupHeader
-	if not popupHeader then
-		popupHeader = CreateFrame("Frame", buttonName.."PopupHeader", button, "SecureHandlerEnterLeaveTemplate")
-		popupHeader:SetAttribute("_onenter", [[self:Show()]])
-		popupHeader:SetAttribute("_onleave", [[self:Hide()]])
-		popupHeader:SetFrameStrata("DIALOG")
+	local popupBar = button.popupBar
+	if not popupBar then
+		popupBar = CreateFrame("Frame", buttonName.."PopupBar", button, "SecureHandlerBaseTemplate")
+		popupBar:SetFrameStrata("DIALOG")
+		popupBar:Raise()
+		popupBar:Hide()
 
-		button:SetFrameRef("popupHeader", popupHeader)
-		button:Execute([[
-			popupHeader = self:GetFrameRef("popupHeader")
-			popupHeader:SetWidth(1)
-			popupHeader:SetHeight(1)
-			popupHeader:Raise()
-			popupHeader:Hide()
-		]])
-		SecureHandlerWrapScript(button, "OnEnter", button, [[ self:GetFrameRef("popupHeader"):Show() ]])
-		SecureHandlerWrapScript(button, "OnLeave", button, [[ self:GetFrameRef("popupHeader"):Hide() ]])
-		RegisterAutoHide(popupHeader, 0.5)
+		PopupHandler:SetFrameRef("popupBar", popupBar)
+		PopupHandler:SetFrameRef("mainButton", button)
+		PopupHandler:Execute([=[
+			local bar = PopupHandler:GetFrameRef("popupBar")
+			local button = PopupHandler:GetFrameRef("mainButton")
 
-		button.popupHeader = popupHeader
+			BAR_MAP[button] = bar
+		]=])
+		PopupHandler:WrapScript(button, "OnEnter", [=[
+			BAR_MAP[self]:Show()
+		]=])
+		PopupHandler:WrapScript(button, "OnLeave", [=[
+			BAR_MAP[self]:Hide()
+		]=])
+		PopupHandler:WrapScript(button, "OnClick", [=[
+			BAR_MAP[self]:Hide()
+		]=])
+
+		button.popupBar = popupBar
 	end
 
 	local vertical = AB.db["MageBarVertical"]
-	if vertical then
-		button:Execute([[
-			popupHeader = self:GetFrameRef("popupHeader")
-			popupHeader:ClearAllPoints()
-			popupHeader:SetPoint("RIGHT", self, "LEFT")
-		]])
-	else
-		button:Execute([[
-			popupHeader = self:GetFrameRef("popupHeader")
-			popupHeader:ClearAllPoints()
-			popupHeader:SetPoint("BOTTOM", self, "TOP")
-		]])
-	end
 
 	local prevButton
 	for i, spellID in ipairs(info.subSpell) do
 		local popupButton =  button.popupButtonList[i]
 		if not popupButton then
-			popupButton = AB:CreateMageButton(buttonName.."Popup"..i, popupHeader, spellID)
-			popupButton:SetFrameRef("popupHeader", popupHeader)
-			SecureHandlerWrapScript(popupButton, "OnEnter", popupButton, [[ self:GetFrameRef("popupHeader"):Show() ]])
-			SecureHandlerWrapScript(popupButton, "OnLeave", popupButton, [[ self:GetFrameRef("popupHeader"):Hide() ]])
+			popupButton = AB:CreateMageButton(buttonName.."Popup"..i, popupBar, spellID)
+
+			PopupHandler:SetFrameRef("popupButton", popupButton)
+			PopupHandler:Execute([=[
+				local bar = PopupHandler:GetFrameRef("popupBar")
+				local button = PopupHandler:GetFrameRef("popupButton")
+
+				BAR_MAP[button] = bar
+			]=])
+			PopupHandler:WrapScript(popupButton, "OnClick", [=[
+				BAR_MAP[self]:Hide()
+			]=])
+			PopupHandler:WrapScript(popupButton, "OnEnter", [=[
+				local popupBar = BAR_MAP[self]
+				if popupBar and not popupBar:IsVisible() then 
+					popupBar:Show()
+					popupBar:UnregisterAutoHide()
+					popupBar:RegisterAutoHide(.25)
+					popupBar:AddToAutoHide(self)
+				end
+			]=])
 
 			button.popupButtonList[i] = popupButton
 		else
@@ -228,36 +257,60 @@ function AB:CreateMainButton(index, info)
 			else
 				popupButton:SetPoint("RIGHT", prevButton, "LEFT", -margin, 0)
 			end
-			popupButton:SetHitRectInsets(-margin, -margin, 0, 0)
 		else
 			if not prevButton then
 				popupButton:SetPoint("BOTTOM", 0, margin)
 			else
 				popupButton:SetPoint("BOTTOM", prevButton, "TOP", 0, margin)
 			end
-			popupButton:SetHitRectInsets(0, 0, -margin, -margin)
 		end
 
 		prevButton = popupButton
+	end
+
+	local size = AB.db["MageBarSize"]
+	local num = #button.popupButtonList
+	local width, height = num*size + (num+1)*margin, size + 2*margin
+
+	popupBar:ClearAllPoints()
+	if vertical then
+		popupBar:SetSize(width, height)
+		popupBar:SetPoint("RIGHT", button, "LEFT")
+	else
+		popupBar:SetSize(height, width)
+		popupBar:SetPoint("BOTTOM", button, "TOP")
 	end
 end
 
 local spellList = {}
 function AB:UpdateMageBar()
-	for index, info in ipairs(mageSpellData) do
-		spellList[index] = {name = info.name, subSpell = {}}
+	wipe(spellList)
 
-		for _, spellID in ipairs(info.spell) do
-			if IsPlayerSpell(spellID) then
-				tinsert(spellList[index].subSpell, spellID)
-				spellList[index].mainSpell = spellID
+	for _, value in ipairs(mainButtons) do
+		value[1]:ClearAllPoints()
+		value[1]:Hide()
+	end
+
+	local node
+	for index, info in ipairs(mageSpellData) do
+		if AB.db["MageBar"..info.name] then
+			node= {name = info.name, index = index, subSpell = {}}
+
+			for _, spellID in ipairs(info.spell) do
+				if IsPlayerSpell(spellID) then
+					tinsert(node.subSpell, spellID)
+					node.mainSpell = spellID
+				end
 			end
+
+			tinsert(spellList, node)
 		end
 	end
 
-	for index, info in ipairs(spellList) do
+	for _, info in ipairs(spellList) do
 		if info.mainSpell then
-			AB:CreateMainButton(index, info)
+			tremove(info.subSpell)
+			AB:CreateMainButton(info)
 		end
 	end
 
@@ -267,29 +320,33 @@ function AB:UpdateMageBar()
 		end
 	end)
 
+	local num = 0
 	local prevButton
 	for _, value in ipairs(mainButtons) do
-		value[1]:ClearAllPoints()
-		if not prevButton then
-			value[1]:SetPoint("TOPLEFT", padding, -padding)
-		else
-			if AB.db["MageBarVertical"] then
-				value[1]:SetPoint("TOP", prevButton, "BOTTOM", 0, -margin)
+		local button = value[1]
+		if button:IsShown() then
+			if not prevButton then
+				button:SetPoint("TOPLEFT", padding, -padding)
 			else
-				value[1]:SetPoint("LEFT", prevButton, "RIGHT", margin, 0)
+				if AB.db["MageBarVertical"] then
+					button:SetPoint("TOP", prevButton, "BOTTOM", 0, -margin)
+				else
+					button:SetPoint("LEFT", prevButton, "RIGHT", margin, 0)
+				end
 			end
+
+			num = num + 1
+			prevButton = button
 		end
-		prevButton = value[1]
 	end
 
-	AB:UpdateMageBarSize()
+	AB:UpdateMageBarSize(num)
 end
 
-function AB:UpdateMageBarSize()
+function AB:UpdateMageBarSize(num)
 	if not mageBar then return end
 
 	local size = AB.db["MageBarSize"]
-	local num = #mainButtons
 	local width, height = num*size + (num-1)*margin + 2*padding, size + 2*padding
 
 	if AB.db["MageBarVertical"] then

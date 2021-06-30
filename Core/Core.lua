@@ -33,6 +33,11 @@ P.DefaultSettings = {
 		MageBar = true,
 		MageBarVertical = false,
 		MageBarSize = 34,
+		MageBarTeleport = true,
+		MageBarPortal = true,
+		MageBarFood = false,
+		MageBarWater = false,
+		MageBarGem = false,
 	},
 	Bags = {
 		OfflineBag = false,

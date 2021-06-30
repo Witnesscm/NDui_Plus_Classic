@@ -196,6 +196,41 @@ function G:SetupABFader(parent)
 	end
 end
 
+local function updateMageBar()
+	P:GetModule("ActionBar"):UpdateMageBar()
+end
+
+function G:SetupMageBar(parent)
+	local guiName = "NDuiPlusGUI_MageBar"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, L["MageBar"].."*", true)
+	local frame = panel.scroll.child
+
+	local offset = 20
+
+	local options = {
+		[1] = {"MageBarTeleport", L["Teleport"]},
+		[2] = {"MageBarPortal", L["Portal"]},
+		[3] = {"MageBarFood", L["Food"]},
+		[4] = {"MageBarWater", L["Water"]},
+		[5] = {"MageBarGem", L["Mana Gem"]},
+	}
+
+	for _, option in ipairs(options) do
+		local value, text = unpack(option)
+		local box = createOptionCheck(frame, offset, text)
+		box:SetChecked(NDUI_VARIABLE("ActionBar", value))
+		box:SetScript("OnClick", function()
+			NDUI_VARIABLE("ActionBar", value, box:GetChecked())
+			updateMageBar()
+		end)
+
+		offset = offset + 35
+	end
+end
+
 local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end

@@ -137,30 +137,25 @@ function S:alaGearMan()
 	end
 
 	hooksecurefunc(_G.AGM_FUNC, "pdf_CreateButton", function(index)
-		local pdf_menu = ui.pdf_menu
-		if not pdf_menu then return end
-		for i = 1, pdf_menu:GetNumChildren() do
-			local child = select(i, pdf_menu:GetChildren())
-			if child:GetObjectType() == "Button" and not child.styled then
-				child.bg = B.CreateBDFrame(child)
-				child.bg:SetPoint("TOPLEFT", 0, 0)
-				child.bg:SetPoint("BOTTOMRIGHT", 0, 0)
+		local button = ui.pdf_buttons[index]
+		if button then
+			button.bg = B.CreateBDFrame(button)
+			button.bg:SetPoint("TOPLEFT", 0, 0)
+			button.bg:SetPoint("BOTTOMRIGHT", 0, 0)
 
-				child.Icon = child:CreateTexture(nil, "ARTWORK")
-				child.Icon:SetPoint("TOPLEFT", C.mult, -C.mult)
-				child.Icon:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
-				child.Icon:SetTexCoord(unpack(DB.TexCoord))
+			button.Icon = button:CreateTexture(nil, "ARTWORK")
+			button.Icon:SetPoint("TOPLEFT", C.mult, -C.mult)
+			button.Icon:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
+			button.Icon:SetTexCoord(unpack(DB.TexCoord))
 
-				hooksecurefunc(child, "SetNormalTexture", hook_SetNormalTexture)
-				child:SetPushedTexture("")
-				child.SetPushedTexture = B.Dummy
-				child:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+			hooksecurefunc(button, "SetNormalTexture", hook_SetNormalTexture)
+			button:SetPushedTexture("")
+			button.SetPushedTexture = B.Dummy
+			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 
-				child.glow:SetAlpha(0)
-				hooksecurefunc(child.glow, "SetVertexColor", hook_SetVertexColor)
-				hooksecurefunc(child.glow, "Hide", hook_Hide)
-				child.styled = true
-			end
+			button.glow:SetAlpha(0)
+			hooksecurefunc(button.glow, "SetVertexColor", hook_SetVertexColor)
+			hooksecurefunc(button.glow, "Hide", hook_Hide)
 		end
 	end)
 end

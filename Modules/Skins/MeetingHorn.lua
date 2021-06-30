@@ -356,6 +356,27 @@ function S:MeetingHorn()
 		end
 	end
 
+	local GradePanel = MeetingHorn:GetClass("UI.GradePanel")
+	if GradePanel then
+		hooksecurefunc(GradePanel, "OnShow", function(self)
+			if not self.styled then
+				B.StripTextures(self, 0)
+				self.Logo:SetAlpha(1)
+				local bg = B.SetBD(self)
+				bg:SetInside()
+
+				B.StripTextures(self.QrCodeFrame)
+				local qrBG = B.SetBD(self.QrCodeFrame)
+				qrBG:SetInside()
+
+				B.Reskin(self.Commit)
+				B.Reskin(self.Cancel)
+
+				self.styled = true
+			end
+		end)
+	end
+
 	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")

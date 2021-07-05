@@ -58,20 +58,11 @@ function AB:MageButton_UpdateSize()
 end
 
 function AB:MageButton_UpdateSpell(spellID)
-	local name, _, texture = GetSpellInfo(spellID)
-	self.spellID = spellID
+	local _, _, texture = GetSpellInfo(spellID)
 	self.icon:SetTexture(texture)
-
-	local spell = Spell:CreateFromSpellID(spellID)
-	spell:ContinueOnSpellLoad(function()
-		local rank = GetSpellSubtext(spellID)
-		if rank and rank ~= "" then
-			name = format("%s(%s)", name, rank)
-		end
-
-		self:SetAttribute("type", "spell")
-		self:SetAttribute("spell", name)
-	end)
+	self:SetAttribute("type", "spell")
+	self:SetAttribute("spell", spellID)
+	self.spellID = spellID
 
 	AB.MageButton_UpdateCount(self)
 	AB.MageButton_UpdateUsable(self)

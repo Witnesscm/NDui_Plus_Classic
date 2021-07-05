@@ -28,6 +28,8 @@ local function reskinDropDownMenu(level)
 		if backdrop and not backdrop.__styled then
 			backdrop:Hide()
 			backdrop.Show = B.Dummy
+
+			backdrop.__styled = true
 		end
 	end
 

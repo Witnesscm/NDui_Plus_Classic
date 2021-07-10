@@ -377,6 +377,33 @@ function S:MeetingHorn()
 		end)
 	end
 
+	-- Announcement
+	local Announcement = mainFrame.Announcement
+	if Announcement then
+		local loading = Announcement.loading
+		if loading then
+			B.StripTextures(loading)
+			B.SetBD(loading, .8)
+		end
+
+		local container = Announcement.container
+		if container then
+			for _, region in pairs {container:GetRegions()} do
+				if region:GetObjectType() == "FontString" then
+					region:SetTextColor(1, 1, 1)
+				end
+			end
+		end
+	end
+
+	-- MissionGuidance
+	local MissionGuidance = mainFrame.MissionGuidance
+	if MissionGuidance then
+		B.StripTextures(MissionGuidance)
+		B.CreateBDFrame(MissionGuidance, .25)
+		B.ReskinScroll(MissionGuidance.MissionGuidanceScrollFrame.ScrollBar)
+	end
+
 	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")

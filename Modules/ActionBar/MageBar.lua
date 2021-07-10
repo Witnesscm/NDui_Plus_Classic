@@ -32,7 +32,7 @@ local mageSpellData = {
 	[5] = {
 		name = "Gem",
 		spell = {759, 3552, 10053, 10054, 27101}
-	},
+	}
 }
 
 local mageBar

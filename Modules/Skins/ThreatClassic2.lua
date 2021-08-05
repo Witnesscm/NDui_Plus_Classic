@@ -3,44 +3,56 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local select = select
+
+local function reskinStatusBar(self)
+	self:SetBackdrop(nil)
+	self.SetBackdrop = B.Dummy
+
+	local backdrop = self.edgeBackdrop or self.backdrop
+	if backdrop then
+		backdrop:SetBackdrop(nil)
+		backdrop.SetBackdrop = B.Dummy
+	end
+end
+
+local function delayFunc()
+	local frame = _G.ThreatClassic2BarFrame
+	if not frame then return end
+
+	local bg = B.SetBD(frame)
+	if frame.header:IsShown() then
+		bg:SetPoint("TOPLEFT", -C.mult, 18)
+	end
+
+	local frameBg = frame.bg
+	if frameBg then
+		frameBg:SetColorTexture(0, 0, 0, 0)
+		frameBg:SetVertexColor(0, 0, 0, 0)
+		frameBg.SetVertexColor = B.Dummy
+	end
+
+	local header = frame.header
+	if header then
+		reskinStatusBar(header)
+		header:SetStatusBarColor(0, 0, 0, 0)
+		header.SetStatusBarColor = B.Dummy
+		header.text:SetPoint("LEFT", header, 4, 0)
+	end
+
+	for _, child in pairs {frame:GetChildren()} do
+		if child:GetObjectType() == "StatusBar" and child.bg and child.val then
+			reskinStatusBar(child)
+			child.bg:SetVertexColor(0, 0, 0, 0)
+			child.bg.SetVertexColor = B.Dummy
+		end
+	end
+end
 
 function S:ThreatClassic2()
 	if not IsAddOnLoaded("ThreatClassic2") then return end
 	if not S.db["ClassicThreatMeter"] then return end
 
-	local function delayFunc()
-		local frame = _G.ThreatClassic2BarFrame
-		if not frame then return end
-		local bg = B.SetBD(frame)
-		if frame.header:IsShown() then
-			bg:SetPoint("TOPLEFT", -1, 18)
-		end
-
-		frame.bg:SetColorTexture(0, 0, 0, 0)
-		frame.bg:SetVertexColor(0, 0, 0, 0)
-		frame.bg.SetVertexColor = B.Dummy
-		frame.header:SetStatusBarColor(0, 0, 0, 0)
-		frame.header.SetStatusBarColor = B.Dummy
-		frame.header.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
-		frame.header.backdrop.SetBackdropBorderColor = B.Dummy
-		frame.header.text:SetPoint("LEFT", frame.header, 4, 1)
-
-		for i = 1, frame:GetNumChildren() do
-			local child = select(i, frame:GetChildren())
-			if child:GetObjectType() == "StatusBar" and child.bg and child.val then
-				--child:SetStatusBarTexture(DB.normTex)
-				--child.SetStatusBarTexture = B.Dummy
-				child.bg:SetVertexColor(0, 0, 0, 0)
-				child.bg.SetVertexColor = B.Dummy
-				child.backdrop:SetBackdropColor(0, 0, 0, 0)
-				child.backdrop.SetBackdropColor = B.Dummy
-				child.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
-				child.backdrop.SetBackdropBorderColor = B.Dummy
-			end
-		end
-	end
-	C_Timer.After(.5, delayFunc)
+	P:Delay(.5, delayFunc)
 end
 
 S:RegisterSkin("ThreatClassic2", S.ThreatClassic2)
@@ -65,4 +77,5 @@ local function loadStyle(event, addon)
 
 	B:UnregisterEvent(event, loadStyle)
 end
+
 B:RegisterEvent("ADDON_LOADED", loadStyle)

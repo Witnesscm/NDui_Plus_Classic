@@ -1,7 +1,6 @@
 local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local module = P:RegisterModule("Bags")
-local BagsModule = B:GetModule("Bags")
 
 local strfind, strmatch = string.find, string.match
 ----------------------------
@@ -49,18 +48,18 @@ end
 
 local function parseItem(link, count, timeout)
 	if link then
-		if link:find('0:0:0:0:0:%d+:%d+:%d+:0:0') then
-			link = link:match('|H%l+:(%d+)')
+		if link:find("0:0:0:0:0:%d+:%d+:%d+:0:0") then
+			link = link:match("|H%l+:(%d+)")
 		else
-			link = link:match('|H%l+:([%d:]+)')
+			link = link:match("|H%l+:([%d:]+)")
 		end
 
 		local count = count and count > 1 and count or nil
 		if count or timeout then
-			link = link .. ';' .. (count or '')
+			link = link .. ";" .. (count or "")
 		end
 		if timeout then
-			link = link .. ';' .. timeout
+			link = link .. ";" .. timeout
 		end
 
 		return link
@@ -70,10 +69,10 @@ end
 local function getInfo(itemData)
 	if not dataCache[itemData] then
 		local data = {}
-		local link, count, timeout = strsplit(';', itemData)
-		data.link = 'item:' .. link
+		local link, count, timeout = strsplit(";", itemData)
+		data.link = "item:" .. link
 		data.count = tonumber(count)
-		data.id = tonumber(link:match('^(%d+)'))
+		data.id = tonumber(link:match("^(%d+)"))
 		data.icon = GetItemIcon(data.id)
 		data.timeout = tonumber(timeout)
 
@@ -332,7 +331,7 @@ local function LayoutButtons(frame, bags)
 				end
 				itemButton:SetParent(frame)
 				itemButton:ClearAllPoints()
-				itemButton:SetPoint('TOPLEFT', frame, 'TOPLEFT', x * size + xOffset , -y * size + yOffset)
+				itemButton:SetPoint("TOPLEFT", frame, "TOPLEFT", x * size + xOffset , -y * size + yOffset)
 				itemButton:Show()
 
 				if itemData then
@@ -449,10 +448,10 @@ local function CreateInfoFrame(parent)
 end
 
 local function CreateCloseButton(parent)
-	local bu = B.CreateButton(parent, 24, 24, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
 	bu:RegisterForClicks("AnyUp")
 	bu:SetScript("OnClick", function(self, btn)
-		if btn == 'RightButton' then
+		if btn == "RightButton" then
 			ToggleAllBags()
 		end
 		parent:Hide()
@@ -488,8 +487,8 @@ end
 
 local function CreateDropMenu()
 	if not SelectorDropMenu then
-		local frame = CreateFrame('Frame', "NDui_Plus_SelectorDropMenu", UIParent, 'UIDropDownMenuTemplate')
-		frame.displayMode = 'MENU'
+		local frame = CreateFrame("Frame", "NDui_Plus_SelectorDropMenu", UIParent, "UIDropDownMenuTemplate")
+		frame.displayMode = "MENU"
 		frame.initialize = EasyMenu_Initialize
 
 		SelectorDropMenu = frame
@@ -498,8 +497,8 @@ local function CreateDropMenu()
 end
 
 local function GetOwnerColoredName(ownerDB)
-	local color = RAID_CLASS_COLORS[ownerDB.class or 'PRIEST']
-	return format('|cff%02x%02x%02x%s|r', color.r * 0xFF, color.g * 0xFF, color.b * 0xFF, ownerDB.name)
+	local color = RAID_CLASS_COLORS[ownerDB.class or "PRIEST"]
+	return format("|cff%02x%02x%02x%s|r", color.r * 0xFF, color.g * 0xFF, color.b * 0xFF, ownerDB.name)
 end
 
 local function DeleteOwnerInfo(name)
@@ -561,7 +560,7 @@ local function ToggleMenu(frame)
 end
 
 local function OwnerSelector_OnClick(self, btn)
-	if btn == 'RightButton' then
+	if btn == "RightButton" then
 		UpdateAllBags(DB.MyName)
 
 		if IsMenuOpened() then
@@ -583,7 +582,7 @@ local function OwnerSelector_OnEnter(self)
 end
 
 local function CreateSelectorButton(parent)
-	local bu = B.CreateButton(parent, 24, 24, true, "Interface\\CHATFRAME\\UI-ChatIcon-Battlenet")
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\CHATFRAME\\UI-ChatIcon-Battlenet")
 	bu:RegisterForClicks("AnyUp")
 	bu:SetScript("OnClick", OwnerSelector_OnClick)
 	bu:SetScript("OnEnter", OwnerSelector_OnEnter)
@@ -593,9 +592,9 @@ local function CreateSelectorButton(parent)
 end
 
 local function CreateBankToggle(parent)
-	local bu = B.CreateButton(parent, 24, 24, true, "Interface\\ICONS\\INV_Misc_Bag_08")
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\ICONS\\INV_Misc_Bag_08")
 	bu:SetScript("OnClick", function()
-		ToggleFrame(bankFrame)
+		B:TogglePanel(bankFrame)
 		if bankFrame:IsShown() then
 			bu.bg:SetBackdropBorderColor(1, .8, 0)
 			PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
@@ -611,9 +610,9 @@ local function CreateBankToggle(parent)
 end
 
 local function CreateKeyToggle(parent)
-	local bu = B.CreateButton(parent, 24, 24, true, "Interface\\ICONS\\INV_Misc_Key_12")
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\ICONS\\INV_Misc_Key_12")
 	bu:SetScript("OnClick", function()
-		ToggleFrame(keyringFrame)
+		B:TogglePanel(keyringFrame)
 		if keyringFrame:IsShown() then
 			bu.bg:SetBackdropBorderColor(1, .8, 0)
 			PlaySound(SOUNDKIT.KEY_RING_OPEN)
@@ -640,7 +639,7 @@ local function CreateMainFrame()
 	bagFrame.InfoFrame = CreateInfoFrame(bagFrame)
 	bagFrame.Name = B.CreateFS(bagFrame, 14, DB.MyName, true, "TOP", 0, -8)
 	bagFrame.Close = CreateCloseButton(bagFrame)
-	bagFrame.Close:SetPoint("TOPRIGHT", -5, -3)
+	bagFrame.Close:SetPoint("TOPRIGHT", -5, -5)
 	bagFrame.Selector = CreateSelectorButton(bagFrame)
 	bagFrame.Selector:SetPoint("RIGHT", bagFrame.Close, "LEFT", -3, 0)
 	bagFrame.BankToggle = CreateBankToggle(bagFrame)
@@ -674,24 +673,52 @@ local function CreateMainFrame()
 end
 
 local function CloseButton_OnClick(_, btn)
-	if btn == 'RightButton' then
-		ToggleFrame(NDui_Plus_BagFrame)
+	if btn == "RightButton" then
+		B:TogglePanel(_G.NDui_Plus_BagFrame)
 	end
 end
 
-local function Backpack_OnShow(self)
-	local bag = _G.NDui_BackpackBag
-	if bag and not self.hooked then
-		for i = 1, bag:GetNumChildren() do
-			local child = select(i, bag:GetChildren())
-			if child:GetObjectType() == "Button" and child.title and child.title == CLOSE then
+local function CreateOfflineToggle(parent)
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\HELPFRAME\\ReportLagIcon-Loot")
+	bu.Icon:SetPoint("TOPLEFT", -1, 3)
+	bu.Icon:SetPoint("BOTTOMRIGHT", 1, -3)
+	bu:RegisterForClicks("AnyUp")
+	bu:SetScript("OnClick", function()
+		B:TogglePanel(_G.NDui_Plus_BagFrame)
+	end)
+	bu.title = L["OfflineBag"]
+	B.AddTooltip(bu, "ANCHOR_TOP")
+
+	return bu
+end
+
+local function BackpackBag_OnShow(self)
+	if self.hooked then return end
+
+	local buttons = self.widgetButtons
+	if buttons then
+		local toggle = CreateOfflineToggle(self)
+		toggle:SetPoint("RIGHT", buttons[#buttons], "LEFT", -3, 0)
+		tinsert(buttons, toggle)
+	end
+
+	for i = 1, self:GetNumChildren() do
+		local child = select(i, self:GetChildren())
+		if child:GetObjectType() == "Button" then
+			if child.title and child.title == CLOSE then
 				child:RegisterForClicks("AnyUp")
 				child:HookScript("OnClick", CloseButton_OnClick)
 				child.text = P.RightButtonTip(L["Open OfflineBag"])
-				self.hooked = true
+				break
+			elseif child.tag then
+				child:Click()
+				child:Click()
+				break
 			end
 		end
 	end
+
+	self.hooked = true
 end
 
 function module:OnLogin()
@@ -712,15 +739,15 @@ function module:OnLogin()
 	if not C.db["Bags"]["Enable"] then return end
 
 	P:Delay(.5, function()
-		local Backpack = BagsModule.Bags
-		if not Backpack then return end
-		Backpack:HookScript("OnShow", Backpack_OnShow)
+		local BackpackBag = _G.NDui_BackpackBag
+		if not BackpackBag then return end
+		BackpackBag:HookScript("OnShow", BackpackBag_OnShow)
 	end)
 end
 
-SlashCmdList['NDUI_PLUS_BAG'] = function(msg)
+SlashCmdList["NDUI_PLUS_BAG"] = function(msg)
 	if not bagFrame then return end
 
-	ToggleFrame(NDui_Plus_BagFrame)
+	B:TogglePanel(_G.NDui_Plus_BagFrame)
 end
 SLASH_NDUI_PLUS_BAG1 = "/ndpb"

@@ -692,33 +692,38 @@ local function CreateOfflineToggle(parent)
 	return bu
 end
 
-local function BackpackBag_OnShow(self)
-	if self.hooked then return end
+function module:ToggleOfflineBag()
+	local cargBags = _G.NDui.cargBags
+	local backpack = cargBags and cargBags:GetImplementation("NDui_Backpack")
+	if backpack then
+		local bag = backpack.contByName["Bag"]
+		if bag then
+			local buttons = bag.widgetButtons
+			if buttons then
+				local toggle = CreateOfflineToggle(bag)
+				toggle:SetPoint("RIGHT", buttons[#buttons], "LEFT", -3, 0)
+				tinsert(buttons, toggle)
+			end
 
-	local buttons = self.widgetButtons
-	if buttons then
-		local toggle = CreateOfflineToggle(self)
-		toggle:SetPoint("RIGHT", buttons[#buttons], "LEFT", -3, 0)
-		tinsert(buttons, toggle)
-	end
-
-	for i = 1, self:GetNumChildren() do
-		local child = select(i, self:GetChildren())
-		if child:GetObjectType() == "Button" then
-			if child.title and child.title == CLOSE then
-				child:RegisterForClicks("AnyUp")
-				child:HookScript("OnClick", CloseButton_OnClick)
-				child.text = P.RightButtonTip(L["Open OfflineBag"])
-				break
-			elseif child.tag then
-				child:Click()
-				child:Click()
-				break
+			local widgetArrow = bag.widgetArrow
+			if widgetArrow then
+				widgetArrow:Click()
+				widgetArrow:Click()
+			else
+				for i = 1, bag:GetNumChildren() do -- old version
+					local child = select(i, bag:GetChildren())
+					if child:GetObjectType() == "Button" and child.title and child.title == CLOSE then
+						child:RegisterForClicks("AnyUp")
+						child:HookScript("OnClick", CloseButton_OnClick)
+						child.text = P.RightButtonTip(L["Open OfflineBag"])
+						break
+					end
+				end
 			end
 		end
 	end
 
-	self.hooked = true
+	B:UnregisterEvent("PLAYER_ENTERING_WORLD", module.ToggleOfflineBag)
 end
 
 function module:OnLogin()
@@ -738,11 +743,7 @@ function module:OnLogin()
 
 	if not C.db["Bags"]["Enable"] then return end
 
-	P:Delay(.5, function()
-		local BackpackBag = _G.NDui_BackpackBag
-		if not BackpackBag then return end
-		BackpackBag:HookScript("OnShow", BackpackBag_OnShow)
-	end)
+	B:RegisterEvent("PLAYER_ENTERING_WORLD", module.ToggleOfflineBag)
 end
 
 SlashCmdList["NDUI_PLUS_BAG"] = function(msg)

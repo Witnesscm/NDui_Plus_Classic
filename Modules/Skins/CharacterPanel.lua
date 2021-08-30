@@ -57,12 +57,12 @@ local function loadFunc(event, addon)
 			local child = select(i, category:GetChildren())
 			if child.__texture and child.__owner then
 				child:HookScript("OnEnter", function(self)
-					if S.db["HideToggle"] then
+					if S.db["CategoryArrow"] then
 						P:UIFrameFadeIn(self, 0.3, self:GetAlpha(), 1)
 					end
 				end)
 				child:HookScript("OnLeave", function(self)
-					if S.db["HideToggle"] then
+					if S.db["CategoryArrow"] then
 						P:UIFrameFadeOut(self, 0.3, self:GetAlpha(), 0)
 					end
 				end)

@@ -238,7 +238,7 @@ end
 B:RegisterEvent("PLAYER_LOGIN", function()
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
-		P:Print(format(L["Version Check"], P.SupportVersion))
+		P:Print(L["Version Check"], P.SupportVersion)
 		P:Notifications()
 		return
 	end

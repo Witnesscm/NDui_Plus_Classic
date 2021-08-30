@@ -562,7 +562,7 @@ function G:CreateToggleButton()
 	button.Icon:SetAllPoints()
 	button.Icon:SetTexture(P.SwapTex)
 	button:SetHighlightTexture(P.SwapTex)
-	
+
 	return button
 end
 

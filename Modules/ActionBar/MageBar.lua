@@ -4,11 +4,9 @@ local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
-local format = string.format
 local CooldownFrame_Set = CooldownFrame_Set
 local GetMouseFocus = GetMouseFocus
 local GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell = GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell
-local Spell = Spell
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 

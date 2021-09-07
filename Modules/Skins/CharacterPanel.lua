@@ -4,9 +4,9 @@ local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
-local select, pairs, type = select, pairs, type
+local tinsert, ipairs = table.insert, ipairs
 
--- Compatible with CharacterStatPanel, MerInspect, alaGearMan.
+-- Compatible with MerInspect, alaGearMan.
 
 local addonFrames = {}
 
@@ -24,62 +24,6 @@ function S:UpdatePanelsPosition()
 		end
 	end
 end
-
--- CharacterStatPanel
-local arrowButtons = {}
-
-function S:UpdateArrowVisible()
-	for _, button in ipairs(arrowButtons) do
-		if S.db["CategoryArrow"] then
-			P:UIFrameFadeOut(button, 0.5, button:GetAlpha(), 0)
-			button:SetAlpha(0)
-		else
-			P:UIFrameFadeIn(button, 0.5, button:GetAlpha(), 1)
-			button:SetAlpha(1)
-		end
-	end
-end
-
-local function loadFunc(event, addon)
-	local status = P:VersionCheck_Compare(DB.Version, "2.2.1")
-	if status == "IsOld" then
-		local statPanel = M.StatPanel
-		if statPanel then
-			tinsert(addonFrames, {frame = statPanel, order = 2})
-		end
-	end
-
-	-- 渐隐箭头按钮
-	local index = 1
-	local category = _G["NDuiStatCategory"..index]
-	while category do
-		for i = 1, category:GetNumChildren() do
-			local child = select(i, category:GetChildren())
-			if child.__texture and child.__owner then
-				child:HookScript("OnEnter", function(self)
-					if S.db["CategoryArrow"] then
-						P:UIFrameFadeIn(self, 0.3, self:GetAlpha(), 1)
-					end
-				end)
-				child:HookScript("OnLeave", function(self)
-					if S.db["CategoryArrow"] then
-						P:UIFrameFadeOut(self, 0.3, self:GetAlpha(), 0)
-					end
-				end)
-
-				tinsert(arrowButtons, child)
-			end
-		end
-
-		index = index + 1
-		category = _G["NDuiStatCategory"..index]
-	end
-
-	S:UpdateArrowVisible()
-
-	B:UnregisterEvent(event, loadFunc)
-end
-B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
 
 function S:CharacterPanel()
 	-- MerInspect

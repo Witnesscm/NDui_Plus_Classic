@@ -695,19 +695,16 @@ B:RegisterEvent("ADDON_LOADED", M.TalentUI_Load)
 function M:EnhancedTalentUI()
 	if not M.db["EnhancedTalentUI"] then return end
 
-	local method = "ToggleTalentFrame"
-	if _G[method] then
-		P:RawHook(method, function()
-			if M.db["ExpandTalent"] then
-				B:TogglePanel(M.TalentUI)
+	_G.ToggleTalentFrame = function()
+		if M.db["ExpandTalent"] then
+			B:TogglePanel(M.TalentUI)
+		else
+			if PlayerTalentFrame:IsShown() then
+				HideUIPanel(PlayerTalentFrame)
 			else
-				if PlayerTalentFrame:IsShown() then
-					HideUIPanel(PlayerTalentFrame)
-				else
-					ShowUIPanel(PlayerTalentFrame)
-				end
+				ShowUIPanel(PlayerTalentFrame)
 			end
-		 end)
+		end
 	end
 
 	TalentFrame_LoadUI()

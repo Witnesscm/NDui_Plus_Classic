@@ -2,7 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Version = GetAddOnMetadata(addonName, "Version")
-P.SupportVersion = "2.2.0"
+P.SupportVersion = "2.5.0"
 
 -- Textures
 local Texture = "Interface\\Addons\\"..addonName.."\\Media\\Texture\\"

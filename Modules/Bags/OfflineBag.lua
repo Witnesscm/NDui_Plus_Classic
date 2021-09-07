@@ -672,12 +672,6 @@ local function CreateMainFrame()
 	keyringFrame:Hide()
 end
 
-local function CloseButton_OnClick(_, btn)
-	if btn == "RightButton" then
-		B:TogglePanel(_G.NDui_Plus_BagFrame)
-	end
-end
-
 local function CreateOfflineToggle(parent)
 	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\HELPFRAME\\ReportLagIcon-Loot")
 	bu.Icon:SetPoint("TOPLEFT", -1, 3)
@@ -709,16 +703,6 @@ function module:ToggleOfflineBag()
 			if widgetArrow then
 				widgetArrow:Click()
 				widgetArrow:Click()
-			else
-				for i = 1, bag:GetNumChildren() do -- old version
-					local child = select(i, bag:GetChildren())
-					if child:GetObjectType() == "Button" and child.title and child.title == CLOSE then
-						child:RegisterForClicks("AnyUp")
-						child:HookScript("OnClick", CloseButton_OnClick)
-						child.text = P.RightButtonTip(L["Open OfflineBag"])
-						break
-					end
-				end
 			end
 		end
 	end

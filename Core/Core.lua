@@ -115,6 +115,7 @@ P.DefaultSettings = {
 		EnhancedGuildUI = true,
 		EnhancedTalentUI = true,
 		ExpandTalent = false,
+		SearchForIcons = true,
 	},
 }
 

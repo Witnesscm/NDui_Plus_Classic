@@ -209,7 +209,7 @@ function S:alaCalendar()
 		B.SetBD(config)
 		B.ReskinClose(config.close)
 
-		for key, object in pairs(config.set_objects) do
+		for _, object in pairs(config.set_objects) do
 			local objectType = object:GetObjectType()
 			if objectType == "Button" then
 				B.ReskinArrow(object, "down")
@@ -228,7 +228,13 @@ function S:alaCalendar()
 		B.StripTextures(charlist)
 		B.SetBD(charlist)
 	end
-	hooksecurefunc(_G.__ala_meta__.cal, "init_createGUI", reskinFunc)
+
+	local alaCal = _G.__ala_meta__.cal
+	if alaCal.init_createGUI then
+		hooksecurefunc(alaCal, "init_createGUI", reskinFunc)
+	elseif alaCal.CreateUI then
+		hooksecurefunc(alaCal, "CreateUI", reskinFunc)
+	end
 end
 
 S:RegisterSkin("alaCalendar", S.alaCalendar)

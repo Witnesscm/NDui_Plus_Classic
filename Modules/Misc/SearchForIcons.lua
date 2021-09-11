@@ -89,6 +89,8 @@ function module:PopupFrame_Update()
 end
 
 function module:MacroIcons_Update()
+	if not self then return end
+
 	module.icons = self
 
 	local parent
@@ -97,6 +99,8 @@ function module:MacroIcons_Update()
 	elseif _G.MacroPopupFrame and _G.MacroPopupFrame:IsShown() then
 		parent = _G.MacroPopupFrame
 	end
+
+	if not parent then return end
 
 	if not module.frame then
 		module:CreateSearchFrame()

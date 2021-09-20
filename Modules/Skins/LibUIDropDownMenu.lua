@@ -6,16 +6,6 @@ local r, g, b = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
 
-local function toggleBackdrop(bu, show)
-	bu.bg:SetShown(show)
-end
-
-local function isCheckTexture(check)
-	if check:GetTexture() == "Interface\\Common\\UI-DropDownRadioChecks" then
-		return true
-	end
-end
-
 local function reskinDropDownMenu(level)
 	local listFrame = _G["L_DropDownList"..level]
 

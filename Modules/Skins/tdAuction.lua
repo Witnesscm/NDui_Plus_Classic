@@ -72,8 +72,8 @@ function S:tdAuction()
 		B.ReskinScroll(Sell.PriceList.ScrollFrame.scrollBar)
 
 		for _, region in pairs {AuctionsItemButton:GetRegions()} do
-			local texture = region.GetTexture and region:GetTexture()
-			if texture and texture ~= "" and type(texture) == "string" and texture:find("ItemSlot") then
+			local texture = region.GetTextureFilePath and region:GetTextureFilePath()
+			if texture and texture:find("ItemSlot") then
 				region:SetTexture("")
 			end
 		end

@@ -4,7 +4,6 @@ local S = P:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
-local next = next
 
 function S:WIM()
 	if not IsAddOnLoaded("WIM") then return end
@@ -57,7 +56,7 @@ function S:WIM()
 		if frame.UpdateIcon then
 			hooksecurefunc(frame, "UpdateIcon", function(self)
 				self.circle:Hide()
-				if(WIM.constants.classes[self.class]) then
+				if WIM.constants.classes[self.class] then
 					local classTag = WIM.constants.classes[self.class].tag
 					local tcoords = CLASS_ICON_TCOORDS[classTag]
 					if tcoords then
@@ -69,19 +68,14 @@ function S:WIM()
 			end)
 		end
 	end
-	
+
 	local minimap = _G.WIM3MinimapButton
 	if minimap then
 		for i = 1, minimap:GetNumRegions() do
 			local region = select(i, minimap:GetRegions())
-			local texture = region.GetTexture and region:GetTexture()
-			if texture and texture ~= "" then
-				if type(texture) == "number" and texture == 136430 then
-					region:SetTexture("")
-				end
-				if type(texture) == "string" and (texture:find("TempPortraitAlphaMask") or texture:find("TrackingBorder")) then
-					region:SetTexture("")
-				end
+			local texture = region.GetTextureFilePath and region:GetTextureFilePath()
+			if texture and (texture:find("TempPortraitAlphaMask") or texture:find("TrackingBorder")) then
+				region:SetTexture("")
 			end
 		end
 	end

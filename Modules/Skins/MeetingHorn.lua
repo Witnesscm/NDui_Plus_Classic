@@ -24,11 +24,23 @@ local function reskinDropDown(dropdown)
 end
 
 local function reskinQRTooltip()
-	local tooltip = mainFrame.Browser.QRTooltip
+	local tooltip = mainFrame.Browser and mainFrame.Browser.QRTooltip
 	if tooltip and not tooltip.styled then
 		B.StripTextures(tooltip)
 		B.SetBD(tooltip, .7)
 		B.ReskinClose(tooltip.Close)
+		tooltip.Close:SetHitRectInsets(0, 0, 0, 0)
+		tooltip.styled = true
+	end
+end
+
+local function reskinLeaderTooltip(self)
+	local tooltip = self.QRApplyLeaderTooltip
+	if tooltip and not tooltip.styled then
+		B.StripTextures(tooltip)
+		B.SetBD(tooltip, .7)
+		B.ReskinClose(tooltip.Close)
+		tooltip.Close:SetHitRectInsets(0, 0, 0, 0)
 		tooltip.styled = true
 	end
 end
@@ -147,6 +159,7 @@ function S:MeetingHorn()
 		"Browser.Refresh",
 		"Manage.Creator.CreateButton",
 		"Manage.Creator.CloseButton",
+		"Manage.Creator.RecruitButton",
 		"Options.Filters.Add",
 		"Options.Filters.Import",
 		"Options.Filters.Export",
@@ -244,6 +257,24 @@ function S:MeetingHorn()
 			button.styled = true
 		end
 	end)
+
+	-- Browser
+	local Browser = mainFrame.Browser
+	if Browser then
+		local ApplyLeaderBtn = Browser.ApplyLeaderBtn
+		if ApplyLeaderBtn then
+			B.Reskin(ApplyLeaderBtn)
+			ApplyLeaderBtn:HookScript("PostClick", reskinLeaderTooltip)
+		end
+
+		local progressBar = Browser.ProgressBar
+		if progressBar then
+			B.StripTextures(progressBar)
+			progressBar:SetStatusBarTexture(DB.normTex)
+			progressBar:DisableDrawLayer("BACKGROUND")
+			B.CreateBDFrame(progressBar, .25)
+		end
+	end
 
 	-- Encounter
 	local Encounter = mainFrame.Encounter
@@ -343,6 +374,14 @@ function S:MeetingHorn()
 				B.StripTextures(subFrame)
 				subFrame.bg = B.CreateBDFrame(subFrame, .25)
 				subFrame.bg:SetInside()
+
+				if v == "First.Header" then
+					local ApplyLeaderBtn = subFrame.ApplyLeaderBtn
+					if ApplyLeaderBtn then
+						B.Reskin(ApplyLeaderBtn)
+						ApplyLeaderBtn:HookScript("PostClick", reskinLeaderTooltip)
+					end
+				end
 			end
 		end
 
@@ -420,14 +459,6 @@ function S:MeetingHorn()
 			})
 			return r
 		end
-	end
-
-	local progressBar = mainFrame.Browser.ProgressBar
-	if progressBar then
-		B.StripTextures(progressBar)
-		progressBar:SetStatusBarTexture(DB.normTex)
-		progressBar:DisableDrawLayer("BACKGROUND")
-		B.CreateBDFrame(progressBar, .25)
 	end
 
 	local DataBroker = _G.MeetingHornDataBroker

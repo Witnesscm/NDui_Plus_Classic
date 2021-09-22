@@ -4,12 +4,13 @@ local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
+local strfing = string.find
 
 function S:tdAuction()
 	if not IsAddOnLoaded("tdAuction") then return end
 	if not S.db["tdAuction"] then return end
 
-	local tdAuction = LibStub("AceAddon-3.0"):GetAddon("tdAuction")
+	local tdAuction = _G.LibStub("AceAddon-3.0"):GetAddon("tdAuction")
 
 	local function reskinFunc()
 		-- Browse
@@ -42,10 +43,10 @@ function S:tdAuction()
 		end
 
 		--BrowseDropDown
-		for i = 1, BrowseDropDown:GetNumChildren() do
-			local child = select(i, BrowseDropDown:GetChildren())
+		for i = 1, _G.BrowseDropDown:GetNumChildren() do
+			local child = select(i, _G.BrowseDropDown:GetChildren())
 			if child:GetObjectType() == "Frame" and child.backdropInfo then
-				child:SetPoint("BOTTOMRIGHT", BrowseDropDown.Button, "BOTTOMRIGHT")
+				child:SetPoint("BOTTOMRIGHT", _G.BrowseDropDown.Button, "BOTTOMRIGHT")
 			end
 		end
 
@@ -71,10 +72,12 @@ function S:tdAuction()
 		B.ReskinClose(Sell.PriceList.Close)
 		B.ReskinScroll(Sell.PriceList.ScrollFrame.scrollBar)
 
-		for _, region in pairs {AuctionsItemButton:GetRegions()} do
-			local texture = region.GetTextureFilePath and region:GetTextureFilePath()
-			if texture and texture:find("ItemSlot") then
-				region:SetTexture("")
+		for _, region in pairs {_G.AuctionsItemButton:GetRegions()} do
+			if region:GetObjectType() == "Texture" then
+				local texture = region.GetTextureFilePath and region:GetTextureFilePath()
+				if texture and type(texture) == "string" and strfing(texture, "ItemSlot") then
+					region:SetTexture("")
+				end
 			end
 		end
 

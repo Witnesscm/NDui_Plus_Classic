@@ -4,6 +4,7 @@ local S = P:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
+local strfind = string.find
 
 function S:WIM()
 	if not IsAddOnLoaded("WIM") then return end
@@ -71,11 +72,12 @@ function S:WIM()
 
 	local minimap = _G.WIM3MinimapButton
 	if minimap then
-		for i = 1, minimap:GetNumRegions() do
-			local region = select(i, minimap:GetRegions())
-			local texture = region.GetTextureFilePath and region:GetTextureFilePath()
-			if texture and (texture:find("TempPortraitAlphaMask") or texture:find("TrackingBorder")) then
-				region:SetTexture("")
+		for _, region in pairs {minimap:GetRegions()} do
+			if region:GetObjectType() == "Texture" then
+				local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
+				if texturePath and type(texturePath) == "string" and (strfind(texturePath, "TempPortraitAlphaMask") or strfind(texturePath, "TrackingBorder")) then
+					region:SetTexture("")
+				end
 			end
 		end
 	end

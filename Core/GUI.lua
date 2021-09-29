@@ -590,7 +590,7 @@ function G:OnLogin()
 	end)
 end
 
-SlashCmdList['NDUI_PLUS'] = function(msg)
+SlashCmdList["NDUI_PLUS"] = function(msg)
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(format(L["Version Check"], P.SupportVersion))

@@ -15,19 +15,11 @@ local function setBorder(button)
 	border:SetAllPoints()
 end
 
-local function reskinMenu(idx)
-	local button = _G["ItemRackMenu"..idx]
-	if button and not button.styled then
-		Bar:StyleActionButton(button, P.BarConfig)
-		setBorder(button)
-		button.styled = true
-	end
-end
-
 function S:ItemRack()
 	if not S.db["ItemRack"] then return end
 
-	B.StripTextures(_G.ItemRackMenuFrame)
+	local ItemRack = _G.ItemRack
+	if not ItemRack then return end
 
 	for i = 0, 20 do
 		local bu = _G["ItemRackButton"..i]
@@ -36,7 +28,20 @@ function S:ItemRack()
 		end
 	end
 
-	hooksecurefunc(_G.ItemRack, "CreateMenuButton", reskinMenu)
+	hooksecurefunc(ItemRack, "CreateMenuButton", function(idx)
+		local button = _G["ItemRackMenu"..idx]
+		if button and not button.styled then
+			Bar:StyleActionButton(button, P.BarConfig)
+			setBorder(button)
+			button.styled = true
+		end
+	end)
+
+	hooksecurefunc(ItemRack, "ReflectLock", function()
+		if _G.ItemRackMenuFrame.SetBackdrop then
+			_G.ItemRackMenuFrame:SetBackdrop(nil)
+		end
+	end)
 end
 
 function S:ItemRackOptions()
@@ -249,3 +254,4 @@ function S:ItemRackOptions()
 end
 
 S:RegisterSkin("ItemRack", S.ItemRack)
+S:RegisterSkin("ItemRackOptions", S.ItemRackOptions)

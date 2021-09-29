@@ -3,13 +3,11 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local select = select
 
 local texture_delete = "Interface\\Buttons\\UI-GroupLoot-Pass-Up"
 local texture_modify = "Interface\\WorldMap\\GEAR_64GREY"
 
 function S:alaGearMan()
-	if not IsAddOnLoaded("alaGearMan") then return end
 	if not S.db["alaGearMan"] then return end
 
 	local ALA = _G.__ala_meta__

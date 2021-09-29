@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local select, pairs, type = select, pairs, type
+local select, pairs = select, pairs
 ----------------------------
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 ----------------------------
@@ -97,7 +97,6 @@ local function getValue(pathStr, tbl)
 end
 
 function S:MeetingHorn()
-	if not IsAddOnLoaded("MeetingHorn") then return end
 	if not S.db["MeetingHorn"] then return end
 
 	local MeetingHorn = LibStub("AceAddon-3.0"):GetAddon("MeetingHorn", true)

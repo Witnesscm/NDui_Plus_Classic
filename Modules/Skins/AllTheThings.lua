@@ -5,17 +5,17 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 local function reanchorSkillFrame(self)
-	if SkilletFrame then
-		self:SetPoint("TOPLEFT", SkilletFrame, "TOPRIGHT", 4, 0)
-		self:SetPoint("BOTTOMLEFT", SkilletFrame, "BOTTOMRIGHT", 4, 0)
-	elseif CraftFrame and CraftFrame:IsVisible() then
+	if _G.SkilletFrame then
+		self:SetPoint("TOPLEFT", _G.SkilletFrame, "TOPRIGHT", 4, 0)
+		self:SetPoint("BOTTOMLEFT", _G.SkilletFrame, "BOTTOMRIGHT", 4, 0)
+	elseif _G.CraftFrame and _G.CraftFrame:IsVisible() then
 		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", CraftFrame, "TOPRIGHT", -27, -11)
-		self:SetPoint("BOTTOMLEFT", CraftFrame, "BOTTOMRIGHT", -27, 71)
-	elseif TradeSkillFrame and TradeSkillFrame:IsVisible() then
+		self:SetPoint("TOPLEFT", _G.CraftFrame, "TOPRIGHT", -27, -11)
+		self:SetPoint("BOTTOMLEFT", _G.CraftFrame, "BOTTOMRIGHT", -27, 71)
+	elseif _G.TradeSkillFrame and _G.TradeSkillFrame:IsVisible() then
 		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", TradeSkillFrame, "TOPRIGHT", -27, -11)
-		self:SetPoint("BOTTOMLEFT", TradeSkillFrame, "BOTTOMRIGHT", -27, 71)
+		self:SetPoint("TOPLEFT", _G.TradeSkillFrame, "TOPRIGHT", -27, -11)
+		self:SetPoint("BOTTOMLEFT", _G.TradeSkillFrame, "BOTTOMRIGHT", -27, 71)
 	end
 end
 
@@ -36,8 +36,6 @@ local function reskinATTFrame(frame, suffix)
 end
 
 function S:AllTheThings()
-	if not IsAddOnLoaded("ATT-Classic") then return end
-
 	local ATTC = _G.ATTC
 	if not ATTC then return end
 
@@ -60,4 +58,4 @@ function S:AllTheThings()
 	model.bg:SetInside()
 end
 
-S:RegisterSkin("AllTheThings", S.AllTheThings)
+S:RegisterSkin("ATT-Classic", S.AllTheThings)

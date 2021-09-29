@@ -666,31 +666,26 @@ function M:TalentUI_Init()
 end
 
 function M:TalentUI_Load(addon)
-	if addon == "Blizzard_TalentUI" then
-		P:Delay(.5,function ()
-			for i = 1, MAX_NUM_TALENTS do
-				local talent = _G["PlayerTalentFrameTalent"..i]
-				local icon = _G["PlayerTalentFrameTalent"..i.."IconTexture"]
-				if talent then
-					local hl = talent:GetHighlightTexture()
-					hl:SetColorTexture(1, 1, 1, .25)
-				end
+	P:Delay(.5,function ()
+		for i = 1, MAX_NUM_TALENTS do
+			local talent = _G["PlayerTalentFrameTalent"..i]
+			if talent then
+				local hl = talent:GetHighlightTexture()
+				hl:SetColorTexture(1, 1, 1, .25)
 			end
-		end)
-
-		if M.db["EnhancedTalentUI"] then
-			local bu = CreateFrame("Button", nil, PlayerTalentFrame)
-			bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
-			B.ReskinArrow(bu, "right")
-			bu:SetScript("OnClick", function()
-				M:TalentUI_Toggle(true)
-			end)
 		end
+	end)
 
-		B:UnregisterEvent(self, M.TalentUI_Load)
+	if M.db["EnhancedTalentUI"] then
+		local bu = CreateFrame("Button", nil, PlayerTalentFrame)
+		bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
+		B.ReskinArrow(bu, "right")
+		bu:SetScript("OnClick", function()
+			M:TalentUI_Toggle(true)
+		end)
 	end
 end
-B:RegisterEvent("ADDON_LOADED", M.TalentUI_Load)
+P:AddCallbackForAddon("Blizzard_TalentUI", M.TalentUI_Load)
 
 function M:EnhancedTalentUI()
 	if not M.db["EnhancedTalentUI"] then return end

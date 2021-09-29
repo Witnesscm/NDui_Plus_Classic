@@ -7,7 +7,6 @@ local _G = getfenv(0)
 local strfind = string.find
 
 function S:WIM()
-	if not IsAddOnLoaded("WIM") then return end
 	if not S.db["WIM"] then return end
 
 	local WIM = _G.WIM

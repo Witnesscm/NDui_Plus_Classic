@@ -6,8 +6,6 @@ local _G = getfenv(0)
 local r, g, b = DB.r, DB.g, DB.b
 
 function S:alaTrade()
-	if not IsAddOnLoaded("alaTrade") then return end
-
 	local merc = _G.__ala_meta__ and _G.__ala_meta__.merc
 	if not merc then return end
 

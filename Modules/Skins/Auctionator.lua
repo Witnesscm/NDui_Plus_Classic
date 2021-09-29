@@ -14,10 +14,7 @@ local function hook_SetNormalTexture(self)
 end
 
 function S:Auctionator()
-	if not IsAddOnLoaded("Auctionator") then return end
-	
-	local Atr_Init = _G.Atr_Init
-	if not Atr_Init then return end
+	if not _G.Atr_Init then return end
 
 	hooksecurefunc("Atr_Init", function()
 		B.ReskinCheck(Atr_Adv_Search_Button)
@@ -91,22 +88,22 @@ function S:Auctionator()
 		end
 
 		local MoneyEditBoxes = {
-			'UC_5000000_MoneyInput',
-			'UC_1000000_MoneyInput',
-			'UC_200000_MoneyInput',
-			'UC_50000_MoneyInput',
-			'UC_10000_MoneyInput',
-			'UC_2000_MoneyInput',
-			'UC_500_MoneyInput',
-			'Atr_StackPrice',
-			'Atr_StartingPrice',
-			'Atr_ItemPrice',
+			"UC_5000000_MoneyInput",
+			"UC_1000000_MoneyInput",
+			"UC_200000_MoneyInput",
+			"UC_50000_MoneyInput",
+			"UC_10000_MoneyInput",
+			"UC_2000_MoneyInput",
+			"UC_500_MoneyInput",
+			"Atr_StackPrice",
+			"Atr_StartingPrice",
+			"Atr_ItemPrice",
 		}
 
 		for _, MoneyEditBox in pairs(MoneyEditBoxes) do
-			B.ReskinInput(_G[MoneyEditBox..'Gold'])
-			B.ReskinInput(_G[MoneyEditBox..'Silver'])
-			B.ReskinInput(_G[MoneyEditBox..'Copper'])
+			B.ReskinInput(_G[MoneyEditBox.."Gold"])
+			B.ReskinInput(_G[MoneyEditBox.."Silver"])
+			B.ReskinInput(_G[MoneyEditBox.."Copper"])
 		end
 
 		for _, key in pairs({"Atr_FullScanFrame", "Atr_FullScanResults", "Atr_Adv_Search_Dialog", "Atr_Buy_Confirm_Frame"}) do

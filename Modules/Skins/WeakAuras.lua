@@ -153,8 +153,6 @@ local function ReskinWAOptions()
 end
 
 function S:WeakAuras()
-	if not IsAddOnLoaded("WeakAuras") then return end
-
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -197,33 +195,28 @@ function S:WeakAuras()
 			return origRegisterRegionOptions(name, createFunction, icon, displayName, createThumbnail, ...)
 		end
 	end
+end
 
-	-- WeakAurasOptions
-	local count = 0
-	local function loadFunc(event, addon)
-		if addon == "WeakAurasOptions" then
-			hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
-			count = count + 1
-		end
+function S:WeakAurasOptions()
+	local WeakAuras = _G.WeakAuras
+	if not WeakAuras or not WeakAuras.ShowOptions then return end
 
-		if addon == "WeakAurasTemplates" then
-			if WeakAuras.CreateTemplateView then
-				local origCreateTemplateView = WeakAuras.CreateTemplateView
-				WeakAuras.CreateTemplateView = function(...)
-					local group = origCreateTemplateView(...)
-					reskinChildButton(group.frame)
+	hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
+end
 
-					return group
-				end
-			end
-			count = count + 1
-		end
+function S:WeakAurasTemplates()
+	local WeakAuras = _G.WeakAuras
+	if not WeakAuras or not WeakAuras.CreateTemplateView then return end
 
-		if count >= 2 then
-			B:UnregisterEvent(event, loadFunc)
-		end
+	local origCreateTemplateView = WeakAuras.CreateTemplateView
+	WeakAuras.CreateTemplateView = function(...)
+		local group = origCreateTemplateView(...)
+		reskinChildButton(group.frame)
+
+		return group
 	end
-	B:RegisterEvent("ADDON_LOADED", loadFunc)
 end
 
 S:RegisterSkin("WeakAuras", S.WeakAuras)
+S:RegisterSkin("WeakAurasOptions", S.WeakAurasOptions)
+S:RegisterSkin("WeakAurasTemplates", S.WeakAurasTemplates)

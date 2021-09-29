@@ -77,7 +77,6 @@ local function ReskinCollapseTex(self)
 end
 
 function S:alaCalendar()
-	if not IsAddOnLoaded("alaCalendar") then return end
 	if not S.db["alaCalendar"] then return end
 
 	local uiStyle = _G.ala_cal_ui_style
@@ -188,7 +187,7 @@ function S:alaCalendar()
 		hooksecurefunc(board.scroll, "UpdateButtons", function()
 			for i = 1, board.scroll:GetNumChildren() do
 			local child = select(i, board.scroll:GetChildren())
-				if child:GetObjectType() == 'Frame' then
+				if child:GetObjectType() == "Frame" then
 					for j = 1, child:GetNumChildren() do
 						local child2 = select(j, child:GetChildren())
 						if child2 and child2.collapse and not child2.styled then

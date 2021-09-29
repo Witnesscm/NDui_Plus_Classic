@@ -4,7 +4,7 @@ local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
-local select, pairs, type = select, pairs, type
+local select, pairs = select, pairs
 
 local function reskinFrame(frame)
 	frame:SetBackdrop(nil)
@@ -17,7 +17,6 @@ local function reskinFrame(frame)
 end
 
 function S:MerInspect()
-	if not IsAddOnLoaded("MerInspect") then return end
 	if not S.db["MerInspect"] then return end
 
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
@@ -46,13 +45,14 @@ function S:MerInspect()
 
 	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
 		if not self.styled then
-			local category = {self.AttributesCategory, self.ResistanceCategory, self.EnhancementsCategory, self.SuitCategory}
-			for _, v in pairs(category) do
-				v.Background:Hide()
-				local line = v:CreateTexture(nil, "ARTWORK")
-				line:SetSize(180, C.mult)
-				line:SetPoint("BOTTOM", 0, 5)
-				line:SetColorTexture(1, 1, 1, .25)
+			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
+				local category = self[key]
+				if category then
+					local line = category:CreateTexture(nil, "ARTWORK")
+					line:SetSize(180, C.mult)
+					line:SetPoint("BOTTOM", 0, 5)
+					line:SetColorTexture(1, 1, 1, .25)
+				end
 			end
 
 			B.StripTextures(self)

@@ -7,7 +7,6 @@ local _G = getfenv(0)
 local strfing = string.find
 
 function S:tdAuction()
-	if not IsAddOnLoaded("tdAuction") then return end
 	if not S.db["tdAuction"] then return end
 
 	local tdAuction = _G.LibStub("AceAddon-3.0"):GetAddon("tdAuction")

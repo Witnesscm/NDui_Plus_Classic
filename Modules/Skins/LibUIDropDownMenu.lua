@@ -89,4 +89,4 @@ function S:LibUIDropDownMenu()
 	end
 end
 
-S:RegisterSkin("LibUIDropDownMenu", S.LibUIDropDownMenu)
+S:RegisterSkin("LibUIDropDownMenu")

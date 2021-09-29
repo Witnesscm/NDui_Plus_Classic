@@ -92,7 +92,6 @@ local function reskinFilter(self)
 end
 
 function S:AtlasLootClassic()
-	if not IsAddOnLoaded("AtlasLootClassic") then return end
 	if not S.db["AtlasLootClassic"] then return end
 
 	local AtlasLoot = _G.AtlasLoot

@@ -44,7 +44,6 @@ function S:ItemLevel_UpdateGemInfo(link, index, slotFrame, refresh)
 end
 
 function S:tdInspect()
-	if not IsAddOnLoaded("tdInspect") then return end
 	if not S.db["tdInspect"] then return end
 
 	local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")

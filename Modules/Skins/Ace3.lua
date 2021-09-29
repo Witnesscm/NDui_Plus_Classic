@@ -13,7 +13,7 @@ local TT = B:GetModule("Tooltip")
 local minorGUI, minorConfigDialog = 36, 76
 
 function S:Ace3()
-	local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
+	local AceGUI = _G.LibStub and _G.LibStub("AceGUI-3.0", true)
 
 	if not AceGUI then return end
 	if not S.db["Ace3"] then return end
@@ -31,7 +31,7 @@ function S:Ace3()
 	end
 end
 
-S:RegisterSkin("Ace3", S.Ace3)
+S:RegisterSkin("Ace3")
 
 function S:Ace3_SkinDropdown()
 	if self and self.obj then

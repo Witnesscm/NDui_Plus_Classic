@@ -14,7 +14,6 @@ function S:ResetSpyFont()
 end
 
 function S:Spy()
-	if not IsAddOnLoaded("Spy") then return end
 	if not S.db["Spy"] then return end
 
 	local Spy = _G.Spy

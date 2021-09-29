@@ -5,8 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:PallyPower()
-	if not IsAddOnLoaded("PallyPower") then return end
-	
 	local PallyPower = _G.PallyPower
 	if not PallyPower then return end
 

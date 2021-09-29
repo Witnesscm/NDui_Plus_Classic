@@ -16,46 +16,51 @@ function S:UpdatePanelsPosition()
 		local frame = panels.frame
 		if frame:IsShown() then
 			if panels.order == 3 then
-				frame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -33 + offset, -15)
+				frame:SetPoint("TOPLEFT", _G.PaperDollFrame, "TOPRIGHT", -33 + offset, -15)
 			else
-				frame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32 + offset, -15-C.mult)
+				frame:SetPoint("TOPLEFT", _G.PaperDollFrame, "TOPRIGHT", -32 + offset, -15-C.mult)
 			end
 			offset = offset + frame:GetWidth() + 3
 		end
 	end
 end
 
-function S:CharacterPanel()
-	-- MerInspect
-	local LibItemInfo = LibStub("LibItemInfo.1000", true)
-	if LibItemInfo and IsAddOnLoaded("MerInspect") then
+-- MerInspect
+function S:CharacterPanel_MerInspect()
+	local LibItemInfo = _G.LibStub("LibItemInfo.1000", true)
+	if LibItemInfo and _G.ShowInspectItemListFrame then
 		local ilevel, _, maxLevel = LibItemInfo:GetUnitItemLevel("player")
-		local inspectFrame = ShowInspectItemListFrame("player", PaperDollFrame, ilevel, maxLevel)
+		local inspectFrame = _G.ShowInspectItemListFrame("player", _G.PaperDollFrame, ilevel, maxLevel)
 
 		tinsert(addonFrames, {frame = inspectFrame, order = 3})
 
 		hooksecurefunc("ShowInspectItemListFrame", function(unit, ...)
-			if unit and unit == "player" and CharacterFrame:IsShown() then
+			if unit and unit == "player" and _G.CharacterFrame:IsShown() then
 				S:UpdatePanelsPosition()
 			end
 		end)
 	end
+end
 
-	-- alaGearMan
-	if IsAddOnLoaded("alaGearMan") and _G.AGM_FUNC then
-		hooksecurefunc(_G.AGM_FUNC, "initUI", function()
-			local ALA = _G.__ala_meta__
-			if not ALA then return end
+-- alaGearMan
+function S:CharacterPanel_alaGearMan()
+	local AGM_FUNC = _G.AGM_FUNC
+	if not AGM_FUNC or not AGM_FUNC.initUI then return end
 
-			local gearWin = ALA.gear and ALA.gear.ui.gearWin
-			if gearWin then
-				tinsert(addonFrames, {frame = gearWin, order = 1})
-			end
-		end)
-	end
+	hooksecurefunc(AGM_FUNC, "initUI", function()
+		local ALA = _G.__ala_meta__
+		if not ALA then return end
 
+		local gearWin = ALA.gear and ALA.gear.ui.gearWin
+		if gearWin then
+			tinsert(addonFrames, {frame = gearWin, order = 1})
+		end
+	end)
+end
+
+function S:CharacterPanel()
 	local done
-	PaperDollFrame:HookScript("OnShow", function()
+	_G.PaperDollFrame:HookScript("OnShow", function()
 		if not done then
 			table.sort(addonFrames, function(a, b)
 				return a.order < b.order
@@ -73,4 +78,6 @@ function S:CharacterPanel()
 	end)
 end
 
-S:RegisterSkin("CharacterPanel", S.CharacterPanel)
+S:RegisterSkin("MerInspect", S.CharacterPanel_MerInspect)
+S:RegisterSkin("alaGearMan", S.CharacterPanel_alaGearMan)
+S:RegisterSkin("CharacterPanel")

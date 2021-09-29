@@ -5,8 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:CChatNotifier()
-	if not IsAddOnLoaded("CChatNotifier") then return end
-
 	local frame = _G.CCNUI_MainUI
 	if not frame then return end
 

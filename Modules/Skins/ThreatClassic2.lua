@@ -15,44 +15,41 @@ local function reskinStatusBar(self)
 	end
 end
 
-local function delayFunc()
-	local frame = _G.ThreatClassic2BarFrame
-	if not frame then return end
-
-	local bg = B.SetBD(frame)
-	if frame.header:IsShown() then
-		bg:SetPoint("TOPLEFT", -C.mult, 18)
-	end
-
-	local frameBg = frame.bg
-	if frameBg then
-		frameBg:SetColorTexture(0, 0, 0, 0)
-		frameBg:SetVertexColor(0, 0, 0, 0)
-		frameBg.SetVertexColor = B.Dummy
-	end
-
-	local header = frame.header
-	if header then
-		reskinStatusBar(header)
-		header:SetStatusBarColor(0, 0, 0, 0)
-		header.SetStatusBarColor = B.Dummy
-		header.text:SetPoint("LEFT", header, 4, 0)
-	end
-
-	for _, child in pairs {frame:GetChildren()} do
-		if child:GetObjectType() == "StatusBar" and child.bg and child.val then
-			reskinStatusBar(child)
-			child.bg:SetVertexColor(0, 0, 0, 0)
-			child.bg.SetVertexColor = B.Dummy
-		end
-	end
-end
-
 function S:ThreatClassic2()
-	if not IsAddOnLoaded("ThreatClassic2") then return end
 	if not S.db["ClassicThreatMeter"] then return end
 
-	P:Delay(.5, delayFunc)
+	P:Delay(.5, function()
+		local frame = _G.ThreatClassic2BarFrame
+		if not frame then return end
+
+		local bg = B.SetBD(frame)
+		if frame.header:IsShown() then
+			bg:SetPoint("TOPLEFT", -C.mult, 18)
+		end
+
+		local frameBg = frame.bg
+		if frameBg then
+			frameBg:SetColorTexture(0, 0, 0, 0)
+			frameBg:SetVertexColor(0, 0, 0, 0)
+			frameBg.SetVertexColor = B.Dummy
+		end
+
+		local header = frame.header
+		if header then
+			reskinStatusBar(header)
+			header:SetStatusBarColor(0, 0, 0, 0)
+			header.SetStatusBarColor = B.Dummy
+			header.text:SetPoint("LEFT", header, 4, 0)
+		end
+
+		for _, child in pairs {frame:GetChildren()} do
+			if child:GetObjectType() == "StatusBar" and child.bg and child.val then
+				reskinStatusBar(child)
+				child.bg:SetVertexColor(0, 0, 0, 0)
+				child.bg.SetVertexColor = B.Dummy
+			end
+		end
+	end)
 end
 
 S:RegisterSkin("ThreatClassic2", S.ThreatClassic2)

@@ -5,8 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:ExtVendorUI()
-	if not IsAddOnLoaded("ExtVendorUI_Classic") then return end
-
 	-- MerchantFrame
 	B.Reskin(MerchantFrameFilterButton)
 	B.ReskinInput(MerchantFrameSearchBox)
@@ -87,4 +85,4 @@ function S:ExtVendorUI()
 	ExtVendor_SellJunkPopup_JunkListItemListScrollBar.trackBG:SetAlpha(0)
 end
 
-S:RegisterSkin("ExtVendorUI", S.ExtVendorUI)
+S:RegisterSkin("ExtVendorUI_Classic", S.ExtVendorUI)

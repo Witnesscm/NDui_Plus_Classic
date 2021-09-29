@@ -6,7 +6,6 @@ local Bar = B:GetModule("Actionbar")
 local _G = getfenv(0)
 
 function S:GearMenu()
-	if not IsAddOnLoaded("GearMenu") then return end
 	if not S.db["GearMenu"] then return end
 
 	local rggm = _G.rggm

@@ -5,8 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:Atlas()
-	if not IsAddOnLoaded("Atlas") then return end
-
 	local addon = LibStub("AceAddon-3.0"):GetAddon("Atlas")
 	addon.db.profile.options.frames.lock = false
 
@@ -36,8 +34,6 @@ function S:Atlas()
 end
 
 function S:AtlasQuest()
-	if not IsAddOnLoaded("AtlasQuest") then return end
-
 	local frame = AtlasQuestFrame
 	B.StripTextures(frame)
 	B.SetBD(frame)

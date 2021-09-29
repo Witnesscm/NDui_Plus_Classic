@@ -6,14 +6,12 @@ local TT = B:GetModule("Tooltip")
 local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
-local select, pairs, type, strfind = select, pairs, type, string.find
+local select, pairs, strfind = select, pairs, string.find
 
 function S:HandyNotes_NPCs()
-	if not IsAddOnLoaded("HandyNotes_NPCs (Classic)") and not IsAddOnLoaded("HandyNotes_NPCs (Burning Crusade Classic)") then return end
-
 	P:Delay(.5,function()
-		for i = 1, WorldMapFrame:GetNumChildren() do
-			local child = select(i, WorldMapFrame:GetChildren())
+		for i = 1, _G.WorldMapFrame:GetNumChildren() do
+			local child = select(i, _G.WorldMapFrame:GetChildren())
 			if child:GetObjectType() == "Button" and child:GetText() == "NPCs" then
 				B.Reskin(child)
 			end
@@ -21,35 +19,7 @@ function S:HandyNotes_NPCs()
 	end)
 end
 
-function S:honorspy()
-	if not IsAddOnLoaded("honorspy") then return end
-
-	local mainFrame = _G.HonorSpyGUI_MainFrame
-	if not mainFrame then return end
-
-	local function delayFunc()
-		if mainFrame.frame.bg then
-			-- B.CreateBD(mainFrame.frame.bg)
-			-- B.CreateSD(mainFrame.frame.bg)
-			-- B.CreateTex(mainFrame.frame.bg)
-		end
-	end
-	C_Timer.After(.5, delayFunc)
-
-	local scroll = mainFrame.children[3].frame
-	if scroll then
-		for i = 1, scroll:GetNumChildren() do
-			local child = select(i, scroll:GetChildren())
-			if child and child.scrollBar then
-				B.ReskinScroll(child.scrollBar)
-			end
-		end
-	end
-end
-
 function S:BattleInfo()
-	if not IsAddOnLoaded("BattleInfo") then return end
-
 	local function GetChildFrame(i, frame)
 		local child = select(i, frame:GetChildren())
 		if child:GetObjectType() == "Frame" and not child:GetName() then
@@ -85,15 +55,12 @@ function S:BattleInfo()
 end
 
 function S:Accountant()
-	if not IsAddOnLoaded("Accountant_Classic") then return end
-
 	B.ReskinPortraitFrame(_G.AccountantClassicFrame)
 	B.Reskin(_G.AccountantClassicFrameResetButton)
 	B.Reskin(_G.AccountantClassicFrameOptionsButton)
 	B.Reskin(_G.AccountantClassicFrameExitButton)
 
 	local row1 = _G.AccountantClassicFrameRow1In
-	
 	local vline1 = CreateFrame("Frame", nil, row1, "BackdropTemplate")
 	vline1:SetHeight(340)
 	vline1:SetWidth(1)
@@ -131,8 +98,6 @@ function S:Accountant()
 end
 
 function S:BagSync()
-	if not IsAddOnLoaded("BagSync") then return end
-
 	local BagSync = _G.BagSync
 	local search = BagSync:GetModule("Search")
 	local blacklist = BagSync:GetModule("Blacklist")
@@ -164,19 +129,16 @@ function S:BagSync()
 		end
 	end
 
-	local function delayFunc()
+	P:Delay(.5,function()
 		reskinFrame(search.frame.frame)
 		reskinFrame(search.warningframe.frame)
 		reskinFrame(blacklist.frame.frame)
 		reskinFrame(blacklist.guildFrame.frame)
 		reskinFrame(profiles.parentFrame)
-	end
-	C_Timer.After(.5, delayFunc)
+	end)
 end
 
 function S:FeatureFrame()
-	if not IsAddOnLoaded("FeatureFrame") then return end
-
 	B.ReskinPortraitFrame(FeatureFrame, 10, -10, -32, 70)
 	for i = 1, 7 do
 		local tab = _G["FeatureFrameTab"..i]
@@ -206,8 +168,6 @@ function S:FeatureFrame()
 end
 
 function S:buffOmat()
-	if not IsAddOnLoaded("BuffomatClassicTBC") then return end
-
 	local frame = _G.BomC_MainWindow
 	if not frame then return end
 
@@ -230,8 +190,6 @@ function S:buffOmat()
 end
 
 function S:BuyEmAllClassic()
-	if not IsAddOnLoaded("BuyEmAllClassic") then return end
-
 	B.StripTextures(BuyEmAllFrame)
 	B.SetBD(BuyEmAllFrame, nil, 10, -10, -10, 10)
 	B.Reskin(BuyEmAllOkayButton)
@@ -243,15 +201,13 @@ function S:BuyEmAllClassic()
 end
 
 function S:xCT()
-	if not IsAddOnLoaded("xCT+") then return end
-
 	local styled
 	InterfaceOptionsCombatPanel:HookScript("OnShow", function(self)
 		if styled then return end
 
 		for i = 1, self:GetNumChildren() do
 			local child = select(i, self:GetChildren())
-			if child:GetObjectType() == 'Button' and child:GetText() then
+			if child:GetObjectType() == "Button" and child:GetText() then
 				B.Reskin(child)
 			end
 		end
@@ -261,8 +217,6 @@ function S:xCT()
 end
 
 function S:Elephant()
-	if not IsAddOnLoaded("Elephant") then return end
-
 	local Elephant = _G.Elephant
 
 	B.StripTextures(ElephantFrame)
@@ -318,8 +272,6 @@ function S:Elephant()
 end
 
 function S:Hemlock()
-	if not IsAddOnLoaded("Hemlock") then return end
-
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
 
@@ -352,7 +304,6 @@ function S:Hemlock()
 end
 
 function S:TotemTimers()
-	if not IsAddOnLoaded("TotemTimers") then return end
 	if DB.MyClass ~= "SHAMAN" then return end
 
 	local TotemTimers = _G.TotemTimers
@@ -409,18 +360,23 @@ function S:TotemTimers()
 	end)
 end
 
-S:RegisterSkin("HandyNotes_NPCs", S.HandyNotes_NPCs)
--- S:RegisterSkin("honorspy", S.honorspy)
+function S:BigWigs_Options()
+	TT.ReskinTooltip(_G.BigWigsOptionsTooltip)
+end
+
+S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
+S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
-S:RegisterSkin("Accountant", S.Accountant)
+S:RegisterSkin("Accountant_Classic", S.Accountant)
 S:RegisterSkin("BagSync", S.BagSync)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
-S:RegisterSkin("buffOmat", S.buffOmat)
+S:RegisterSkin("BuffomatClassicTBC", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
-S:RegisterSkin("xCT", S.xCT)
+S:RegisterSkin("xCT+", S.xCT)
 -- S:RegisterSkin("Elephant", S.Elephant)
 S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
+S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

@@ -29,6 +29,7 @@
 	<Script file="PallyPower.lua"/>
 	<Script file="Skillet.lua"/>
 	<Script file="Spy.lua"/>
+	<Script file="tdGUI.lua"/>
 	<Script file="tdAuction.lua"/>
 	<Script file="tdInspect.lua"/>
 	<Script file="ThreatClassic2.lua"/>

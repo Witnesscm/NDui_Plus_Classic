@@ -7,8 +7,6 @@ local _G = getfenv(0)
 local next = next
 
 function S:NovaWorldBuffs()
-	if not IsAddOnLoaded("NovaWorldBuffs") then return end
-
 	local NWB = LibStub("AceAddon-3.0"):GetAddon("NovaWorldBuffs")
 	if not NWB then return end
 
@@ -19,6 +17,7 @@ function S:NovaWorldBuffs()
 		"NWBVersionFrame",
 		"NWBCopyFrame",
 		"NWBTimerLogFrame",
+		"NWBLFrame",
 	}
 	for _, frame in next, frames do
 		local f = _G[frame]
@@ -53,6 +52,8 @@ function S:NovaWorldBuffs()
 		"NWBlayerFrameCopyButton",
 		"NWBlayerFrameTimerLogButton",
 		"NWBTimerLogRefreshButton",
+		"NWBGuildLayersButton",
+		"NWBLFrameRefreshButton",
 	}
 	for _, button in next, buttons do
 		local bu = _G[button]
@@ -66,6 +67,7 @@ function S:NovaWorldBuffs()
 		"NWBlayerDragTooltip",
 		"NWBLayerMapDragTooltip",
 		"NWBVersionDragTooltip",
+		"NWBLDragTooltip",
 	}
 	for _, tooltip in next, tooltips do
 		local tip = _G[tooltip]
@@ -112,7 +114,7 @@ function S:NovaWorldBuffs()
 		minimap.fs.SetFont = B.Dummy
 	end
 
-	local function reskinMarker(frame)
+	local function reskinMarker(frame, isTower)
 		local icon = frame.texture
 		local tooltip = frame.tooltip
 		local timer = frame.timerFrame
@@ -121,7 +123,7 @@ function S:NovaWorldBuffs()
 		local fs2 = frame.fs2
 		local fsLayer = frame.fsLayer
 
-		if icon then B.ReskinIcon(icon) end
+		if icon and not isTower then B.ReskinIcon(icon) end
 		if tooltip then TT.ReskinTooltip(tooltip) end
 		if timer then
 			B.StripTextures(timer)
@@ -195,6 +197,37 @@ function S:NovaWorldBuffs()
 			end
 		end
 	end)
+
+	for _, key in pairs({"NWBShatDailyMap", "NWBShatHeroicMap"}) do
+		local dailyMap = _G[key]
+		if dailyMap then
+			if dailyMap.textFrame and dailyMap.textFrame.fs then
+				B.StripTextures(dailyMap.textFrame)
+				dailyMap.textFrame.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3])
+			end
+
+			if dailyMap.tooltip then
+				TT.ReskinTooltip(dailyMap.tooltip)
+			end
+		end
+	end
+
+	local function reskinNWBTerokkarMaps()
+		for layer in NWB:pairsByKeys(NWB.data.layers) do
+			local frame = _G["towers" .. layer .. "NWBTerokkarMap"]
+			if frame and not frame.styled then
+				reskinMarker(frame, true)
+				frame.styled = true
+			end
+		end
+	end
+
+	if _G["towersNWBTerokkarMap"] then
+		reskinMarker(_G["towersNWBTerokkarMap"], true)
+	end
+
+	reskinNWBTerokkarMaps()
+	hooksecurefunc(NWB, "createTerokkarMarkers", reskinNWBTerokkarMaps)
 end
 
 S:RegisterSkin("NovaWorldBuffs", S.NovaWorldBuffs)

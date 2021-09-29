@@ -19,11 +19,11 @@ local function reskinButton(self)
 end
 
 function S:AutoBar()
-	if not IsAddOnLoaded("AutoBarClassic") and not IsAddOnLoaded("AutoBarBCC") then return end
 	if not S.db["AutoBar"] then return end
 
 	hooksecurefunc(_G.AutoBar.Class.Button.prototype, "CreateButtonFrame", reskinButton)
 	hooksecurefunc(_G.AutoBar.Class.PopupButton.prototype, "CreateButtonFrame", reskinButton)
 end
 
-S:RegisterSkin("AutoBar", S.AutoBar)
+S:RegisterSkin("AutoBarClassic", S.AutoBar)
+S:RegisterSkin("AutoBarBCC", S.AutoBar)

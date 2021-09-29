@@ -29,7 +29,6 @@ local function reskinTradeButton(bu)
 end
 
 function S:SkilletClassic()
-	if not IsAddOnLoaded("Skillet-Classic") then return end
 	if not S.db["Skillet"] then return end
 
 	local Buttons = {
@@ -243,4 +242,4 @@ function S:SkilletClassic()
 	hooksecurefunc(_G.Skillet, "UpdateTradeButtons", reskinTradeButtons)
 end
 
-S:RegisterSkin("SkilletClassic", S.SkilletClassic)
+S:RegisterSkin("Skillet-Classic", S.SkilletClassic)

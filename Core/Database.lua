@@ -2,7 +2,12 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Version = GetAddOnMetadata(addonName, "Version")
-P.SupportVersion = "2.5.0"
+
+if P.IsClassic() then
+	P.SupportVersion = "1.29.0"
+else
+	P.SupportVersion = "2.5.0"
+end
 
 -- Colors
 P.InfoColors = {r = .6, g = .8, b = 1}

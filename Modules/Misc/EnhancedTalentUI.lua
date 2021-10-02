@@ -6,9 +6,9 @@ local LSP = LibStub("LibShowUIPanel-1.0")
 local ShowUIPanel = LSP.ShowUIPanel
 local HideUIPanel = LSP.HideUIPanel
 
-local MAX_NUM_TALENT_TIERS = 9
-local NUM_TALENT_COLUMNS = 4
-local MAX_NUM_TALENTS = 40
+local MAX_NUM_TALENT_TIERS = _G.MAX_NUM_TALENT_TIERS or 10
+local NUM_TALENT_COLUMNS = _G.NUM_TALENT_COLUMNS or 4
+local MAX_NUM_TALENTS = _G.MAX_NUM_TALENTS or 40
 
 local TALENT_BRANCH_TEXTURECOORDS = {
 	up = {
@@ -85,6 +85,11 @@ function M:TalentUI_CreatePanel(i)
 	frame.initialOffsetY = 16
 	frame.buttonSpacingX = 63
 	frame.buttonSpacingY = 63
+
+	if P.IsClassic() then
+		frame.initialOffsetY = 36
+		frame:SetHeight(486)
+	end
 
 	local TopBG = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
 	TopBG:SetPoint("TOPLEFT")
@@ -623,6 +628,10 @@ function M:TalentUI_Init()
 		PlaySound(SOUNDKIT.TALENT_SCREEN_CLOSE)
 	end)
 
+	if P.IsClassic() then
+		frame:SetHeight(554)
+	end
+
 	local Close = CreateFrame("Button", nil, frame)
 	B.ReskinClose(Close)
 	Close:SetScript("OnClick", function()
@@ -702,7 +711,10 @@ function M:EnhancedTalentUI()
 		end
 	end
 
-	TalentFrame_LoadUI()
+	if not IsAddOnLoaded("Blizzard_TalentUI") then
+		UIParentLoadAddOn("Blizzard_TalentUI")
+	end
+
 	M:TalentUI_Init()
 	B:RegisterEvent("CHARACTER_POINTS_CHANGED", M.TalentUI_UpdateAll)
 	B:RegisterEvent("SPELLS_CHANGED", M.TalentUI_UpdateAll)

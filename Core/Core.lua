@@ -170,6 +170,18 @@ loader:SetScript("OnEvent", function(self, _, addon)
 	self:UnregisterAllEvents()
 end)
 
+function P.IsRetail()
+	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE
+end
+
+function P.IsBCC()
+	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+end
+
+function P.IsClassic()
+	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
+end
+
 function P:ThrowError(err, message)
 	if not err then return end
 

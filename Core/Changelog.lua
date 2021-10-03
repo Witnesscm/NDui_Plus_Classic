@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.1.5
+[单位框体] 修复宠物框体布局
+
 v2.1.4
 [主要] 兼容Classic版本
 [主要] 优化模块加载顺序

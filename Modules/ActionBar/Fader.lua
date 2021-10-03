@@ -1,6 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local AB = P:RegisterModule("ActionBar")
+local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
 -----------------
 -- Credit: ElvUI
@@ -178,15 +178,5 @@ function AB:GlobalFade()
 	AB.fadeParent:SetScript("OnEvent", AB.FadeParent_OnEvent)
 
 	AB:UpdateFaderSettings()
-
-	local function loadFunc(event, addon)
-		AB:UpdateFaderState()
-		B:UnregisterEvent(event, loadFunc)
-	end
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
-end
-
-function AB:OnLogin()
-	AB:GlobalFade()
-	AB:MageBar()
+	AB:UpdateFaderState()
 end

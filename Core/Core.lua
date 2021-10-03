@@ -272,7 +272,9 @@ function P:GetModule(name)
 	return modules[name]
 end
 
-B:RegisterEvent("PLAYER_LOGIN", function()
+function P:Initialize()
+	P:Debug("start")
+
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(L["Version Check"], P.SupportVersion)
@@ -305,4 +307,19 @@ B:RegisterEvent("PLAYER_LOGIN", function()
 
 	P.Initialized = true
 	P.Modules = modules
+
+	P:Debug("loaded")
+end
+
+local WaitFrame = CreateFrame("Frame")
+WaitFrame:Hide()
+WaitFrame:SetScript("OnUpdate", function()
+	if B.Modules then
+		P:Initialize()
+		WaitFrame:Hide()
+	end
+end)
+
+B:RegisterEvent("PLAYER_LOGIN", function()
+	WaitFrame:Show()
 end)

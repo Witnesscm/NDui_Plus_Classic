@@ -583,11 +583,9 @@ function G:SetupToggle()
 end
 
 function G:OnLogin()
-	P:Delay(.5, function()
-		local NDuiBtn = _G.GameMenuFrameNDui
-		if not NDuiBtn then return end
-		NDuiBtn:HookScript("PostClick",G.SetupToggle)
-	end)
+	local NDuiBtn = _G.GameMenuFrameNDui
+	if not NDuiBtn then return end
+	NDuiBtn:HookScript("PostClick",G.SetupToggle)
 end
 
 SlashCmdList["NDUI_PLUS"] = function(msg)

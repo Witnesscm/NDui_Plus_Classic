@@ -43,8 +43,6 @@ function UF:SetupTankFrame()
 	"yOffset", -yOffset,
 	"groupFilter", "MAINTANK",
 	"point", "TOP",
-	"columnAnchorPoint", "LEFT",
-	"template", "ELVUI_UNITTARGET",
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
 	self:SetHeight(%d)

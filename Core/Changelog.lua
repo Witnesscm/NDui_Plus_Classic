@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.1.2
+[主要] 兼容Classic版本
+[单位框体] 添加坦克和宠物框体
+[美化] 更新部分插件美化
+[美化] 添加ImprovedAddonList美化
+
 v2.1.1
 [|cffFF1414重要|r] 需要NDui v2.5.0 以上版本
 [背包] 添加新的离线背包按钮

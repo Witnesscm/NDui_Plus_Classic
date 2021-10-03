@@ -674,8 +674,8 @@ function M:TalentUI_Init()
 	M.TalentUI = frame
 end
 
-function M:TalentUI_Load(addon)
-	P:Delay(.5,function ()
+function M:TalentUI_Load()
+	P:Delay(.5,function()
 		for i = 1, MAX_NUM_TALENTS do
 			local talent = _G["PlayerTalentFrameTalent"..i]
 			if talent then

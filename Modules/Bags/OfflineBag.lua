@@ -686,7 +686,7 @@ local function CreateOfflineToggle(parent)
 	return bu
 end
 
-function module:ToggleOfflineBag()
+function module:CreateWidgetButton()
 	local cargBags = _G.NDui.cargBags
 	local backpack = cargBags and cargBags:GetImplementation("NDui_Backpack")
 	if backpack then
@@ -706,8 +706,6 @@ function module:ToggleOfflineBag()
 			end
 		end
 	end
-
-	B:UnregisterEvent("PLAYER_ENTERING_WORLD", module.ToggleOfflineBag)
 end
 
 function module:OnLogin()
@@ -718,16 +716,16 @@ function module:OnLogin()
 	CreateMainFrame()
 	UpdateAllBags()
 
+	if C.db["Bags"]["Enable"] then
+		module:CreateWidgetButton()
+	end
+
 	B:RegisterEvent("BAG_UPDATE", UpdateBag)
 	B:RegisterEvent("BAG_CLOSED", UpdateBag)
 	B:RegisterEvent("PLAYER_MONEY", SaveMoney)
 	B:RegisterEvent("BANKFRAME_OPENED", Bank_Opened)
 	B:RegisterEvent("BANKFRAME_CLOSED", Bank_Closed)
 	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", UpdateItemButtonInfo)
-
-	if not C.db["Bags"]["Enable"] then return end
-
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", module.ToggleOfflineBag)
 end
 
 SlashCmdList["NDUI_PLUS_BAG"] = function(msg)

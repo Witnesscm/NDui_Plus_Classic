@@ -35,7 +35,7 @@ function UF:SetupRaidPet()
 	local petMoverWidth = petWidth*petMaxColumns+xOffset*(petMaxColumns-1)
 	local petMoverHeight = petFrameHeight*petPerColumn+yOffset*(petPerColumn-1)
 
-	local raidPet = oUF:SpawnHeader("oUF_RaidPet", nil, nil,
+	local raidPet = oUF:SpawnHeader("oUF_RaidPet", "SecureGroupPetHeaderTemplate", nil,
 	"showPlayer", true,
 	"showSolo", true,
 	"showParty", true,
@@ -50,7 +50,6 @@ function UF:SetupRaidPet()
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
 	self:SetHeight(%d)
-	self:SetAttribute("unitsuffix", "pet")
 	]]):format(petWidth, petFrameHeight))
 
 	RegisterStateDriver(raidPet, "visibility", "[group:raid] show;hide")

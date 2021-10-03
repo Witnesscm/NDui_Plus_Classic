@@ -75,6 +75,14 @@ local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
 
+local function updateTankSize()
+	P:GetModule("UnitFrames"):UpdateTankSize()
+end
+
+local function updateRaidPetSize()
+	P:GetModule("UnitFrames"):UpdateRaidPetSize()
+end
+
 local function updateChatAutoShow()
 	P:GetModule("Chat"):UpdateAutoShow()
 end
@@ -168,6 +176,19 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", true, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
 		{},
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
+		{},
+		{1, "UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
+		{1, "UnitFrames", "TankTarget", L["Target Frame"], true},
+		{3, "UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
+		{3, "UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
+		{3, "UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
+		{},
+		{1, "UnitFrames", "RaidPetFrame", HeaderTag..L["RaidPetFrame"]},
+		{3, "UnitFrames", "RaidPetWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateRaidPetSize},
+		{3, "UnitFrames", "RaidPetHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateRaidPetSize},
+		{3, "UnitFrames", "RaidPetPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateRaidPetSize},
+		{3, "UnitFrames", "RaidPetPerColumn", L["RaidPetPerColumn"], true, {1, 20, 1}},
+		{3, "UnitFrames", "RaidPetMaxColumns", L["RaidPetMaxColumns"], nil, {1, 10, 1}},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},

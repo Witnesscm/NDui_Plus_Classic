@@ -21,6 +21,51 @@ local function CreateTankStyle(self)
 	NUF:CreateThreatBorder(self)
 end
 
+local function Range_Update(self)
+	local element = self.Range
+	local unit = strmatch(self.unit, "(.+)target$") or self.unit
+
+	if(element.PreUpdate) then
+		element:PreUpdate()
+	end
+
+	local inRange, checkedRange
+	local connected = UnitIsConnected(unit)
+	if(connected) then
+		inRange, checkedRange = UnitInRange(unit)
+		if(checkedRange and not inRange) then
+			self:SetAlpha(element.outsideAlpha)
+		else
+			self:SetAlpha(element.insideAlpha)
+		end
+	else
+		self:SetAlpha(element.insideAlpha)
+	end
+
+	if(element.PostUpdate) then
+		return element:PostUpdate(self, inRange, checkedRange, connected)
+	end
+end
+
+local function CreateTankTargetStyle(self)
+	self.mystyle = "tank"
+	self.isTarget = true
+	self.Range = {
+		insideAlpha = 1, outsideAlpha = .4,
+		Override = Range_Update
+	}
+
+	NUF:CreateHeader(self)
+	UF:CreateHealthBar(self)
+	NUF:CreateHealthText(self)
+	UF:CreatePowerBar(self)
+	NUF:CreateRaidMark(self)
+	NUF:CreateTargetBorder(self)
+	NUF:CreatePrediction(self)
+	NUF:CreateClickSets(self)
+	NUF:CreateThreatBorder(self)
+end
+
 function UF:SetupTankFrame()
 	if not UF.db["TankFrame"] then return end
 
@@ -31,8 +76,9 @@ function UF:SetupTankFrame()
 	local tankWidth, tankHeight = UF.db["TankWidth"], UF.db["TankHeight"]
 	local tankPower = UF.db["TankPowerHeight"]
 	local tankFrameHeight = tankHeight + tankPower + C.mult
+	local tankMoverWidth = tankWidth
 	local tankMoverHeight = tankFrameHeight*5+yOffset*4
-	local tankTarget = UF.db["TankTarget"]
+	local enableTarget = UF.db["TankTarget"]
 
 	local tank = oUF:SpawnHeader("oUF_Tank", nil, nil,
 	"showPlayer", true,
@@ -46,12 +92,40 @@ function UF:SetupTankFrame()
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
 	self:SetHeight(%d)
-	]]):format(tankWidth, tankFrameHeight),
-	tankTarget and "template", tankTarget and "ELVUI_UNITTARGET")
+	]]):format(tankWidth, tankFrameHeight))
+	--enableTarget and "template", enableTarget and "ELVUI_UNITTARGET")
 
 	RegisterStateDriver(tank, "visibility", "[group:raid] show;hide")
 
-	local tankMover = B.Mover(tank, L["TankFrame"], "TankFrame", {"TOPLEFT", UIParent, 35, -414}, tankWidth, tankMoverHeight)
+	if enableTarget then
+		oUF:RegisterStyle("TankTarget", CreateTankTargetStyle)
+		oUF:SetActiveStyle("TankTarget")
+
+		local targetOffset = 6
+		tankMoverWidth = tankWidth*2+targetOffset
+
+		local tankTarget = oUF:SpawnHeader("oUF_TankTarget", nil, nil,
+		"showPlayer", true,
+		"showSolo", true,
+		"showParty", true,
+		"showRaid", true,
+		"xoffset", xOffset,
+		"yOffset", -yOffset,
+		"groupFilter", "MAINTANK",
+		"point", "TOP",
+		"oUF-initialConfigFunction", ([[
+		self:SetWidth(%d)
+		self:SetHeight(%d)
+		self:SetAttribute("unitsuffix", "target")
+		]]):format(tankWidth, tankFrameHeight))
+
+		RegisterStateDriver(tankTarget, "visibility", "[group:raid] show;hide")
+
+		tankTarget:ClearAllPoints()
+		tankTarget:SetPoint("TOPLEFT", tank, "TOPRIGHT", targetOffset, 0)
+	end
+
+	local tankMover = B.Mover(tank, L["TankFrame"], "TankFrame", {"TOPLEFT", UIParent, 35, -414}, tankMoverWidth, tankMoverHeight)
 	tank:ClearAllPoints()
 	tank:SetPoint("TOPLEFT", tankMover)
 end

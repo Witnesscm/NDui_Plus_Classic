@@ -19,6 +19,8 @@ end
 function S:MerInspect()
 	if not S.db["MerInspect"] then return end
 
+	if not _G.ShowInspectItemListFrame then return end
+
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
 		local frame = parent.inspectFrame
 		if not frame then return end
@@ -43,11 +45,17 @@ function S:MerInspect()
 		end
 	end)
 
+	if not _G.ClassicStatsFrameTemplate_OnShow then return end
+
 	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
 		if not self.styled then
+			B.StripTextures(self)
+			reskinFrame(self)
+
 			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
 				local category = self[key]
 				if category then
+					B.StripTextures(category)
 					local line = category:CreateTexture(nil, "ARTWORK")
 					line:SetSize(180, C.mult)
 					line:SetPoint("BOTTOM", 0, 5)
@@ -55,8 +63,6 @@ function S:MerInspect()
 				end
 			end
 
-			B.StripTextures(self)
-			reskinFrame(self)
 			self.styled = true
 		end
 	end)

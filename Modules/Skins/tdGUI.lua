@@ -1,6 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local r, g, b = DB.r, DB.g, DB.b
 
 function S:tdGUI()
 	local GUI = _G.LibStub and _G.LibStub("tdGUI-1.0", true)

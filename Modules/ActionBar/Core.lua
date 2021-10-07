@@ -62,6 +62,6 @@ local Bar = B:GetModule("Actionbar")
 -- end
 
 function AB:OnLogin()
-	AB:GlobalFade()
 	AB:MageBar()
+	AB:GlobalFade()
 end

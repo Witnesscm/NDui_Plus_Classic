@@ -177,18 +177,18 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},
-		{1, "UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
-		{1, "UnitFrames", "TankTarget", L["Target Frame"], true},
-		{3, "UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
-		{3, "UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
-		{3, "UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
+		{1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
+		{1, "C:UnitFrames", "TankTarget", L["Target Frame"], true},
+		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
+		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
+		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
 		{},
-		{1, "UnitFrames", "RaidPetFrame", HeaderTag..L["RaidPetFrame"]},
-		{3, "UnitFrames", "RaidPetWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateRaidPetSize},
-		{3, "UnitFrames", "RaidPetHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateRaidPetSize},
-		{3, "UnitFrames", "RaidPetPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateRaidPetSize},
-		{3, "UnitFrames", "RaidPetPerColumn", L["RaidPetPerColumn"], true, {1, 20, 1}},
-		{3, "UnitFrames", "RaidPetMaxColumns", L["RaidPetMaxColumns"], nil, {1, 10, 1}},
+		{1, "C:UnitFrames", "RaidPetFrame", HeaderTag..L["RaidPetFrame"]},
+		{3, "C:UnitFrames", "RaidPetWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateRaidPetSize},
+		{3, "C:UnitFrames", "RaidPetHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateRaidPetSize},
+		{3, "C:UnitFrames", "RaidPetPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateRaidPetSize},
+		{3, "C:UnitFrames", "RaidPetPerColumn", L["RaidPetPerColumn"], true, {1, 20, 1}},
+		{3, "C:UnitFrames", "RaidPetMaxColumns", L["RaidPetMaxColumns"], nil, {1, 10, 1}},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
@@ -249,6 +249,32 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 }
 
+function G.Variable(key, value, newValue)
+	local header, charKey= strsplit(":", key)
+	if header == "C" then
+		if newValue ~= nil then
+			NDuiPlusCharDB[charKey][value] = newValue
+		else
+			return NDuiPlusCharDB[charKey][value]
+		end
+	else
+		if newValue ~= nil then
+			NDuiPlusDB[key][value] = newValue
+		else
+			return NDuiPlusDB[key][value]
+		end
+	end
+end
+
+function G.GetDefaultSettings(key, value)
+	local header, charKey= strsplit(":", key)
+	if header == "C" then
+		return P.CharacterSettings[charKey][value]
+	else
+		return P.DefaultSettings[key][value]
+	end
+end
+
 local function SelectTab(i)
 	for num = 1, #G.TabList do
 		if num == i then
@@ -293,22 +319,6 @@ local function CreateTab(parent, i, name)
 	return tab
 end
 
-local function NDUI_VARIABLE(key, value, newValue)
-	if key == "BLANK" then
-		if newValue ~= nil then
-			NDuiPlusDB[value] = newValue
-		else
-			return NDuiPlusDB[value]
-		end
-	else
-		if newValue ~= nil then
-			NDuiPlusDB[key][value] = newValue
-		else
-			return NDuiPlusDB[key][value]
-		end
-	end
-end
-
 local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 20
 
@@ -325,9 +335,9 @@ local function CreateOption(i)
 				offset = offset + 35
 			end
 			cb.name = B.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
-			cb:SetChecked(NDUI_VARIABLE(key, value))
+			cb:SetChecked(G.Variable(key, value))
 			cb:SetScript("OnClick", function()
-				NDUI_VARIABLE(key, value, cb:GetChecked())
+				G.Variable(key, value, cb:GetChecked())
 				if callback then callback() end
 			end)
 			if data and type(data) == "function" then
@@ -349,12 +359,12 @@ local function CreateOption(i)
 				eb:SetPoint("TOPLEFT", 25, -offset - 25)
 				offset = offset + 70
 			end
-			eb:SetText(NDUI_VARIABLE(key, value))
+			eb:SetText(G.Variable(key, value))
 			eb:HookScript("OnEscapePressed", function()
-				eb:SetText(NDUI_VARIABLE(key, value))
+				eb:SetText(G.Variable(key, value))
 			end)
 			eb:HookScript("OnEnterPressed", function()
-				NDUI_VARIABLE(key, value, eb:GetText())
+				G.Variable(key, value, eb:GetText())
 				if callback then callback() end
 			end)
 
@@ -374,15 +384,15 @@ local function CreateOption(i)
 				offset = offset + 70
 			end
 			local s = B.CreateSlider(parent, name, min, max, step, x, y)
-			s.__default = P.DefaultSettings[key][value]
-			s:SetValue(NDUI_VARIABLE(key, value))
+			s.__default = G.GetDefaultSettings(key, value)
+			s:SetValue(G.Variable(key, value))
 			s:SetScript("OnValueChanged", function(_, v)
 				local current = B:Round(tonumber(v), 2)
-				NDUI_VARIABLE(key, value, current)
+				G.Variable(key, value, current)
 				s.value:SetText(current)
 				if callback then callback() end
 			end)
-			s.value:SetText(B:Round(NDUI_VARIABLE(key, value), 2))
+			s.value:SetText(B:Round(G.Variable(key, value), 2))
 			if tooltip then
 				s.title = L["Tips"]
 				B.AddTooltip(s, "ANCHOR_RIGHT", tooltip, "info")
@@ -401,12 +411,12 @@ local function CreateOption(i)
 				dd:SetPoint("TOPLEFT", 25, -offset - 25)
 				offset = offset + 70
 			end
-			dd.Text:SetText(data[NDUI_VARIABLE(key, value)])
+			dd.Text:SetText(data[G.Variable(key, value)])
 
 			local opt = dd.options
 			dd.button:HookScript("OnClick", function()
 				for num = 1, #data do
-					if num == NDUI_VARIABLE(key, value) then
+					if num == G.Variable(key, value) then
 						opt[num]:SetBackdropColor(1, .8, 0, .3)
 						opt[num].selected = true
 					else
@@ -417,7 +427,7 @@ local function CreateOption(i)
 			end)
 			for i in pairs(data) do
 				opt[i]:HookScript("OnClick", function()
-					NDUI_VARIABLE(key, value, i)
+					G.Variable(key, value, i)
 					if callback then callback() end
 				end)
 				if key == "TexStyle" then
@@ -437,7 +447,7 @@ local function CreateOption(i)
 			end
 		-- Colorswatch
 		elseif optType == 5 then
-			local swatch = B.CreateColorSwatch(parent, name, NDUI_VARIABLE(key, value))
+			local swatch = B.CreateColorSwatch(parent, name, G.Variable(key, value))
 			local width = 25 + (horizon or 0)*155
 			if horizon then
 				swatch:SetPoint("TOPLEFT", width, -offset + 30)
@@ -445,7 +455,7 @@ local function CreateOption(i)
 				swatch:SetPoint("TOPLEFT", width, -offset - 5)
 				offset = offset + 35
 			end
-			swatch.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
+			swatch.__default = G.GetDefaultSettings(key, value)
 		-- Button
 		elseif optType == 6 then
 			local bu = P.CreateButton(parent, 120, 24, name)

@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
 -- 宝箱开锁等级
-do 
+do
 	local Lockpicking = GetSpellInfo(1804)
 	local TooltipCache = {}
 

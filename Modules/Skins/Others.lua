@@ -6,7 +6,7 @@ local TT = B:GetModule("Tooltip")
 local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
-local select, pairs, strfind = select, pairs, string.find
+local select, pairs, ipairs, strfind = select, pairs, ipairs, string.find
 
 function S:HandyNotes_NPCs()
 	P:Delay(.5,function()
@@ -364,6 +364,46 @@ function S:BigWigs_Options()
 	TT.ReskinTooltip(_G.BigWigsOptionsTooltip)
 end
 
+function S:RestockerTBC()
+	local RS = _G.RS_ADDON
+	if not RS or not RS.MainFrame then return end
+
+	local frame = RS.MainFrame
+	P.ReskinFrame(frame)
+	B.StripTextures(frame.listInset)
+	B.ReskinScroll(frame.scrollFrame.ScrollBar)
+	B.Reskin(frame.addBtn)
+	B.ReskinInput(frame.editBox)
+	P.ReskinDropDown(frame.profileDropDownMenu)
+	UIDropDownMenu_SetWidth(frame.profileDropDownMenu, 120)
+
+	for _, child in pairs({frame:GetChildren()}) do
+		if child:GetObjectType() == "CheckButton" then
+			B.ReskinCheck(child)
+		end
+	end
+
+	local function reskinItemFrame(item)
+		for _, child in pairs({item:GetChildren()}) do
+			local objectType = child:GetObjectType()
+			if objectType == "Button" then
+				B.ReskinClose(child)
+			elseif objectType == "EditBox" then
+				P.ReskinInput(child)
+				child.bg:SetPoint("BOTTOMRIGHT", -4, 0)
+			end
+		end
+	end
+
+	for _, item in ipairs(RS.framepool) do
+		reskinItemFrame(item)
+	end
+
+	hooksecurefunc(RS, "addListFrame", function()
+		reskinItemFrame(RS.framepool[#RS.framepool])
+	end)
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -377,6 +417,7 @@ S:RegisterSkin("xCT+", S.xCT)
 S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
+S:RegisterSkin("RestockerTBC", S.RestockerTBC)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

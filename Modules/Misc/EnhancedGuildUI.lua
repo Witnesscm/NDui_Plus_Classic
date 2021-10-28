@@ -106,6 +106,8 @@ local function ToggleGuildUI(texture)
 end
 
 local function ExtendFriendsFrame(extend)
+	if not M.db["GuildExtended"] then return end
+
 	FriendsFrame:SetWidth(extend and UIWidth or PANEL_DEFAULT_WIDTH)
 end
 

@@ -6,7 +6,7 @@ local M = B:GetModule("Misc")
 local _G = getfenv(0)
 local tinsert, ipairs = table.insert, ipairs
 
--- Compatible with MerInspect, alaGearMan.
+-- Compatible with MerInspect, alaGearMan, CharacterStatsTBC.
 
 local addonFrames = {}
 
@@ -39,6 +39,14 @@ function S:CharacterPanel_MerInspect()
 				S:UpdatePanelsPosition()
 			end
 		end)
+	end
+end
+
+-- CharacterStatsTBC
+function S:CharacterPanel_CharacterStatsTBC()
+	local sideStatsFrame = _G.CSC_SideStatsFrame
+	if sideStatsFrame then
+		tinsert(addonFrames, {frame = sideStatsFrame, order = 2})
 	end
 end
 
@@ -80,4 +88,5 @@ end
 
 S:RegisterSkin("MerInspect", S.CharacterPanel_MerInspect)
 S:RegisterSkin("alaGearMan", S.CharacterPanel_alaGearMan)
+S:RegisterSkin("CharacterStatsTBC", S.CharacterPanel_CharacterStatsTBC)
 S:RegisterSkin("CharacterPanel")

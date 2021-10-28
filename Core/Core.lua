@@ -111,6 +111,7 @@ P.DefaultSettings = {
 		Skillet = true,
 		tdInspect = true,
 		tdAuction = true,
+		Auctionator = true,
 		HideToggle = false,
 		CategoryArrow = false,
 	},

@@ -23,24 +23,25 @@ local function reskinDropDown(dropdown)
 	B.CreateGradient(bg)
 end
 
-local function reskinQRTooltip()
+local function reskinQRTooltip(self)
+	B.StripTextures(self)
+	B.SetBD(self, .7)
+	B.ReskinClose(self.Close)
+	self.Close:SetHitRectInsets(0, 0, 0, 0)
+end
+
+local function reskinBrowserQRTooltip()
 	local tooltip = mainFrame.Browser and mainFrame.Browser.QRTooltip
 	if tooltip and not tooltip.styled then
-		B.StripTextures(tooltip)
-		B.SetBD(tooltip, .7)
-		B.ReskinClose(tooltip.Close)
-		tooltip.Close:SetHitRectInsets(0, 0, 0, 0)
+		reskinQRTooltip(tooltip)
 		tooltip.styled = true
 	end
 end
 
-local function reskinLeaderTooltip(self)
-	local tooltip = self.QRApplyLeaderTooltip
+local function reskinLeaderQRTooltip(self)
+	local tooltip = self.QRApplyLeaderTooltip or mainFrame.Browser and mainFrame.Browser.ApplyLeaderBtn and mainFrame.Browser.ApplyLeaderBtn.QRApplyLeaderTooltip
 	if tooltip and not tooltip.styled then
-		B.StripTextures(tooltip)
-		B.SetBD(tooltip, .7)
-		B.ReskinClose(tooltip.Close)
-		tooltip.Close:SetHitRectInsets(0, 0, 0, 0)
+		reskinQRTooltip(tooltip)
 		tooltip.styled = true
 	end
 end
@@ -241,7 +242,7 @@ function S:MeetingHorn()
 			end
 
 			if button.QRIcon then
-				button.QRIcon:HookScript("PostClick", reskinQRTooltip)
+				button.QRIcon:HookScript("PostClick", reskinBrowserQRTooltip)
 			end
 
 			if button.Text and button.Creature then
@@ -260,10 +261,12 @@ function S:MeetingHorn()
 	-- Browser
 	local Browser = mainFrame.Browser
 	if Browser then
-		local ApplyLeaderBtn = Browser.ApplyLeaderBtn
-		if ApplyLeaderBtn then
-			B.Reskin(ApplyLeaderBtn)
-			ApplyLeaderBtn:HookScript("PostClick", reskinLeaderTooltip)
+		for _, key in ipairs({"ApplyLeaderBtn", "RechargeBtn",}) do
+			local bu = Browser[key]
+			if bu then
+				B.Reskin(bu)
+				bu:HookScript("PostClick", reskinLeaderQRTooltip)
+			end
 		end
 
 		local progressBar = Browser.ProgressBar
@@ -378,7 +381,7 @@ function S:MeetingHorn()
 					local ApplyLeaderBtn = subFrame.ApplyLeaderBtn
 					if ApplyLeaderBtn then
 						B.Reskin(ApplyLeaderBtn)
-						ApplyLeaderBtn:HookScript("PostClick", reskinLeaderTooltip)
+						ApplyLeaderBtn:HookScript("PostClick", reskinLeaderQRTooltip)
 					end
 				end
 			end

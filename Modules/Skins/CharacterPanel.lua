@@ -46,6 +46,10 @@ end
 function S:CharacterPanel_CharacterStatsTBC()
 	local sideStatsFrame = _G.CSC_SideStatsFrame
 	if sideStatsFrame then
+		sideStatsFrame:SetHeight(422)
+		sideStatsFrame:ClearAllPoints()
+		sideStatsFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32, -15-C.mult)
+
 		tinsert(addonFrames, {frame = sideStatsFrame, order = 2})
 	end
 end

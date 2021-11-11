@@ -329,12 +329,12 @@ end
 function S:Auctionator()
 	if not S.db["Auctionator"] then return end
 
-	-- Auctionator ClassicFix
+	-- Auctionator (ClassicFix)
 	if _G.Atr_Init then
 		hooksecurefunc("Atr_Init", AuctionatorSkin_ClassicFix)
 	end
 
-	-- Auctionator Retail
+	-- Auctionator (Retail)
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not Auctionator.Events or not Auctionator.Events.OnAuctionHouseShow then return end
 

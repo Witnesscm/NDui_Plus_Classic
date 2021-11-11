@@ -2,6 +2,15 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.1.8
+TBC
+[易用性] 角色附加面板兼容支持CharacterStatsTBC
+[美化] 添加Auctionator正式版美化
+[美化] 添加Restocker美化
+[美化] 更新MeetingHorn美化
+Classic
+[美化] 更新部分插件美化
+
 v2.1.7
 [单位框体] 坦克和宠物框体相关设置更改为角色储存，需要重新进行设定
 [美化] 修复部分美化

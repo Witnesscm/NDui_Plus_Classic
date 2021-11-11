@@ -76,12 +76,6 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	-- for _, key in pairs({"NWBCopyDiscordButton", "NWBShowStatsButton", "NWBShowStatsAllButton", "NWBtimerLogMergeLayersButton"}) do
-		-- local check = _G[key]
-		-- if check then
-			-- B.ReskinCheck(check)
-		-- end
-	-- end
 	hooksecurefunc(NWB, "createShowStatsButton", function()
 		B.ReskinCheck(NWB.showStatsButton)
 		B.ReskinCheck(NWB.showStatsAllButton)
@@ -127,13 +121,13 @@ function S:NovaWorldBuffs()
 		if tooltip then TT.ReskinTooltip(tooltip) end
 		if timer then
 			B.StripTextures(timer)
-			timer.Background:SetAlpha(0)
-			timer.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3])
+			if timer.Background then timer.Background:SetAlpha(0) end
+			if timer.fs then timer.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3]) end
 		end
 		if noLayer then
 			B.StripTextures(noLayer)
-			noLayer.Background:SetAlpha(0)
-			noLayer.fs:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
+			if noLayer.Background then noLayer.Background:SetAlpha(0) end
+			if noLayer.fs then noLayer.fs:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
 		end
 		if fs1 then fs1:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
 		if fs2 then fs2:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end

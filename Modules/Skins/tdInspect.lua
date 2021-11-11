@@ -13,32 +13,32 @@ local gemSlotBlackList = {
 local tip = B.ScanTip
 
 function S:ItemLevel_UpdateGemInfo(link, index, slotFrame, refresh)
-	if C.db["Misc"]["GemNEnchant"] and not gemSlotBlackList[index] then
-		tip:SetOwner(UIParent, "ANCHOR_NONE")
-		tip:SetHyperlink(link)
+	if P.IsClassic() or not C.db["Misc"]["GemNEnchant"] or gemSlotBlackList[index] then return end
 
-		if not tip.slotInfo then tip.slotInfo = {} else wipe(tip.slotInfo) end
+	tip:SetOwner(UIParent, "ANCHOR_NONE")
+	tip:SetHyperlink(link)
 
-		tip.slotInfo.gems = B:InspectItemTextures()
+	if not tip.slotInfo then tip.slotInfo = {} else wipe(tip.slotInfo) end
 
-		if next(tip.slotInfo.gems) then
-			local gemStep = 1
-			for i = 1, 5 do
-				local texture = slotFrame["textureIcon"..i]
-				local bg = texture.bg
-				local gem = tip.slotInfo.gems[gemStep]
-				if gem then
-					texture:SetTexture(gem)
-					bg:SetBackdropBorderColor(0, 0, 0)
-					bg:Show()
+	tip.slotInfo.gems = B:InspectItemTextures()
 
-					gemStep = gemStep + 1
-				end
+	if next(tip.slotInfo.gems) then
+		local gemStep = 1
+		for i = 1, 5 do
+			local texture = slotFrame["textureIcon"..i]
+			local bg = texture.bg
+			local gem = tip.slotInfo.gems[gemStep]
+			if gem then
+				texture:SetTexture(gem)
+				bg:SetBackdropBorderColor(0, 0, 0)
+				bg:Show()
+
+				gemStep = gemStep + 1
 			end
+		end
 
-			if not refresh then
-				P:Delay(.1, S.ItemLevel_UpdateGemInfo, self, link, index, slotFrame, true)
-			end
+		if not refresh then
+			P:Delay(.1, S.ItemLevel_UpdateGemInfo, self, link, index, slotFrame, true)
 		end
 	end
 end
@@ -53,11 +53,6 @@ function S:tdInspect()
 	local UIInspectFrame = tdInspect:GetClass("UI.InspectFrame")
 
 	hooksecurefunc(tdInspect, "SetupUI", function()
-		local tab = _G.InspectFrameTab4
-		if tab then
-			B.ReskinTab(tab)
-		end
-
 		B.ReskinCheck(InspectPaperDollFrame.ToggleButton)
 		InspectPaperDollFrame.RaceBackground:SetAlpha(0)
 		InspectPaperDollFrame.LastUpdate:ClearAllPoints()
@@ -102,6 +97,10 @@ function S:tdInspect()
 		for _, item in pairs(equipButtons) do
 			P.ReskinFont(item.Name)
 		end
+	end)
+
+	hooksecurefunc(UIInspectFrame, "AddTab", function(self)
+		B.ReskinTab(_G["InspectFrameTab".. _G.InspectFrame.numTabs])
 	end)
 
 	hooksecurefunc(UISlotItem, "Update", function(self)

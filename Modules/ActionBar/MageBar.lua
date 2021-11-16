@@ -340,13 +340,15 @@ function AB:UpdateMageBar()
 		end
 	end
 
-	AB:UpdateMageBarSize(num)
+	AB.NumMageButons = num
+	AB:UpdateMageBarSize()
 end
 
-function AB:UpdateMageBarSize(num)
+function AB:UpdateMageBarSize()
 	if not mageBar then return end
 
 	local size = AB.db["MageBarSize"]
+	local num = AB.NumMageButons
 	local width, height = num*size + (num-1)*margin + 2*padding, size + 2*padding
 
 	if AB.db["MageBarVertical"] then

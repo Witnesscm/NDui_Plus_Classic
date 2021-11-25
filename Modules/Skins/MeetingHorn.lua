@@ -230,11 +230,15 @@ function S:MeetingHorn()
 	hooksecurefunc(ListView, "GetButton", function(self, index)
 		local button = self._buttons[index]
 		if button and not button.styled then
-			button:DisableDrawLayer("BACKGROUND")
+			B.StripTextures(button, 0)
 			button:SetHighlightTexture(DB.bdTex)
 			local hl = button:GetHighlightTexture()
 			hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
 			hl:SetInside()
+
+			if button.Icon then
+				button.Icon:SetAlpha(1)
+			end
 
 			if button.Signup then
 				B.Reskin(button.Signup)

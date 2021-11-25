@@ -230,7 +230,7 @@ function S:MeetingHorn()
 	hooksecurefunc(ListView, "GetButton", function(self, index)
 		local button = self._buttons[index]
 		if button and not button.styled then
-			B.StripTextures(button)
+			button:DisableDrawLayer("BACKGROUND")
 			button:SetHighlightTexture(DB.bdTex)
 			local hl = button:GetHighlightTexture()
 			hl:SetVertexColor(DB.r, DB.g, DB.b, .25)

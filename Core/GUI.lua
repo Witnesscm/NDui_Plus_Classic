@@ -63,24 +63,12 @@ local function openKeyBindingFrame()
 	end
 end
 
-local function updateUFsNameText()
-	P:GetModule("UnitFrames"):UpdateNameText()
-end
-
-local function updateUFsAurasFilter()
-	P:GetModule("UnitFrames"):UpdateAurasFilter()
-end
-
 local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
 
 local function updateTankSize()
 	P:GetModule("UnitFrames"):UpdateTankSize()
-end
-
-local function updateRaidPetSize()
-	P:GetModule("UnitFrames"):UpdateRaidPetSize()
 end
 
 local function updateChatAutoShow()
@@ -172,9 +160,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{3, "Bags", "IconSize", L["BagsIconSize"], true, {30, 42, 1}},
 	},
 	[3] = {
-		{1, "UnitFrames", "NameColor", L["NameColor"].."*", nil, nil, updateUFsNameText, L["NameColorTip"]},
-		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", true, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
-		{},
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},
 		{1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
@@ -182,13 +167,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
 		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
 		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
-		{},
-		{1, "C:UnitFrames", "RaidPetFrame", HeaderTag..L["RaidPetFrame"]},
-		{3, "C:UnitFrames", "RaidPetWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateRaidPetSize},
-		{3, "C:UnitFrames", "RaidPetHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateRaidPetSize},
-		{3, "C:UnitFrames", "RaidPetPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateRaidPetSize},
-		{3, "C:UnitFrames", "RaidPetPerColumn", L["RaidPetPerColumn"], true, {1, 20, 1}},
-		{3, "C:UnitFrames", "RaidPetMaxColumns", L["RaidPetMaxColumns"], nil, {1, 10, 1}},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
@@ -449,11 +427,10 @@ local function CreateOption(i)
 		-- Colorswatch
 		elseif optType == 5 then
 			local swatch = B.CreateColorSwatch(parent, name, G.Variable(key, value))
-			local width = 25 + (horizon or 0)*155
 			if horizon then
-				swatch:SetPoint("TOPLEFT", width, -offset + 30)
+				swatch:SetPoint("TOPLEFT", 254, -offset + 30)
 			else
-				swatch:SetPoint("TOPLEFT", width, -offset - 5)
+				swatch:SetPoint("TOPLEFT", 24, -offset - 5)
 				offset = offset + 35
 			end
 			swatch.__default = G.GetDefaultSettings(key, value)

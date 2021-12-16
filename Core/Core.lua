@@ -50,8 +50,6 @@ P.DefaultSettings = {
 		IconSize = 34,
 	},
 	UnitFrames= {
-		NameColor = false,
-		OnlyPlayerDebuff = false,
 		Fader = false,
 		Hover = true,
 		Combat = true,
@@ -132,12 +130,6 @@ P.CharacterSettings = {
 		TankHeight = 30,
 		TankPowerHeight = 2,
 		TankTarget = false,
-		RaidPetFrame = false,
-		RaidPetWidth = 80,
-		RaidPetHeight = 25,
-		RaidPetPowerHeight = 2,
-		RaidPetPerColumn = 5,
-		RaidPetMaxColumns = 2,
 	},
 }
 
@@ -199,6 +191,10 @@ end
 
 function P:Print(...)
 	_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r " .. format(...))
+end
+
+function P:Error(...)
+	_G.UIErrorsFrame:AddMessage("|cFF70B8FF"..format(...).."|r ")
 end
 
 function P:VersionCheck_Compare(new, old)

@@ -4,6 +4,8 @@ local CH = P:GetModule("Chat")
 ------------------------
 -- Credit: BasicChatMods
 ------------------------
+local gsub = string.gsub
+
 function CH:UpdateGroupInfo()
 	wipe(CH.GroupNames)
 
@@ -17,7 +19,7 @@ function CH:UpdateGroupInfo()
 	end
 end
 
-local function addRaidIndex(fullName, nameString, nameText)
+local function addRaidIndex(fullName, info, nameText)
 	local name = Ambiguate(fullName, "none")
 	local group = name and CH.GroupNames[name]
 
@@ -25,12 +27,12 @@ local function addRaidIndex(fullName, nameString, nameText)
 		nameText = nameText..":"..group
 	end
 
-	return "|Hplayer:"..fullName..nameString.."["..nameText.."]|h"
+	return "|Hplayer:"..fullName..info.."|h["..nameText.."]|h"
 end
 
 function CH:UpdateRaidIndex(text, ...)
 	if IsInRaid() and CH.db["RaidIndex"] then
-		text = text:gsub("|Hplayer:([^:|]+)([^%[]+)%[([^%]]+)%]|h", addRaidIndex)
+		text = gsub(text, "|Hplayer:([^:]+)([^|Hh]+)|h%[([^:]+)%]|h", addRaidIndex)
 	end
 
 	return self.origAddMsg(self, text, ...)

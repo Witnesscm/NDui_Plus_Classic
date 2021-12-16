@@ -22,7 +22,5 @@
 	<Include file="Plugins\Plugins.xml"/>
 	<Script file="Core.lua"/>
 	<Script file="Fader.lua"/>
-	<Script file="Auras.lua"/>
-	<Script file="RaidPets.lua"/>
 	<Script file="Tank.lua"/>
 </Ui>

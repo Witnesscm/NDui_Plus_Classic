@@ -2,7 +2,6 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 local NS = B:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
@@ -113,7 +112,7 @@ function S:BagSync()
 					B.ReskinClose(child)
 				end
 			end
-			TT.ReskinTooltip(tip)
+			P.ReskinTooltip(tip)
 		end
 	end)
 
@@ -186,7 +185,7 @@ function S:buffOmat()
 	B.SetBD(frame)
 	B.Reskin(BomC_ListTab_Button)
 	B.ReskinScroll(BomC_SpellTab_Scroll.ScrollBar)
-	TT.ReskinTooltip(BomC_Tooltip)
+	P.ReskinTooltip(BomC_Tooltip)
 end
 
 function S:BuyEmAllClassic()
@@ -361,7 +360,7 @@ function S:TotemTimers()
 end
 
 function S:BigWigs_Options()
-	TT.ReskinTooltip(_G.BigWigsOptionsTooltip)
+	P.ReskinTooltip(_G.BigWigsOptionsTooltip)
 end
 
 function S:RestockerTBC()
@@ -404,6 +403,14 @@ function S:RestockerTBC()
 	end)
 end
 
+function S:RaidLedger()
+	for _, child in pairs {_G.RaidFrame:GetChildren()} do
+		if child:GetObjectType() == "Button" and child:GetText() and child:GetText() ~= "" and not child.__bg then
+			B.Reskin(child)
+		end
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -418,6 +425,7 @@ S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("RestockerTBC", S.RestockerTBC)
+S:RegisterSkin("RaidLedger", S.RaidLedger)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

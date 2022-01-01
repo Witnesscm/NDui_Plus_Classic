@@ -7,7 +7,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 local cr, cg, cb = DB.r, DB.g, DB.b
-local TT = B:GetModule("Tooltip")
 
 -- versions of AceGUI and AceConfigDialog.
 local minorGUI, minorConfigDialog = 36, 76
@@ -502,7 +501,7 @@ end
 function S:Ace3_MetaIndex(k, v)
 	if k == "tooltip" then
 		rawset(self, k, v)
-		TT.ReskinTooltip(v)
+		P.ReskinTooltip(v)
 	elseif k == "popup" then
 		rawset(self, k, v)
 		v:HookScript("OnShow", S.Ace3_StylePopup)
@@ -555,7 +554,7 @@ function S:Ace3_SkinTooltip(lib, minor) -- lib: AceConfigDialog or AceGUI
 	if not lib.tooltip then
 		S:Ace3_MetaTable(lib)
 	else
-		TT.ReskinTooltip(lib.tooltip)
+		P.ReskinTooltip(lib.tooltip)
 
 		if lib.popup and not lib.popup.IsHooked then -- StaticPopup
 			lib.popup:HookScript("OnShow", S.Ace3_StylePopup)

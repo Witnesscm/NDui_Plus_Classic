@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
 local next = next
@@ -72,7 +71,7 @@ function S:NovaWorldBuffs()
 	for _, tooltip in next, tooltips do
 		local tip = _G[tooltip]
 		if tip then
-			TT.ReskinTooltip(tip)
+			P.ReskinTooltip(tip)
 		end
 	end
 
@@ -103,7 +102,7 @@ function S:NovaWorldBuffs()
 	local minimap = _G.MinimapLayerFrame
 	if minimap then
 		B.StripTextures(minimap)
-		TT.ReskinTooltip(minimap.tooltip)
+		P.ReskinTooltip(minimap.tooltip)
 		minimap.fs:SetFont(DB.Font[1], DB.Font[2], DB.Font[3])
 		minimap.fs.SetFont = B.Dummy
 	end
@@ -118,7 +117,7 @@ function S:NovaWorldBuffs()
 		local fsLayer = frame.fsLayer
 
 		if icon and not isTower then B.ReskinIcon(icon) end
-		if tooltip then TT.ReskinTooltip(tooltip) end
+		if tooltip then P.ReskinTooltip(tooltip) end
 		if timer then
 			B.StripTextures(timer)
 			if timer.Background then timer.Background:SetAlpha(0) end
@@ -170,7 +169,7 @@ function S:NovaWorldBuffs()
 		local button = _G["NWBDisableLayerButton" .. count]
 		if button then
 			B.Reskin(button)
-			TT.ReskinTooltip(button.tooltip)
+			P.ReskinTooltip(button.tooltip)
 		end
 	end)
 
@@ -201,7 +200,7 @@ function S:NovaWorldBuffs()
 			end
 
 			if dailyMap.tooltip then
-				TT.ReskinTooltip(dailyMap.tooltip)
+				P.ReskinTooltip(dailyMap.tooltip)
 			end
 		end
 	end

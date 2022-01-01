@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 local cr, cg, cb = DB.r, DB.g, DB.b
 
 local function reskinDropDown(self)
@@ -197,8 +196,8 @@ function S:SkilletClassic()
 		B.ReskinClose(SkilletNotesCloseButton)
 
 		-- Tooltip
-		TT.ReskinTooltip(SkilletSkillTooltip)
-		TT.ReskinTooltip(SkilletTradeskillTooltip)
+		P.ReskinTooltip(SkilletSkillTooltip)
+		P.ReskinTooltip(SkilletTradeskillTooltip)
 	end
 	hooksecurefunc(_G.Skillet, "CreateTradeSkillWindow", reskinFunc)
 

@@ -3,43 +3,112 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local next = next
+
+local function reskinFont(self, size)
+	if not self then P:Debug("Unknown NWB FontString") return end
+
+	local oldSize = select(2, self:GetFont())
+	size = size or oldSize
+	self:SetFont(DB.Font[1], size, DB.Font[3])
+	self:SetShadowColor(0, 0, 0, 0)
+end
+
+local function reskinTooltip(self)
+	if not self then P:Debug("Unknown NWB Tooltip") return end
+
+	P.ReskinTooltip(self)
+	if self.fs then reskinFont(self.fs) end
+end
+
+local function reskinTimer(self)
+	if not self then P:Debug("Unknown NWB Timer") return end
+
+	B.StripTextures(self)
+	if self.Background then self.Background:SetAlpha(0) end
+
+	for _, key in ipairs({"fs", "fs1", "fs2"}) do
+		local fs = self[key]
+		if fs then
+			reskinFont(fs)
+		end
+	end
+end
+
+local function reskinCheck(self, tbl)
+	for _, key in ipairs(tbl) do
+		local check = self[key]
+		if check then
+			B.ReskinCheck(check)
+		else
+			P:Debug("Unknown NWB Check: %s", key)
+		end
+	end
+end
+
+local function reskinMarker(frame, isTower)
+	local icon = frame.texture
+	local tooltip = frame.tooltip
+
+	if icon and not isTower then B.ReskinIcon(icon) end
+	if tooltip then reskinTooltip(tooltip) end
+
+	for _, key in ipairs({"timerFrame", "noLayerFrame"}) do
+		local timer = frame[key]
+		if timer then
+			reskinTimer(timer)
+		end
+	end
+
+	for _, key in ipairs({"fs", "fs1", "fs2", "fsLayer"}) do
+		local fs = frame[key]
+		if fs then
+			reskinFont(fs)
+		end
+	end
+end
+
+local function reskinMarkers(tbl)
+	for k, _ in pairs(tbl) do
+		local mark = _G[k.."NWB"]
+		if mark then
+			reskinMarker(mark)
+		end
+
+		local mini = _G[k.."NWBMini"]
+		if mini then
+			reskinMarker(mini)
+		end
+	end
+end
 
 function S:NovaWorldBuffs()
 	local NWB = LibStub("AceAddon-3.0"):GetAddon("NovaWorldBuffs")
 	if not NWB then return end
 
-	local frames = {
-		"NWBlayerFrame",
-		"NWBLayerMapFrame",
-		"NWBbuffListFrame",
-		"NWBVersionFrame",
-		"NWBCopyFrame",
-		"NWBTimerLogFrame",
-		"NWBLFrame",
-	}
-	for _, frame in next, frames do
-		local f = _G[frame]
-		if f then
-			B.StripTextures(f)
-			B.SetBD(f, nil, -12, 12, 12, -12)
+	for _, key in ipairs({"NWBlayerFrame", "NWBLayerMapFrame", "NWBbuffListFrame", "NWBVersionFrame", "NWBCopyFrame", "NWBTimerLogFrame", "NWBLFrame"}) do
+		local frame = _G[key]
+		if frame then
+			B.StripTextures(frame)
+			B.SetBD(frame, nil, -12, 12, 12, -12)
 
-			local close = _G[frame.."Close"]
+			local close = _G[key.."Close"]
 			if close then
 				B.ReskinClose(close, 0, 0)
 			end
 
-			local scroll = _G[frame.."ScrollBar"]
+			local scroll = _G[key.."ScrollBar"]
 			if scroll then
 				B.ReskinScroll(scroll)
-				scroll:ClearAllPoints();
-				scroll:SetPoint("TOPLEFT", f, "TOPRIGHT", -13, -32);
-				scroll:SetPoint("BOTTOMLEFT", f, "BOTTOMRIGHT", -13, 9);
+				scroll:ClearAllPoints()
+				scroll:SetPoint("TOPLEFT", frame, "TOPRIGHT", -13, -32)
+				scroll:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", -13, 9)
 			end
 		end
 	end
 
-	B.StripTextures(NWBCopyDragFrame)
+	if _G.NWBCopyDragFrame then
+		B.StripTextures(_G.NWBCopyDragFrame)
+	end
 
 	local buttons = {
 		"NWBbuffListFrameConfButton",
@@ -54,95 +123,50 @@ function S:NovaWorldBuffs()
 		"NWBGuildLayersButton",
 		"NWBLFrameRefreshButton",
 	}
-	for _, button in next, buttons do
-		local bu = _G[button]
+
+	for _, key in ipairs(buttons) do
+		local bu = _G[key]
 		if bu then
 			B.Reskin(bu)
+			if bu.tooltip then reskinTooltip(bu.tooltip) end
 		end
 	end
 
-	local tooltips = {
-		"NWBbuffListDragTooltip",
-		"NWBlayerDragTooltip",
-		"NWBLayerMapDragTooltip",
-		"NWBVersionDragTooltip",
-		"NWBLDragTooltip",
-	}
-	for _, tooltip in next, tooltips do
-		local tip = _G[tooltip]
+	for _, key in ipairs({"NWBbuffListDragTooltip", "NWBlayerDragTooltip", "NWBLayerMapDragTooltip", "NWBVersionDragTooltip", "NWBLDragTooltip"}) do
+		local tip = _G[key]
 		if tip then
-			P.ReskinTooltip(tip)
+			reskinTooltip(tip)
 		end
 	end
 
 	hooksecurefunc(NWB, "createShowStatsButton", function()
-		B.ReskinCheck(NWB.showStatsButton)
-		B.ReskinCheck(NWB.showStatsAllButton)
+		reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
 	end)
 
 	hooksecurefunc(NWB, "createCopyFormatButton", function()
-		B.ReskinCheck(NWB.copyDiscordButton)
+		reskinCheck(NWB, {"copyDiscordButton"})
 	end)
 
 	hooksecurefunc(NWB, "createDmfHelperButtons", function()
-		B.ReskinCheck(NWB.dmfChatCountdown)
-		B.ReskinCheck(NWB.dmfAutoResButton)
+		reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
 	end)
 
 	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
-		B.ReskinCheck(NWB.timerLogShowRendButton)
-		B.ReskinCheck(NWB.timerLogShowOnyButton)
-		B.ReskinCheck(NWB.timerLogShowNefButton)
+		reskinCheck(NWB, {"timerLogShowRendButton", "timerLogShowOnyButton", "timerLogShowNefButton"})
 	end)
 
 	hooksecurefunc(NWB, "createTimerLogMergeLayersCheckbox", function()
-		B.ReskinCheck(NWB.timerLogMergeLayersButton)
+		reskinCheck(NWB, {"timerLogMergeLayersButton"})
 	end)
 
 	local minimap = _G.MinimapLayerFrame
 	if minimap then
 		B.StripTextures(minimap)
-		P.ReskinTooltip(minimap.tooltip)
-		minimap.fs:SetFont(DB.Font[1], DB.Font[2], DB.Font[3])
-		minimap.fs.SetFont = B.Dummy
-	end
+		reskinTooltip(minimap.tooltip)
 
-	local function reskinMarker(frame, isTower)
-		local icon = frame.texture
-		local tooltip = frame.tooltip
-		local timer = frame.timerFrame
-		local noLayer = frame.noLayerFrame
-		local fs1 = frame.fs
-		local fs2 = frame.fs2
-		local fsLayer = frame.fsLayer
-
-		if icon and not isTower then B.ReskinIcon(icon) end
-		if tooltip then P.ReskinTooltip(tooltip) end
-		if timer then
-			B.StripTextures(timer)
-			if timer.Background then timer.Background:SetAlpha(0) end
-			if timer.fs then timer.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3]) end
-		end
-		if noLayer then
-			B.StripTextures(noLayer)
-			if noLayer.Background then noLayer.Background:SetAlpha(0) end
-			if noLayer.fs then noLayer.fs:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
-		end
-		if fs1 then fs1:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
-		if fs2 then fs2:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
-		if fsLayer then fsLayer:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3]) end
-	end
-
-	local function reskinMarkers(tbl)
-		for k, v in pairs(tbl) do
-			local mark = _G[k.."NWB"]
-			if mark then
-				reskinMarker(mark)
-			end
-			local mini = _G[k.."NWBMini"]
-			if mini then
-				reskinMarker(mini)
-			end
+		if minimap.fs then
+			minimap.fs:SetFont(DB.Font[1], DB.Font[2], DB.Font[3])
+			minimap.fs.SetFont = B.Dummy
 		end
 	end
 
@@ -154,8 +178,8 @@ function S:NovaWorldBuffs()
 	--reskinMarker(_G.nefWorldMapNoLayerFrame)
 
 	hooksecurefunc(NWB, "refreshWorldbuffMarkers", function()
-		for layer, data in NWB:pairsByKeys(NWB.data.layers) do
-			for k, v in pairs(NWB.worldBuffMapMarkerTypes) do
+		for layer, _ in NWB:pairsByKeys(NWB.data.layers) do
+			for k, _ in pairs(NWB.worldBuffMapMarkerTypes) do
 				local mark = _G[k..layer.."NWBWorldMap"]
 				if mark and not mark.styled then
 					reskinMarker(mark)
@@ -169,22 +193,21 @@ function S:NovaWorldBuffs()
 		local button = _G["NWBDisableLayerButton" .. count]
 		if button then
 			B.Reskin(button)
-			P.ReskinTooltip(button.tooltip)
+			reskinTooltip(button.tooltip)
 		end
 	end)
 
 	hooksecurefunc(NWB, "updateFelwoodWorldmapMarker", function(_, type)
 		local button = _G[type .. "NWB"]
 		if button then
-			local i = 2
-			local timer = button["timerFrame"..i]
+			local i = 1
+			local timer = i == 1 and button.timerFrame or button["timerFrame"..i]
 			while timer do
 				if not timer.styled then
-					B.StripTextures(timer)
-					timer.Background:SetAlpha(0)
-					timer.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3])
+					reskinTimer(timer)
 					timer.styled = true
 				end
+
 				i = i + 1
 				timer = button["timerFrame"..i]
 			end
@@ -196,13 +219,15 @@ function S:NovaWorldBuffs()
 		if dailyMap then
 			if dailyMap.textFrame and dailyMap.textFrame.fs then
 				B.StripTextures(dailyMap.textFrame)
-				dailyMap.textFrame.fs:SetFont(DB.Font[1], DB.Font[2]+1, DB.Font[3])
+				reskinFont(dailyMap.textFrame.fs)
 			end
 
-			if dailyMap.tooltip then
-				P.ReskinTooltip(dailyMap.tooltip)
-			end
+			reskinTooltip(dailyMap.tooltip)
 		end
+	end
+
+	if _G["towersNWBTerokkarMap"] then
+		reskinMarker(_G["towersNWBTerokkarMap"], true)
 	end
 
 	local function reskinNWBTerokkarMaps()
@@ -213,10 +238,6 @@ function S:NovaWorldBuffs()
 				frame.styled = true
 			end
 		end
-	end
-
-	if _G["towersNWBTerokkarMap"] then
-		reskinMarker(_G["towersNWBTerokkarMap"], true)
 	end
 
 	reskinNWBTerokkarMaps()

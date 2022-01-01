@@ -268,6 +268,7 @@ do
 
 		if not self.tipStyled then
 			if self.SetBackdrop then self:SetBackdrop(nil) end
+			if self.NineSlice then self.NineSlice:SetAlpha(0) end
 			self:DisableDrawLayer("BACKGROUND")
 			self.bg = B.SetBD(self, a or .7)
 			self.bg:SetInside(self)

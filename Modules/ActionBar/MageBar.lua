@@ -294,7 +294,7 @@ function AB:UpdateMageBar()
 	local node
 	for index, info in ipairs(mageSpellData) do
 		if AB.db["MageBar"..info.name] then
-			node= {name = info.name, index = index, subSpell = {}}
+			node = {name = info.name, index = index, subSpell = {}}
 
 			for _, spellID in ipairs(info.spell) do
 				if IsPlayerSpell(spellID) then

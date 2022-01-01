@@ -2,7 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local module = P:RegisterModule("Bags")
 
-local strfind, strmatch = string.find, string.match
+local strfind = string.find
 ----------------------------
 -- Credit: tdBag2
 ----------------------------
@@ -54,7 +54,7 @@ local function parseItem(link, count, timeout)
 			link = link:match("|H%l+:([%d:]+)")
 		end
 
-		local count = count and count > 1 and count or nil
+		count = count and count > 1 and count or nil
 		if count or timeout then
 			link = link .. ";" .. (count or "")
 		end
@@ -76,10 +76,10 @@ local function getInfo(itemData)
 		data.icon = GetItemIcon(data.id)
 		data.timeout = tonumber(timeout)
 
-		local name, link, quality = GetItemInfo(data.link)
+		local name, itemLink, quality = GetItemInfo(data.link)
 		if name then
 			data.name = name
-			data.link = link
+			data.link = itemLink
 			data.quality = quality
 		else
 			data.noCache = true
@@ -219,8 +219,8 @@ local function ItemButton_Free(self)
 end
 
 local function UpdateItemButtonInfo(_, itemId)
-	for bag, buttons in pairs(ItemButtons) do
-		for slot, itemButton in pairs(buttons) do
+	for _, buttons in pairs(ItemButtons) do
+		for _, itemButton in pairs(buttons) do
 			if itemButton:IsShown() and itemButton.info and itemButton.info.id and itemButton.info.id == itemId then
 				itemButton:UpdateInfo()
 			end
@@ -376,8 +376,8 @@ local function Filter(button, text)
 end
 
 local function ApplyToButtons(text)
-	for bag, buttons in pairs(ItemButtons) do
-		for slot, itemButton in pairs(buttons) do
+	for _, buttons in pairs(ItemButtons) do
+		for _, itemButton in pairs(buttons) do
 			if itemButton:IsShown() then
 				Filter(itemButton, text)
 			end
@@ -450,14 +450,11 @@ end
 local function CreateCloseButton(parent)
 	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\RAIDFRAME\\ReadyCheck-NotReady")
 	bu:RegisterForClicks("AnyUp")
-	bu:SetScript("OnClick", function(self, btn)
-		if btn == "RightButton" then
-			ToggleAllBags()
-		end
+	bu:SetScript("OnClick", function()
 		parent:Hide()
 	end)
 	bu.title = CLOSE
-	B.AddTooltip(bu, "ANCHOR_TOP", P.RightButtonTip(L["Open Bag"]))
+	B.AddTooltip(bu, "ANCHOR_TOP")
 
 	return bu
 end
@@ -465,7 +462,7 @@ end
 local function UpdateAllBags(current)
 	if current then
 		if current == Owner then
-			return 
+			return
 		else
 			Owner = current
 		end
@@ -576,8 +573,8 @@ end
 local function OwnerSelector_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_TOP")
 	GameTooltip:SetText(CHARACTER)
-	GameTooltip:AddLine(P.LeftButtonTip(L.TOOLTIP_CHANGE_PLAYER))
-	GameTooltip:AddLine(P.RightButtonTip(L.TOOLTIP_RETURN_TO_SELF))
+	GameTooltip:AddLine(P.LeftButtonTip(L.TOOLTIP_CHANGE_PLAYER), 1, 1, 1)
+	GameTooltip:AddLine(P.RightButtonTip(L.TOOLTIP_RETURN_TO_SELF), 1, 1, 1)
 	GameTooltip:Show()
 end
 

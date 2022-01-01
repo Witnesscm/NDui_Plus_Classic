@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
 local tinsert, ipairs = table.insert, ipairs
@@ -10,7 +9,10 @@ local tinsert, ipairs = table.insert, ipairs
 
 local addonFrames = {}
 
-function S:UpdatePanelsPosition()
+local lastTime = 0
+function S:UpdatePanelsPosition(force)
+	if (not force and GetTime() - lastTime < .1) then return end
+
 	local offset = 0
 	for _, panels in ipairs(addonFrames) do
 		local frame = panels.frame
@@ -23,6 +25,8 @@ function S:UpdatePanelsPosition()
 			offset = offset + frame:GetWidth() + 3
 		end
 	end
+
+	lastTime = GetTime()
 end
 
 -- MerInspect
@@ -34,9 +38,9 @@ function S:CharacterPanel_MerInspect()
 
 		tinsert(addonFrames, {frame = inspectFrame, order = 3})
 
-		hooksecurefunc("ShowInspectItemListFrame", function(unit, ...)
-			if unit and unit == "player" and _G.CharacterFrame:IsShown() then
-				S:UpdatePanelsPosition()
+		hooksecurefunc("ShowInspectItemListFrame", function(unit, parent, ...)
+			if unit and unit == "player" and parent and parent:GetName() == "PaperDollFrame" then
+				S:UpdatePanelsPosition(true)
 			end
 		end)
 	end

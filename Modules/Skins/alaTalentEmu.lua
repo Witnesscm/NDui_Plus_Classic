@@ -7,7 +7,7 @@ local select = select
 
 local function loadFunc()
 	P:Delay(.5, function()
-		local bu = _G.PlayerTalentFrame.__alaTalentEmuCall
+		local bu = _G.PlayerTalentFrame.__TalentEmuCall
 		if bu then
 			B.Reskin(bu)
 			bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -22, 0)
@@ -42,4 +42,4 @@ function S:alaTalentEmu()
 	end)
 end
 
-S:RegisterSkin("alaTalentEmu", S.alaTalentEmu)
+S:RegisterSkin("TalentEmu", S.alaTalentEmu)

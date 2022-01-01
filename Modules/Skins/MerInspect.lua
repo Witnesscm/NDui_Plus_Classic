@@ -32,10 +32,10 @@ function S:MerInspect()
 			end
 		end
 
-		local f = parent:GetName()
-		if (f == "InspectFrame" or f == "PaperDollFrame") then
+		local frameName = parent:GetName()
+		if frameName == "InspectFrame" then
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15)
-		else
+		elseif frameName ~= "PaperDollFrame" then
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
 		end
 

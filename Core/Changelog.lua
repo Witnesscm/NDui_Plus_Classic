@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.2.1
+[主要] 更新支持TBC 2.5.3
+
 v2.2.0
 [|cffFF1414重要|r] 需要NDui v2.7.0 以上版本
 [动作条] 修复法师动作条尺寸调整

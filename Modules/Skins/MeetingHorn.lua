@@ -30,14 +30,6 @@ local function reskinQRTooltip(self)
 	self.Close:SetHitRectInsets(0, 0, 0, 0)
 end
 
-local function reskinBrowserQRTooltip()
-	local tooltip = mainFrame.Browser and mainFrame.Browser.QRTooltip
-	if tooltip and not tooltip.styled then
-		reskinQRTooltip(tooltip)
-		tooltip.styled = true
-	end
-end
-
 local function reskinLeaderQRTooltip(self)
 	local tooltip = self.QRApplyLeaderTooltip or mainFrame.Browser and mainFrame.Browser.ApplyLeaderBtn and mainFrame.Browser.ApplyLeaderBtn.QRApplyLeaderTooltip
 	if tooltip and not tooltip.styled then
@@ -246,7 +238,13 @@ function S:MeetingHorn()
 			end
 
 			if button.QRIcon then
-				button.QRIcon:HookScript("PostClick", reskinBrowserQRTooltip)
+				button.QRIcon:HookScript("PostClick", function()
+					local tooltip = mainFrame.Browser and mainFrame.Browser.QRTooltip
+					if tooltip and not tooltip.styled then
+						reskinQRTooltip(tooltip)
+						tooltip.styled = true
+					end
+				end)
 			end
 
 			if button.Text and button.Creature then
@@ -314,6 +312,11 @@ function S:MeetingHorn()
 			else
 				tab:SetPoint("TOPLEFT", Encounter.Tabs[i-1], "BOTTOMLEFT", 0, 2)
 			end
+		end
+
+		local LookFall = Encounter.LookFall
+		if LookFall then
+			LookFall:HookScript("PostClick", reskinLeaderQRTooltip)
 		end
 	end
 

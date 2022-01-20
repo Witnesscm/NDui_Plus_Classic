@@ -32,20 +32,6 @@ end
 
 S:RegisterSkin("Ace3")
 
-local function Scroll_OnEnter(self)
-	local thumb = self.thumb
-	if not thumb then return end
-	thumb.bg:SetBackdropColor(cr, cg, cb, .25)
-	thumb.bg:SetBackdropBorderColor(cr, cg, cb)
-end
-
-local function Scroll_OnLeave(self)
-	local thumb = self.thumb
-	if not thumb then return end
-	thumb.bg:SetBackdropColor(0, 0, 0, 0)
-	B.SetBorderColor(thumb.bg)
-end
-
 function S:Ace3_SkinSlider()
 	self:SetBackdrop(nil)
 	self:SetWidth(16)
@@ -59,11 +45,8 @@ function S:Ace3_SkinSlider()
 		local bg = B.CreateBDFrame(self, 0, true)
 		bg:SetPoint("TOPLEFT", thumb, 0, -2)
 		bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
-		thumb.bg = bg
+		bg:SetBackdropColor(cr, cg, cb, .75)
 	end
-
-	self:HookScript("OnEnter", Scroll_OnEnter)
-	self:HookScript("OnLeave", Scroll_OnLeave)
 end
 
 function S:Ace3_SkinDropdown()

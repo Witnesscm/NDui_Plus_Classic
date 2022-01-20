@@ -15,10 +15,12 @@ function S:tdGUI()
 			if menu then
 				if not menu.styled then
 					P.ReskinTooltip(menu)
+
 					local scrollBar = menu.scrollBar or menu.ScrollBar
 					if scrollBar then
 						B.ReskinScroll(scrollBar)
 					end
+
 					menu.styled = true
 				end
 			end
@@ -27,8 +29,9 @@ function S:tdGUI()
 		hooksecurefunc(DropMenu, "UpdateItems", function(self)
 			for i = 1, #self._buttons do
 				local bu = self:GetButton(i)
-				local _, _, _, x = bu:GetPoint()
-				if bu:IsShown() and x then
+				local left, right = self:GetPadding()
+				right = right + self:GetScrollBarFixedWidth()
+				if bu:IsShown() and left and right then
 					local hl = bu:GetHighlightTexture()
 
 					if not bu.styled then
@@ -36,8 +39,8 @@ function S:tdGUI()
 						bu.styled = true
 					end
 
-					hl:SetPoint("TOPLEFT", -x + C.mult, 0)
-					hl:SetPoint("BOTTOMRIGHT", self:GetWidth() - bu:GetWidth() - x - C.mult, 0)
+					hl:SetPoint("TOPLEFT", -left + C.mult, 0)
+					hl:SetPoint("BOTTOMRIGHT", right - C.mult, 0)
 				end
 			end
 		end)

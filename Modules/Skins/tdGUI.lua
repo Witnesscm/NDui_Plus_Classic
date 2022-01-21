@@ -30,7 +30,6 @@ function S:tdGUI()
 			for i = 1, #self._buttons do
 				local bu = self:GetButton(i)
 				local left, right = self:GetPadding()
-				right = right + self:GetScrollBarFixedWidth()
 				if bu:IsShown() and left and right then
 					local hl = bu:GetHighlightTexture()
 
@@ -40,7 +39,7 @@ function S:tdGUI()
 					end
 
 					hl:SetPoint("TOPLEFT", -left + C.mult, 0)
-					hl:SetPoint("BOTTOMRIGHT", right - C.mult, 0)
+					hl:SetPoint("BOTTOMRIGHT", right - self:GetScrollBarFixedWidth()- C.mult, 0)
 				end
 			end
 		end)

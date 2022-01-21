@@ -272,7 +272,6 @@ do
 			self:DisableDrawLayer("BACKGROUND")
 			self.bg = B.SetBD(self, a or .7)
 			self.bg:SetInside(self)
-			self.bg:SetFrameLevel(self:GetFrameLevel())
 
 			self.tipStyled = true
 		end

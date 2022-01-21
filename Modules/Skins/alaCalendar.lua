@@ -106,7 +106,6 @@ function S:alaCalendar()
 			local bg = frame.weekTitles[col][1]
 			bg:Hide()
 		end
-		frame.cal:SetBackdrop(nil)
 
 		for row, rowcells in ipairs(frame.cells) do
 			for col, cell in ipairs(rowcells) do

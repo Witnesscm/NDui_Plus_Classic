@@ -4,12 +4,16 @@ local oUF = ns.oUF
 local UF = P:RegisterModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
+local unitFrames = {
+	["tank"] = true
+}
+
 function UF:UpdateFrameNameTag()
 	local name = self.nameText
 	if not name then return end
 
 	local mystyle = self.mystyle
-	if mystyle == "nameplate" then return end
+	if not unitFrames[mystyle] then return end
 
 	local colorTag = C.db["UFs"]["RCCName"] and "[color]" or ""
 
@@ -17,11 +21,36 @@ function UF:UpdateFrameNameTag()
 		self:Tag(name, colorTag.."[name]")
 	end
 	name:UpdateTag()
+
+	UF.UpdateRaidNameAnchor(self, name)
 end
 
 do
 	if NUF.UpdateFrameNameTag then
 		hooksecurefunc(NUF, "UpdateFrameNameTag", UF.UpdateFrameNameTag)
+	end
+end
+
+function UF:UpdateFrameHealthTag()
+	local hpval = self.healthValue
+	if not hpval then return end
+
+	local mystyle = self.mystyle
+	if not unitFrames[mystyle] then return end
+
+	if mystyle == "tank" then
+		self:Tag(hpval, "[raidhp]")
+		hpval:ClearAllPoints()
+		hpval:SetPoint("BOTTOM", 0, 1)
+		hpval:SetJustifyH("CENTER")
+		hpval:SetScale(C.db["UFs"]["RaidTextScale"])
+	end
+	hpval:UpdateTag()
+end
+
+do
+	if NUF.UpdateFrameHealthTag then
+		hooksecurefunc(NUF, "UpdateFrameHealthTag", UF.UpdateFrameHealthTag)
 	end
 end
 
@@ -144,12 +173,24 @@ function UF:CreatePowerBar(self)
 	UF:UpdatePowerBarColor(self)
 end
 
+function UF:UpdateRaidNameAnchor(name)
+	name:ClearAllPoints()
+	name:SetWidth(self:GetWidth()*.95)
+	name:SetJustifyH("CENTER")
+	if C.db["UFs"]["RaidHPMode"] == 1 then
+		name:SetPoint("CENTER")
+	else
+		name:SetPoint("TOP", 0, -3)
+	end
+end
+
 function UF:UpdateRaidTextScale()
 	local scale = C.db["UFs"]["RaidTextScale"]
 	for _, frame in pairs(oUF.objects) do
 		if frame.mystyle == "tank" then
 			frame.nameText:SetScale(scale)
 			frame.healthValue:SetScale(scale)
+			frame.healthValue:UpdateTag()
 			if frame.powerText then frame.powerText:SetScale(scale) end
 			UF:UpdateHealthBarColor(frame, true)
 			UF:UpdatePowerBarColor(frame, true)

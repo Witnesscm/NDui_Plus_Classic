@@ -19,6 +19,7 @@ local function CreateTankStyle(self)
 	NUF:CreatePrediction(self)
 	NUF:CreateClickSets(self)
 	NUF:CreateThreatBorder(self)
+	NUF:CreateBuffIndicator(self)
 
 	UF.SetUnitFrameSize(self, "Tank")
 end
@@ -62,10 +63,6 @@ local function CreateTankTargetStyle(self)
 	NUF:CreateHealthText(self)
 	UF:CreatePowerBar(self)
 	NUF:CreateRaidMark(self)
-	NUF:CreateTargetBorder(self)
-	NUF:CreatePrediction(self)
-	NUF:CreateClickSets(self)
-	NUF:CreateThreatBorder(self)
 
 	UF.SetUnitFrameSize(self, "Tank")
 end

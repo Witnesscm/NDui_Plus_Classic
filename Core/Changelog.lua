@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.2.2
+[单位框体] 坦克框体血量格式继承NDui团队框体;添加边角指示器
+[美化] 更新部分插件美化
+
 v2.2.1
 [主要] 更新支持TBC 2.5.3
 

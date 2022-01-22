@@ -33,7 +33,7 @@ end
 S:RegisterSkin("Ace3")
 
 function S:Ace3_SkinSlider()
-	self:SetBackdrop(nil)
+	self:HideBackdrop()
 	self:SetWidth(16)
 
 	local thumb = self.GetThumbTexture and self:GetThumbTexture()
@@ -54,7 +54,7 @@ function S:Ace3_SkinDropdown()
 		local pullout = self.obj.dropdown
 		if pullout then
 			P.ReskinTooltip(pullout)
-			if pullout.SetBackdrop then pullout:SetBackdrop(nil) end
+			pullout:HideBackdrop()
 
 			local slider = pullout.slider
 			if slider and not slider.styled then
@@ -252,7 +252,7 @@ function S:Ace3_RegisterAsWidget(widget)
 		B.Reskin(widget.frame)
 	elseif TYPE == "Slider" then
 		B.ReskinSlider(widget.slider)
-		widget.editbox:SetBackdrop(nil)
+		widget.editbox:HideBackdrop()
 		B.ReskinInput(widget.editbox)
 		widget.editbox:SetPoint("TOP", widget.slider, "BOTTOM", 0, -1)
 	elseif TYPE == "Keybinding" then

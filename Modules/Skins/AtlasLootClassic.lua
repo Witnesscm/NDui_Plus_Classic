@@ -144,8 +144,8 @@ function S:AtlasLootClassic()
 	hooksecurefunc(Set, "ShowToolTipFrame", function()
 		local tip = Set.tooltipFrame
 		if tip and not tip.styled then
-			tip.modelFrame:SetBackdrop(nil)
-			tip.bonusDataFrame:SetBackdrop(nil)
+			tip.modelFrame:HideBackdrop()
+			tip.bonusDataFrame:HideBackdrop()
 			B.SetBD(tip.modelFrame)
 			B.SetBD(tip.bonusDataFrame)
 			tip.styled = true
@@ -156,7 +156,7 @@ function S:AtlasLootClassic()
 	hooksecurefunc(Faction, "ShowToolTipFrame", function()
 		local tip = Faction.tooltipFrame
 		if tip and not tip.styled then
-			tip:SetBackdrop(nil)
+			tip:HideBackdrop()
 			B.SetBD(tip)
 			tip.styled = true
 		end
@@ -166,7 +166,7 @@ function S:AtlasLootClassic()
 	hooksecurefunc(Item, "ShowQuickDressUp", function()
 		local tip = Item.previewTooltipFrame
 		if tip and not tip.styled then
-			tip:SetBackdrop(nil)
+			tip:HideBackdrop()
 			B.SetBD(tip)
 			tip.styled = true
 		end

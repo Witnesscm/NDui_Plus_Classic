@@ -4,7 +4,7 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 
-function S:ExtVendorUI()
+function S:ExtVendor()
 	-- MerchantFrame
 	B.Reskin(MerchantFrameFilterButton)
 	B.ReskinInput(MerchantFrameSearchBox)
@@ -24,24 +24,25 @@ function S:ExtVendorUI()
 		B.CreateBDFrame(item, .25)
 
 		B.StripTextures(button)
-		button.IconBorder:SetAlpha(0)
 		button:ClearAllPoints()
 		button:SetPoint("LEFT", item, 4, 0)
 		local hl = button:GetHighlightTexture()
 		hl:SetColorTexture(1, 1, 1, .25)
 		hl:SetInside()
 
-		B.ReskinIcon(icon)
 		icon:SetInside()
+		button.bg = B.ReskinIcon(icon)
+		B.ReskinIconBorder(button.IconBorder)
+
 		name:SetFontObject(Game12Font)
 		name:SetPoint("LEFT", button, "RIGHT", 2, 9)
-
 		moneyFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+
 		for j = 1, 3 do
 			local currency = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j]
 			local texture = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j.."Texture"]
 			currency:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
-			B.ReskinIcon(texture)
+			currency.bg = B.ReskinIcon(texture)
 		end
 	end
 
@@ -85,4 +86,34 @@ function S:ExtVendorUI()
 	ExtVendor_SellJunkPopup_JunkListItemListScrollBar.trackBG:SetAlpha(0)
 end
 
-S:RegisterSkin("ExtVendorUI_Classic", S.ExtVendorUI)
+S:RegisterSkin("ExtVendorUI_Classic", S.ExtVendor)
+
+do
+	local honorTextures = {
+		[136998] = true,
+		[137000] = true,
+	}
+
+	if _G.AltCurrencyFrame_Update then
+		hooksecurefunc("AltCurrencyFrame_Update", function(frameName, texture)
+			local currency = _G[frameName]
+
+			if not currency.bg then
+				for _, child in pairs {currency:GetChildren()} do
+					if child.backdropInfo and child.backdropInfo.bgFile == DB.bdTex then
+						currency.bg = child
+						break
+					end
+				end
+			end
+
+			if not currency.bg then return end
+
+			if honorTextures[texture] then
+				currency.bg:Hide()
+			else
+				currency.bg:Show()
+			end
+		end)
+	end
+end

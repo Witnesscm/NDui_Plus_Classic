@@ -19,7 +19,7 @@ function S:CChatNotifier()
 	for _, key in pairs({"addFrame", "editFrame"}) do
 		local subFrame = frame[key]
 		if subFrame then
-			subFrame.searchEdit:SetBackdrop(nil)
+			subFrame.searchEdit:HideBackdrop()
 			B.ReskinInput(subFrame.searchEdit)
 			B.Reskin(subFrame.okbutton)
 			B.Reskin(subFrame.backbutton)

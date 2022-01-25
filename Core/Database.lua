@@ -2,7 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Version = GetAddOnMetadata(addonName, "Version")
-P.SupportVersion = "2.7.0"
+P.SupportVersion = "2.8.0"
 
 if P.IsClassic() then P.SupportVersion = "1.29.0" end
 

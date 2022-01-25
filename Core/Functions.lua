@@ -328,33 +328,3 @@ do
 		return format(t, texture, data or d)
 	end
 end
-
--- Add API (temporary)
-do
-	local function HideBackdrop(frame)
-		if frame.NineSlice then frame.NineSlice:SetAlpha(0) end
-		if frame.SetBackdrop then frame:SetBackdrop(nil) end
-	end
-
-	local function addapi(object)
-		local mt = getmetatable(object).__index
-		if not object.HideBackdrop then mt.HideBackdrop = HideBackdrop end
-	end
-
-	local handled = {["Frame"] = true}
-	local object = CreateFrame("Frame")
-	addapi(object)
-	addapi(object:CreateTexture())
-	addapi(object:CreateMaskTexture())
-
-	object = EnumerateFrames()
-	while object do
-		local objectType = object.GetObjectType and object:GetObjectType()
-		if objectType and not handled[objectType] and not object:IsForbidden() then
-			addapi(object)
-			handled[objectType] = true
-		end
-
-		object = EnumerateFrames(object)
-	end
-end

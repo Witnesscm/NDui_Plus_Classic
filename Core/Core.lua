@@ -115,7 +115,7 @@ P.DefaultSettings = {
 	},
 	Misc = {
 		EnhancedTrainers = true,
-		GuildExtended = false,
+		GuildExpand = false,
 		EnhancedGuildUI = true,
 		EnhancedTalentUI = true,
 		ExpandTalent = false,

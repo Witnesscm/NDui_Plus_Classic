@@ -18,7 +18,7 @@ local rankColor = {
 }
 
 local function GuildInfo_Update()
-	local showOffline = GetGuildRosterShowOffline()
+	if not GuildFrame:IsShown() or not M.db["GuildExpand"] then return end
 
 	if FriendsFrame.playerStatusFrame then
 		local guildOffset = FauxScrollFrame_GetOffset(GuildListScrollFrame)
@@ -28,7 +28,7 @@ local function GuildInfo_Update()
 			local button = getglobal("GuildFrameButton"..i)
 
 			local fullName, rank, rankIndex, _, _, _, note, _, online = GetGuildRosterInfo(guildIndex)
-			if (fullName and (showOffline or online)) then
+			if (fullName and (GetGuildRosterShowOffline() or online)) then
 				button.Note:SetText(note)
 				button.Rank:SetText(rank)
 
@@ -53,35 +53,34 @@ local function GuildInfo_Update()
 end
 
 local function ToggleGuildUI(texture)
-	local extend =  M.db["GuildExtended"]
+	local expand =  M.db["GuildExpand"]
 
-	if extend then
+	if expand then
 		B.SetupArrow(texture , "down")
 		header5:Show()
 		header6:Show()
+		FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, 337, -5)
 	else
 		B.SetupArrow(texture , "right")
 		header5:Hide()
 		header6:Hide()
+		FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, -5, -5)
 	end
 
-	local width = extend and UIWidth or PANEL_DEFAULT_WIDTH
+	local width = expand and UIWidth or PANEL_DEFAULT_WIDTH
 
-	if GuildFrame:IsShown() then
-		FriendsFrame:SetWidth(width)
-	end
-
+	GuildFrame:SetWidth(width)
 	GuildFrameNotesText:SetWidth(width - 23)
 	GuildStatusFrame:SetWidth(width - 38)
 	GuildPlayerStatusFrame:SetWidth(width - 38)
 
-	local nameOffset = extend and UINameOffset or 0
-	local levelOffset = extend and UILevelOffset or 0
+	local nameOffset = expand and UINameOffset or 0
+	local levelOffset = expand and UILevelOffset or 0
 
 	WhoFrameColumn_SetWidth(GuildFrameColumnHeader1, 83 + nameOffset)
 	WhoFrameColumn_SetWidth(GuildFrameGuildStatusColumnHeader1, 83 + nameOffset)
 	WhoFrameColumn_SetWidth(GuildFrameColumnHeader3, 32 + levelOffset)
-	GuildFrameColumnHeader3:SetText(extend and LEVEL or LEVEL_ABBR)
+	GuildFrameColumnHeader3:SetText(expand and LEVEL or LEVEL_ABBR)
 
 	for i = 1, GUILDMEMBERS_TO_DISPLAY do
 		local button = getglobal("GuildFrameButton"..i)
@@ -95,7 +94,7 @@ local function ToggleGuildUI(texture)
 		getglobal("GuildFrameGuildStatusButton"..i.."Name"):SetWidth(88 + nameOffset)
 		getglobal("GuildFrameButton"..i.."Level"):SetWidth(23 + levelOffset)
 
-		if extend then
+		if expand then
 			button.Rank:Show()
 			button.Note:Show()
 		else
@@ -103,12 +102,6 @@ local function ToggleGuildUI(texture)
 			button.Note:Hide()
 		end
 	end
-end
-
-local function ExtendFriendsFrame(extend)
-	if not M.db["GuildExtended"] then return end
-
-	FriendsFrame:SetWidth(extend and UIWidth or PANEL_DEFAULT_WIDTH)
 end
 
 function M:EnhancedGuildUI()
@@ -159,23 +152,41 @@ function M:EnhancedGuildUI()
 	-- yClassColors
 	hooksecurefunc("GuildStatus_Update", GuildInfo_Update)
 
-	-- Extend Button
+	for _, child in pairs {FriendsFrame:GetChildren()} do
+		if child.backdropInfo and child.backdropInfo.bgFile == DB.bdTex then
+			FriendsFrame.bg = child
+			break
+		end
+	end
+
+	GuildFrame:ClearAllPoints()
+	GuildFrame:SetPoint("TOPLEFT", FriendsFrame)
+	GuildFrame:SetSize(338, 424)
+	GuildFrame.bg = B.SetBD(GuildFrame)
+
 	local bu = CreateFrame("Button", nil, GuildFrame)
-	bu:SetPoint("RIGHT", FriendsFrame.CloseButton, "LEFT", -2, 0)
+	bu:SetPoint("TOPRIGHT", GuildFrame.bg, "TOPRIGHT", -24, -5)
 	B.ReskinArrow(bu, "right")
 	bu:SetScript("OnClick", function(self)
-		M.db["GuildExtended"] = not M.db["GuildExtended"]
+		M.db["GuildExpand"] = not M.db["GuildExpand"]
 		ToggleGuildUI(self.__texture)
 	end)
 	ToggleGuildUI(bu.__texture)
 
-	-- Update FriendsFrame width
 	GuildFrame:HookScript("OnShow", function()
-		ExtendFriendsFrame(M.db["GuildExtended"])
+		if FriendsFrame.bg then FriendsFrame.bg:Hide() end
+
+		if M.db["GuildExpand"] then
+			FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, 337, -5)
+		end
 	end)
 
 	GuildFrame:HookScript("OnHide", function()
-		ExtendFriendsFrame()
+		if FriendsFrame.bg then FriendsFrame.bg:Show() end
+
+		if M.db["GuildExpand"] then
+			FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, -5, -5)
+		end
 	end)
 
 	-- fix scroll

@@ -210,7 +210,7 @@ function UF:SetUnitFrameSize(unit)
 	local healthHeight = UF.db[unit.."Height"]
 	local powerHeight = UF.db[unit.."PowerHeight"]
 	local height = healthHeight + powerHeight + C.mult
-	self:SetSize(width, height)
+	if not InCombatLockdown() then self:SetSize(width, height) end
 	self.Health:SetHeight(healthHeight)
 	self.Power:SetHeight(powerHeight)
 end

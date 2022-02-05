@@ -138,12 +138,10 @@ function S:alaGearMan()
 		local button = ui.pdf_buttons[index]
 		if button then
 			button.bg = B.CreateBDFrame(button)
-			button.bg:SetPoint("TOPLEFT", 0, 0)
-			button.bg:SetPoint("BOTTOMRIGHT", 0, 0)
+			button.bg:SetAllPoints()
 
 			button.Icon = button:CreateTexture(nil, "ARTWORK")
-			button.Icon:SetPoint("TOPLEFT", C.mult, -C.mult)
-			button.Icon:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
+			button.Icon:SetInside()
 			button.Icon:SetTexCoord(unpack(DB.TexCoord))
 
 			hooksecurefunc(button, "SetNormalTexture", hook_SetNormalTexture)

@@ -54,7 +54,6 @@ function S:Ace3_SkinDropdown()
 		local pullout = self.obj.dropdown
 		if pullout then
 			P.ReskinTooltip(pullout)
-			pullout:HideBackdrop()
 
 			local slider = pullout.slider
 			if slider and not slider.styled then

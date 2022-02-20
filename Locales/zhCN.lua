@@ -115,3 +115,4 @@ L["SearchForIconsTip"] = "|n支持法术ID、物品ID、图标ID搜索。|n|n输
 L["TankFrame"] = "坦克框体"
 L["Target Frame"] = "目标框体"
 L["Power Height"] = "能量条高度"
+L["ExtVendorUI"] = "商人面板扩展"

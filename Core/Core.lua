@@ -119,6 +119,7 @@ P.DefaultSettings = {
 		ExtGuildUI = true,
 		ExtTalentUI = true,
 		TalentExpand = true,
+		ExtVendorUI = false,
 		SearchForIcons = true,
 	},
 }

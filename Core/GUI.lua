@@ -223,8 +223,9 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ExtTrainerUI", L["ExtTrainerUI"]},
 		{1, "Misc", "ExtGuildUI", L["ExtGuildUI"], true, nil, nil, L["ExtendedUITip"]},
 		{1, "Misc", "ExtTalentUI", L["ExtTalentUI"], nil, nil, nil, L["ExtendedUITip"]},
-		{1, "AFK", "Enable", L["AFK Mode"].."*", true, nil, updateAFKMode},
-		{1, "Misc", "SearchForIcons", L["SearchForIcons"],nil, nil, nil, L["SearchForIconsGUITip"]},
+		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"], true},
+		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
+		{1, "Misc", "SearchForIcons", L["SearchForIcons"], true, nil, nil, L["SearchForIconsGUITip"]},
 	},
 }
 

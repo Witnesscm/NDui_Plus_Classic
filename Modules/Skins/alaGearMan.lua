@@ -3,39 +3,133 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
+local cr, cg, cb = DB.r, DB.g, DB.b
 
 local texture_delete = "Interface\\Buttons\\UI-GroupLoot-Pass-Up"
 local texture_modify = "Interface\\WorldMap\\GEAR_64GREY"
 
+local function reskinQuickButtons(buttons)
+	for _, button in ipairs(buttons) do
+		if not button.styled then
+			B.ReskinIcon(button.icon)
+			button.styled = true
+		end
+	end
+end
+
+local arrowTex = {
+	["up"] = P.ArrowUp,
+	["down"] = P.ArrowDown,
+}
+
+local function setupArrowTex(self, direction)
+	self:SetNormalTexture(arrowTex[direction])
+	self:SetPushedTexture(arrowTex[direction])
+	self:SetDisabledTexture(arrowTex[direction])
+	self:GetNormalTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
+	self:GetPushedTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
+	self:GetDisabledTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
+end
+
+local function reskinGearManButton(self)
+	B.StripTextures(self)
+	self.__bg = B.CreateBDFrame(self, .25)
+	self.__bg:SetAllPoints()
+	self:SetHighlightTexture(DB.bdTex)
+	self:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+	self:GetHighlightTexture():SetInside()
+
+	self.icon:SetTexCoord(.08, .92, .08, .92)
+	B.CreateBDFrame(self.icon, .25)
+	self.delete:SetNormalTexture(texture_delete)
+	self.delete:SetPushedTexture(texture_delete)
+	self.modify:SetNormalTexture(texture_modify)
+	self.modify:SetPushedTexture(texture_modify)
+	self.modify:SetSize(self.delete:GetWidth() + 2, self.delete:GetHeight() + 2)
+	self.modify:SetPoint("BOTTOMRIGHT", -3.2, 2)
+	setupArrowTex(self.up, "up")
+	setupArrowTex(self.down, "down")
+	self.helmet:SetSize(16, 16)
+	B.ReskinRadio(self.helmet)
+	self.cloak:SetSize(16, 16)
+	B.ReskinRadio(self.cloak)
+
+	self.glow_selected:SetAlpha(0)
+	self.glow_current:SetTexture(DB.bdTex)
+	self.glow_current:SetVertexColor(cr, cg, cb, .25)
+	self.glow_current:SetInside()
+end
+
+local function hook_SetNormalTexture(self, texture)
+	if self.settingTexture then return end
+	self.settingTexture = true
+	self:SetNormalTexture("")
+
+	if texture and texture ~= "" then
+		self.Icon:SetTexture(texture)
+		self.bg:Show()
+	else
+		self.bg:Hide()
+	end
+	self.settingTexture = nil
+end
+
+local function hook_SetVertexColor(self, r, g, b)
+	self:GetParent().bg:SetBackdropBorderColor(r, g, b)
+end
+local function hook_Hide(self)
+	self:GetParent().bg:SetBackdropBorderColor(0, 0, 0)
+end
+
+local function reskinPDFbutton(self)
+	self.bg = B.CreateBDFrame(self)
+	self.bg:SetAllPoints()
+
+	self.Icon = self:CreateTexture(nil, "ARTWORK")
+	self.Icon:SetInside()
+	self.Icon:SetTexCoord(unpack(DB.TexCoord))
+
+	hooksecurefunc(self, "SetNormalTexture", hook_SetNormalTexture)
+	self:SetPushedTexture("")
+	self.SetPushedTexture = B.Dummy
+	self:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+
+	self.glow:SetAlpha(0)
+	hooksecurefunc(self.glow, "SetVertexColor", hook_SetVertexColor)
+	hooksecurefunc(self.glow, "Hide", hook_Hide)
+end
+
 function S:alaGearMan()
 	if not S.db["alaGearMan"] then return end
 
-	local ALA = _G.__ala_meta__
-	if not ALA then return end
+	local alaGear = _G.__ala_meta__ and _G.__ala_meta__.gear
+	if not alaGear then return end
 
-	local ui = ALA.gear.ui
+	local func = alaGear.func
+	local ui = alaGear.ui
 
-	local function reskinQuick()
-		for _, button in ipairs(ui.secureButtons) do
-			if not button.styled then
-				B.ReskinIcon(button.icon)
-				button.styled = true
-			end
-		end
+	local origCreateButton = func.gm_CreateButton
+	func.gm_CreateButton = function(...)
+		local button = origCreateButton(...)
+		reskinGearManButton(button)
+
+		return button
 	end
 
-	local function reskinFunc()
-		ui.open:SetSize(24, 30)
-		ui.open:SetPoint("TOPRIGHT", -40, -40)
-		B.Reskin(ui.open)
-		ui.open.Icon = ui.open:CreateTexture(nil, "ARTWORK")
-		ui.open.Icon:SetPoint("CENTER")
-		ui.open.Icon:SetSize(28, 28)
-		ui.open.Icon:SetTexture([[Interface\AddOns\NDui_Plus\Media\Texture\ui-gear]])
-		ui.open:HookScript("OnMouseDown", function(self)
+	hooksecurefunc(func, "initUI", function()
+		-- open
+		local open = ui.open
+		open:SetSize(24, 30)
+		open:SetPoint("TOPRIGHT", -40, -40)
+		B.Reskin(open)
+		open.Icon = open:CreateTexture(nil, "ARTWORK")
+		open.Icon:SetPoint("CENTER")
+		open.Icon:SetSize(28, 28)
+		open.Icon:SetTexture([[Interface\AddOns\NDui_Plus\Media\Texture\ui-gear]])
+		open:HookScript("OnMouseDown", function(self)
 			self.Icon:SetPoint("CENTER", self, "CENTER", 1, -1)
 		end)
-		ui.open:HookScript("OnMouseUp", function(self)
+		open:HookScript("OnMouseUp", function(self)
 			self.Icon:SetPoint("CENTER", self, "CENTER", 0, 0)
 		end)
 
@@ -72,86 +166,22 @@ function S:alaGearMan()
 			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		end
 
-		-- Quick
-		reskinQuick()
-		hooksecurefunc(ui.secure, "Create", reskinQuick)
-	end
-	hooksecurefunc(_G.AGM_FUNC, "initUI", reskinFunc)
+		-- secure buttons
+		reskinQuickButtons(ui.secureButtons)
 
-	hooksecurefunc(_G.AGM_FUNC, "gm_SetButton", function(button, index)
-		if button.icon and not button.styled then
-			button.icon:SetTexCoord(.08, .92, .08, .92)
-			B.CreateBDFrame(button.icon, .25)
-			button.delete:SetNormalTexture(texture_delete)
-			button.delete:SetPushedTexture(texture_delete)
-			button.modify:SetNormalTexture(texture_modify)
-			button.modify:SetPushedTexture(texture_modify)
-			button.modify:SetSize(button.delete:GetWidth() + 2, button.delete:GetHeight() + 2)
-			button.modify:SetPoint("BOTTOMRIGHT", -3.2, 2)
-			button.up:SetNormalTexture(P.ArrowUp)
-			button.up:SetPushedTexture(P.ArrowUp)
-			button.up:SetDisabledTexture(P.ArrowUp)
-			button.up:GetNormalTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.up:GetPushedTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.up:GetDisabledTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.down:SetNormalTexture(P.ArrowDown)
-			button.down:SetPushedTexture(P.ArrowDown)
-			button.down:SetDisabledTexture(P.ArrowDown)
-			button.down:GetNormalTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.down:GetPushedTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.down:GetDisabledTexture():SetTexCoord(6 / 32, 25 / 32, 7 / 32, 24 / 32)
-			button.helmet:SetSize(16, 16)
-			B.ReskinRadio(button.helmet)
-			button.cloak:SetSize(16, 16)
-			B.ReskinRadio(button.cloak)
-			button.styled = true
-		end
+		hooksecurefunc(ui.secure, "Create", function()
+			reskinQuickButtons(ui.secureButtons)
+		end)
 	end)
 
-	-- pdf_menu
-	hooksecurefunc(_G.AGM_FUNC, "pdf_init", function()
+	hooksecurefunc(func, "pdf_init", function()
 		B.SetBD(ui.pdf_menu, nil, -2, 2, 2, -2)
 	end)
 
-	local function hook_SetNormalTexture(self, texture)
-		if self.settingTexture then return end
-		self.settingTexture = true
-		self:SetNormalTexture("")
-
-		if texture and texture ~= "" then
-			self.Icon:SetTexture(texture)
-			self.bg:Show()
-		else
-			self.bg:Hide()
-		end
-		self.settingTexture = nil
-	end
-
-	local function hook_SetVertexColor(self, r, g, b)
-		self:GetParent().bg:SetBackdropBorderColor(r, g, b)
-	end
-	local function hook_Hide(self)
-		self:GetParent().bg:SetBackdropBorderColor(0, 0, 0)
-	end
-
-	hooksecurefunc(_G.AGM_FUNC, "pdf_CreateButton", function(index)
+	hooksecurefunc(func, "pdf_CreateButton", function(index)
 		local button = ui.pdf_buttons[index]
 		if button then
-			button.bg = B.CreateBDFrame(button)
-			button.bg:SetAllPoints()
-
-			button.Icon = button:CreateTexture(nil, "ARTWORK")
-			button.Icon:SetInside()
-			button.Icon:SetTexCoord(unpack(DB.TexCoord))
-
-			hooksecurefunc(button, "SetNormalTexture", hook_SetNormalTexture)
-			button:SetPushedTexture("")
-			button.SetPushedTexture = B.Dummy
-			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-
-			button.glow:SetAlpha(0)
-			hooksecurefunc(button.glow, "SetVertexColor", hook_SetVertexColor)
-			hooksecurefunc(button.glow, "Hide", hook_Hide)
+			reskinPDFbutton(button)
 		end
 	end)
 end

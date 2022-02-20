@@ -6,8 +6,8 @@ local _G = getfenv(0)
 ----------------------------
 -- Credit: Leatrix Plus
 ----------------------------
-function M:EnhancedTrainers()
-	if not M.db["EnhancedTrainers"] then return end
+function M:ExtTrainerUI()
+	if not M.db["ExtTrainerUI"] then return end
 
 	if ClassTrainerFrame:GetWidth() > 700 then return end
 
@@ -115,4 +115,4 @@ function M:EnhancedTrainers()
 	end
 end
 
-P:AddCallbackForAddon("Blizzard_TrainerUI", M.EnhancedTrainers)
+P:AddCallbackForAddon("Blizzard_TrainerUI", M.ExtTrainerUI)

@@ -104,8 +104,8 @@ local function ToggleGuildUI(texture)
 	end
 end
 
-function M:EnhancedGuildUI()
-	if not M.db["EnhancedGuildUI"] then return end
+function M:ExtGuildUI()
+	if not M.db["ExtGuildUI"] then return end
 
 	header5 = CreateFrame("Button", "GuildFrameColumnHeader5", GuildPlayerStatusFrame, "GuildFrameColumnHeaderTemplate")
 	header5:SetPoint("LEFT", GuildFrameColumnHeader4, "RIGHT", -2, 0)
@@ -193,4 +193,4 @@ function M:EnhancedGuildUI()
 	GuildListScrollFrame:SetPoint("TOPLEFT", 12, -87)
 end
 
-M:RegisterMisc("EnhancedGuildUI", M.EnhancedGuildUI)
+M:RegisterMisc("ExtGuildUI", M.ExtGuildUI)

@@ -114,11 +114,11 @@ P.DefaultSettings = {
 		CategoryArrow = false,
 	},
 	Misc = {
-		EnhancedTrainers = true,
+		ExtTrainerUI = true,
 		GuildExpand = false,
-		EnhancedGuildUI = true,
-		EnhancedTalentUI = true,
-		ExpandTalent = false,
+		ExtGuildUI = true,
+		ExtTalentUI = true,
+		TalentExpand = true,
 		SearchForIcons = true,
 	},
 }

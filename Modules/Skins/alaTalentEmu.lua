@@ -10,7 +10,7 @@ local function loadFunc()
 		local bu = _G.PlayerTalentFrame.__TalentEmuCall
 		if bu then
 			B.Reskin(bu)
-			bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -22, 0)
+			bu:SetPoint("RIGHT", _G.PlayerTalentFrameCloseButton, "LEFT", -22, 0)
 		end
 	end)
 end

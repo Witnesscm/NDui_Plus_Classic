@@ -608,7 +608,7 @@ function M:TalentUI_Toggle(expand)
 		ShowUIPanel(PlayerTalentFrame)
 	end
 
-	M.db["ExpandTalent"] = expand
+	M.db["TalentExpand"] = expand
 end
 
 function M:TalentUI_Init()
@@ -685,7 +685,7 @@ function M:TalentUI_Load()
 		end
 	end)
 
-	if M.db["EnhancedTalentUI"] then
+	if M.db["ExtTalentUI"] then
 		local bu = CreateFrame("Button", nil, PlayerTalentFrame)
 		bu:SetPoint("RIGHT", PlayerTalentFrameCloseButton, "LEFT", -3, 0)
 		B.ReskinArrow(bu, "right")
@@ -696,11 +696,11 @@ function M:TalentUI_Load()
 end
 P:AddCallbackForAddon("Blizzard_TalentUI", M.TalentUI_Load)
 
-function M:EnhancedTalentUI()
-	if not M.db["EnhancedTalentUI"] then return end
+function M:ExtTalentUI()
+	if not M.db["ExtTalentUI"] then return end
 
 	_G.ToggleTalentFrame = function()
-		if M.db["ExpandTalent"] then
+		if M.db["TalentExpand"] then
 			B:TogglePanel(M.TalentUI)
 		else
 			if PlayerTalentFrame:IsShown() then
@@ -720,4 +720,4 @@ function M:EnhancedTalentUI()
 	B:RegisterEvent("SPELLS_CHANGED", M.TalentUI_UpdateAll)
 end
 
-M:RegisterMisc("EnhancedTalentUI", M.EnhancedTalentUI)
+M:RegisterMisc("ExtTalentUI", M.ExtTalentUI)

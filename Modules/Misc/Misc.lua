@@ -2,7 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:RegisterModule("Misc")
 
-local strmatch, format, tonumber, select = string.match, string.format, tonumber, select
+local format = format
 
 M.MiscList = {}
 

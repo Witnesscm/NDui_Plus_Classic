@@ -110,6 +110,7 @@ P.DefaultSettings = {
 		tdInspect = true,
 		tdAuction = true,
 		Auctionator = true,
+		ShadowDancer = true,
 		HideToggle = false,
 		CategoryArrow = false,
 	},

@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.2.4
+[单位框体] 坦克框体添加副本重要减益效果和减益指示器
+[易用性] 添加商人面板扩展
+[美化] 添加ShadowDancer动作条美化
+[美化] 修复alaCalendar美化
+
 v2.2.3
 [|cffFF1414重要|r] 需要NDui v2.8.0 以上版本
 [易用性] 调整公会面板拓展方式

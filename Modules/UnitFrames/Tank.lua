@@ -20,6 +20,8 @@ local function CreateTankStyle(self)
 	NUF:CreateClickSets(self)
 	NUF:CreateThreatBorder(self)
 	NUF:CreateBuffIndicator(self)
+	NUF:CreateRaidDebuffs(self)
+	UF:CreateDebuffs(self)
 
 	UF.SetUnitFrameSize(self, "Tank")
 end

@@ -52,20 +52,16 @@ local function GuildInfo_Update()
 	end
 end
 
-local function ToggleGuildUI(texture)
+local function ToggleGuildUI(texture, init)
 	local expand =  M.db["GuildExpand"]
 
-	if expand then
-		B.SetupArrow(texture , "down")
-		header5:Show()
-		header6:Show()
-		FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, 337, -5)
-	else
-		B.SetupArrow(texture , "right")
-		header5:Hide()
-		header6:Hide()
-		FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, -5, -5)
+	if not init then
+		FriendsFrame.CloseButton:SetPoint("TOPRIGHT", FriendsFrame.bg, expand and 337 or -5, -5)
 	end
+
+	B.SetupArrow(texture , expand and "down" or "right")
+	header5:SetShown(expand)
+	header6:SetShown(expand)
 
 	local width = expand and UIWidth or PANEL_DEFAULT_WIDTH
 
@@ -94,13 +90,8 @@ local function ToggleGuildUI(texture)
 		getglobal("GuildFrameGuildStatusButton"..i.."Name"):SetWidth(88 + nameOffset)
 		getglobal("GuildFrameButton"..i.."Level"):SetWidth(23 + levelOffset)
 
-		if expand then
-			button.Rank:Show()
-			button.Note:Show()
-		else
-			button.Rank:Hide()
-			button.Note:Hide()
-		end
+		button.Rank:SetShown(expand)
+		button.Note:SetShown(expand)
 	end
 end
 
@@ -171,7 +162,7 @@ function M:ExtGuildUI()
 		M.db["GuildExpand"] = not M.db["GuildExpand"]
 		ToggleGuildUI(self.__texture)
 	end)
-	ToggleGuildUI(bu.__texture)
+	ToggleGuildUI(bu.__texture, true)
 
 	GuildFrame:HookScript("OnShow", function()
 		if FriendsFrame.bg then FriendsFrame.bg:Hide() end

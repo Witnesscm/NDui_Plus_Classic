@@ -32,6 +32,7 @@ end
 function M:ExtVendor_UpdateBuybackPositions()
 	for i = 1, MERCHANT_ITEMS_PER_PAGE do
 		local button = _G["MerchantItem"..i]
+		button:ClearAllPoints()
 
 		if i > _G.BUYBACK_ITEMS_PER_PAGE then
 			button:Hide()

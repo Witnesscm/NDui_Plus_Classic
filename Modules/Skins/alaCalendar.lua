@@ -3,14 +3,8 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local select, ipairs = select, ipairs
+local ipairs = ipairs
 local r, g, b = DB.r, DB.g, DB.b
-
-do
-	if _G.ala_cal_ui_style then
-		_G.ala_cal_ui_style.texture_config = "Interface\\WorldMap\\GEAR_64GREY"
-	end
-end
 
 local function expandOnEnter(self)
 	if self:IsEnabled() then

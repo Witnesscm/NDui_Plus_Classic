@@ -121,6 +121,7 @@ P.DefaultSettings = {
 		ExtTalentUI = true,
 		TalentExpand = true,
 		ExtVendorUI = false,
+		ExtMacroUI =  false,
 		SearchForIcons = true,
 	},
 }

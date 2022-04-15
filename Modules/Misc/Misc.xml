@@ -5,6 +5,7 @@
 	<Script file="ExtTrainerUI.lua"/>
 	<Script file="ExtGuildUI.lua"/>
 	<Script file="ExtVendorUI.lua"/>
+	<Script file="ExtMacroUI.lua"/>
 	<Script file="Loot.lua"/>
 	<Script file="LootRoll.lua"/>
 	<Script file="Lockpicking.lua"/>

@@ -13,6 +13,10 @@ local function reskinFrame(frame)
 	frame.SetBackdropColor = B.Dummy
 	frame:SetBackdropBorderColor(0, 0, 0, 0)
 	frame.SetBackdropBorderColor = B.Dummy
+	frame.GetBackdrop = function(self)
+		return self.backdrop
+	end
+
 	B.SetBD(frame, nil, 0, 0, 0, 0)
 end
 

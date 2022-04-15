@@ -54,10 +54,16 @@ local function reskinGearManButton(self)
 	self.cloak:SetSize(16, 16)
 	B.ReskinRadio(self.cloak)
 
-	self.glow_selected:SetAlpha(0)
 	self.glow_current:SetTexture(DB.bdTex)
 	self.glow_current:SetVertexColor(cr, cg, cb, .25)
 	self.glow_current:SetInside()
+
+	hooksecurefunc(self, "Select", function()
+		self.__bg:SetBackdropBorderColor(1, 1, 1, 1)
+	end)
+	hooksecurefunc(self, "Deselect", function()
+		B.SetBorderColor(self.__bg)
+	end)
 end
 
 local function hook_SetNormalTexture(self, texture)

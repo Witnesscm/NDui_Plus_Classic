@@ -31,6 +31,7 @@ function S:BattleInfo()
 	end
 
 	local HonorFrameStat
+	local PVPFrame = _G.HonorFrame or _G.PVPFrame
 	for i = 1, PVPFrame:GetNumChildren() do
 		local child = GetChildFrame(i, PVPFrame)
 		if child then
@@ -411,6 +412,19 @@ function S:RaidLedger()
 	end
 end
 
+function S:LibQTip()
+	local LibQTip = _G.LibStub and _G.LibStub("LibQTip-1.0", true)
+	if not LibQTip then return end
+
+	local origAcquire = LibQTip.Acquire
+	LibQTip.Acquire = function(...)
+		local tooltip = origAcquire(...)
+		P.ReskinTooltip(tooltip)
+
+		return tooltip
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -426,6 +440,7 @@ S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("RestockerTBC", S.RestockerTBC)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
+S:RegisterSkin("LibQTip")
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

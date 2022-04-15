@@ -5,6 +5,8 @@ local module = P:RegisterModule("SearchForIcons")
 -- Credit: SearchForIcons, by BlackmassJay
 -------------------------------------------
 function module:MacroIcons_Search(str, isIcon)
+	if InCombatLockdown() then return end
+
 	table.wipe(module.icons)
 	module.icons[1] = "INV_MISC_QUESTIONMARK"
 
@@ -28,6 +30,8 @@ function module:MacroIcons_Search(str, isIcon)
 end
 
 function module:MacroIcons_Recovery()
+	if InCombatLockdown() then return end
+
 	table.wipe(module.icons)
 
 	for index, icon in pairs(module.backup) do

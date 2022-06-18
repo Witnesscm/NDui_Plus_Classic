@@ -40,6 +40,12 @@ function LT:OnLogin()
 
 		local num = GetNumLootItems()
 
+		if self.AutoLootTable then
+			num = #self.AutoLootTable
+		end
+
+		self.AutoLootDelay = 0.4 + (num * 0.05)
+
 		num = min(num, maxButtons)
 
 		self:SetHeight(baseHeight + (max(num, 1) * buttonHeight))
@@ -52,7 +58,7 @@ function LT:OnLogin()
 			end
 			if i > LOOTFRAME_NUMBUTTONS then
 				if not button then
-					button = CreateFrame("Button", "LootButton"..i, self, "LootButtonTemplate", i)
+					button = CreateFrame(ItemButtonMixin and "ItemButton" or "Button", "LootButton"..i, self, "LootButtonTemplate", i)
 				end
 				LOOTFRAME_NUMBUTTONS = i
 			end

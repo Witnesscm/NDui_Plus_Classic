@@ -295,6 +295,16 @@ do
 		end
 		self.__bg:SetBackdropBorderColor(0, 0, 0)
 	end
+
+	function P:RemoveBD()
+		for _, child in pairs {self:GetChildren()} do
+			if child.backdropInfo and (child.backdropInfo.bgFile == DB.bdTex and child.backdropInfo.edgeSize == C.mult) then
+				child:Hide()
+				child:SetAlpha(0)
+				break
+			end
+		end
+	end
 end
 
 -- Misc

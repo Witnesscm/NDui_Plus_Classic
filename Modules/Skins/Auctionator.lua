@@ -336,10 +336,10 @@ function S:Auctionator()
 
 	-- Auctionator (Retail)
 	local Auctionator = _G.Auctionator
-	if not Auctionator or not Auctionator.Events or not Auctionator.Events.OnAuctionHouseShow then return end
+	if not Auctionator or not _G.AuctionatorInitalizeClassicFrame or not _G.AuctionatorInitalizeClassicFrame.AuctionHouseShown then return end
 
 	local styled
-	hooksecurefunc(Auctionator.Events, "OnAuctionHouseShow", function()
+	hooksecurefunc(_G.AuctionatorInitalizeClassicFrame, "AuctionHouseShown", function()
 		if styled then return end
 
 		local SplashScreen = _G.AuctionatorSplashScreen
@@ -569,6 +569,16 @@ function S:Auctionator()
 	if Auctionator.ReagentSearch and Auctionator.ReagentSearch.InitializeSearchButton then
 		hooksecurefunc(Auctionator.ReagentSearch, "InitializeSearchButton", function()
 			local button = _G.AuctionatorTradeSkillSearch
+			if button and not button.styled then
+				B.Reskin(button)
+				button.styled = true
+			end
+		end)
+	end
+
+	if Auctionator.CraftSearch and Auctionator.CraftSearch.InitializeSearchButton then
+		hooksecurefunc(Auctionator.CraftSearch, "InitializeSearchButton", function()
+			local button = _G.AuctionatorCraftFrameSearch
 			if button and not button.styled then
 				B.Reskin(button)
 				button.styled = true

@@ -57,7 +57,7 @@ function S:ShadowDancer()
 				alphaMode = "ADD",
 				drawLayer = "BACKGROUND",
 				horizTile = true,
-				vertTile = "REPEAT", -- typo
+				vertTile = true,
 				subLevel = -1,
 				location = {
 					Anchor("TOPLEFT", 0, 0, "BackgroundFrame"),

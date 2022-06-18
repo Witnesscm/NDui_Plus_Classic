@@ -72,6 +72,14 @@ local function reskinSummary(summary)
 	summary.Overview.Text.SetTextColor = B.Dummy
 end
 
+local function reskinItemButton(self)
+	self:SetSize(34, 34)
+	B.StripTextures(self, 0)
+	self.icon:SetAlpha(1)
+	self.bg = B.ReskinIcon(self.icon)
+	B.ReskinIconBorder(self.IconBorder)
+end
+
 local function strToPath(str)
 	local path = {}
 	for v in string.gmatch(str, "([^%.]+)") do 
@@ -131,6 +139,7 @@ function S:MeetingHorn()
 		"FeedBack.EditBox.ScrollFrame.ScrollBar",
 		"Manage.Creator.Comment.ScrollFrame.ScrollBar",
 		"Manage.Chat.ChatFrame.scrollBar",
+		"Quest.Body.Quests.scrollBar",
 	}
 
 	local Panels = {
@@ -370,6 +379,56 @@ function S:MeetingHorn()
 				button.bg:SetAlpha(0)
 				B.Reskin(button)
 				button.styled = true
+			end
+		end)
+	end
+
+	-- Quest
+	local Quest = mainFrame.Quest
+	if Quest then
+		local Body = Quest.Body
+		if Body then
+			B.StripTextures(Body)
+			B.CreateBDFrame(Body, .25)
+			if Body.Refresh then B.Reskin(Body.Refresh) end
+		end
+
+		local Summary = Quest.Summary
+		if Summary then
+			B.StripTextures(Summary)
+			B.CreateBDFrame(Summary, .25)
+
+			for _, child in pairs {Summary:GetChildren()} do
+				if child.ScrollBar then
+					B.ReskinScroll(child.ScrollBar)
+					break
+				end
+			end
+		end
+	end
+
+	-- QuestItem
+	local QuestItem = MeetingHorn:GetClass("UI.QuestItem")
+	if QuestItem then
+		hooksecurefunc(QuestItem, "SetQuest", function(self)
+			if not self.itemStyled then
+				P.SetupBackdrop(self)
+				B.CreateBD(self, .25)
+
+				if self.Reward then
+					B.Reskin(self.Reward)
+				end
+
+				for index, item in ipairs(self.Items) do
+					reskinItemButton(item)
+
+					if index > 1 then
+						item:ClearAllPoints()
+						item:SetPoint("LEFT", self.Items[index-1], "RIGHT", 4, 0)
+					end
+				end
+
+				self.itemStyled = true
 			end
 		end)
 	end

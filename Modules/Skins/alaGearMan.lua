@@ -8,15 +8,6 @@ local cr, cg, cb = DB.r, DB.g, DB.b
 local texture_delete = "Interface\\Buttons\\UI-GroupLoot-Pass-Up"
 local texture_modify = "Interface\\WorldMap\\GEAR_64GREY"
 
-local function reskinQuickButtons(buttons)
-	for _, button in ipairs(buttons) do
-		if not button.styled then
-			B.ReskinIcon(button.icon)
-			button.styled = true
-		end
-	end
-end
-
 local arrowTex = {
 	["up"] = P.ArrowUp,
 	["down"] = P.ArrowDown,
@@ -39,8 +30,6 @@ local function reskinGearManButton(self)
 	self:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	self:GetHighlightTexture():SetInside()
 
-	self.icon:SetTexCoord(.08, .92, .08, .92)
-	B.CreateBDFrame(self.icon, .25)
 	self.delete:SetNormalTexture(texture_delete)
 	self.delete:SetPushedTexture(texture_delete)
 	self.modify:SetNormalTexture(texture_modify)
@@ -142,6 +131,7 @@ function S:alaGearMan()
 		-- gearWin
 		local gearWin = ui.gearWin
 		B.StripTextures(gearWin)
+		P.RemoveBD(gearWin)
 		gearWin:ClearAllPoints()
 		gearWin:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -32, -15-C.mult)
 
@@ -153,35 +143,9 @@ function S:alaGearMan()
 		bg:SetFrameLevel(gearWin:GetFrameLevel() - 1)
 		B.SetBD(bg)
 
-		B.Reskin(ui.save)
-		B.Reskin(ui.equip)
 		ui.setting:SetNormalTexture(texture_modify)
 		ui.setting:SetPushedTexture(texture_modify)
 		ui.setting:GetPushedTexture():SetVertexColor(0.25, 0.25, 0.25, 1.0)
-
-		-- custom
-		B.StripTextures(ui.custom)
-		B.SetBD(ui.custom)
-		B.CreateMF(ui.custom)
-		B.Reskin(ui.customOK)
-		B.Reskin(ui.customCancel)
-		B.CreateBDFrame(ui.customEdit, 0)
-
-		for _, button in ipairs(ui.customIconButtons) do
-			B.ReskinIcon(button:GetNormalTexture())
-			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		end
-
-		-- secure buttons
-		reskinQuickButtons(ui.secureButtons)
-
-		hooksecurefunc(ui.secure, "Create", function()
-			reskinQuickButtons(ui.secureButtons)
-		end)
-	end)
-
-	hooksecurefunc(func, "pdf_init", function()
-		B.SetBD(ui.pdf_menu, nil, -2, 2, 2, -2)
 	end)
 
 	hooksecurefunc(func, "pdf_CreateButton", function(index)

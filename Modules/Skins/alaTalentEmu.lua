@@ -21,6 +21,7 @@ function S:alaTalentEmu()
 	if not alaPopup then return end		-- version check
 
 	local menu = alaPopup.menu
+	B.StripTextures(menu)
 	P.ReskinTooltip(menu)
 
 	hooksecurefunc("ToggleDropDownMenu", function(level, ...)

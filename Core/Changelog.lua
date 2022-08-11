@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.2.6
+[易用性] 修复天赋面板扩展报错
+[美化] 修复某些情况下WeakAurasOptions美化报错
+[美化] 更新部分插件美化
+
 v2.2.5
 [易用性] 添加宏命令面板扩展
 [美化] 修复部分插件美化

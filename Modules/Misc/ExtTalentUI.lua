@@ -653,14 +653,6 @@ function M:TalentUI_Init()
 	Points:SetPoint("BOTTOM", frame, "BOTTOM", 0, 8)
 	frame.Points = Points
 
-	local aleEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
-	if aleEmu then
-		local CalcButton = P.CreateButton(frame, 70, 20, aleEmu.L.TalentFrameCallButtonFontString)
-		CalcButton:SetPoint("BOTTOMRIGHT", -16, 6)
-		CalcButton:SetScript("OnClick", function() aleEmu.Emu_Create() end)
-		frame.CalcButton = CalcButton
-	end
-
 	frame.panels = {}
 	for i = 1, 3 do
 		frame.panels[i] = M.TalentUI_CreatePanel(frame, i)
@@ -672,6 +664,14 @@ function M:TalentUI_Init()
 	end
 
 	M.TalentUI = frame
+
+	local aleEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
+	if aleEmu and aleEmu.MT and aleEmu.CT and aleEmu.CT.L then
+		local CalcButton = P.CreateButton(frame, 70, 20, aleEmu.CT.L.TalentFrameCallButtonString)
+		CalcButton:SetPoint("BOTTOMRIGHT", -16, 6)
+		CalcButton:SetScript("OnClick", function() aleEmu.MT.CreateEmulator() end)
+		frame.CalcButton = CalcButton
+	end
 end
 
 function M:TalentUI_Load()

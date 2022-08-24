@@ -27,10 +27,10 @@ jobs:
         with:
           args: -g bcc
 
-      - name: Create Classic Package
+      - name: Create Wrath Package
         uses: BigWigsMods/packager@master
         with:
-          args: -g classic
+          args: -g wrath
 
       - name: Upload Github Actions
         uses: actions/upload-artifact@v2

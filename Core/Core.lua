@@ -166,8 +166,13 @@ function P.IsRetail()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE
 end
 
+function P.IsWrath()
+	return select(4, GetBuildInfo()) >= 30400
+end
+
 function P.IsBCC()
-	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+	local toc = select(4, GetBuildInfo())
+	return toc < 30400 and toc > 20500
 end
 
 function P.IsClassic()

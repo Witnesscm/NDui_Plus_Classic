@@ -94,7 +94,7 @@ function S:CharacterPanel()
 	end)
 end
 
-S:RegisterSkin("MerInspect", S.CharacterPanel_MerInspect)
-S:RegisterSkin("alaGearMan", S.CharacterPanel_alaGearMan)
-S:RegisterSkin("CharacterStatsTBC", S.CharacterPanel_CharacterStatsTBC)
-S:RegisterSkin("CharacterPanel")
+--S:RegisterSkin("MerInspect", S.CharacterPanel_MerInspect)
+--S:RegisterSkin("alaGearMan", S.CharacterPanel_alaGearMan)
+--S:RegisterSkin("CharacterStatsTBC", S.CharacterPanel_CharacterStatsTBC)
+--S:RegisterSkin("CharacterPanel")

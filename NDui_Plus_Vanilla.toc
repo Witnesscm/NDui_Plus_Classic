@@ -15,4 +15,4 @@ Locales\Locales.xml
 Libs\Libs.xml
 Media\Media.xml
 Core\Core.xml
-Modules\Modules.xml
+Modules\Modules_Classic.xml

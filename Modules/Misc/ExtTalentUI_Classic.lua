@@ -2,6 +2,8 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
+if P.IsWrath() then return end
+
 local LSP = LibStub("LibShowUIPanel-1.0")
 local ShowUIPanel = LSP.ShowUIPanel
 local HideUIPanel = LSP.HideUIPanel

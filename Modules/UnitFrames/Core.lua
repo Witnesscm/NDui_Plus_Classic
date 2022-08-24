@@ -251,6 +251,6 @@ function UF:CreateDebuffs(self)
 end
 
 function UF:OnLogin()
-	UF:SetupTankFrame()
+	--UF:SetupTankFrame()
 	UF:UpdateUFsFader()
 end

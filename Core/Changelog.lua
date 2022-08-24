@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.2.7
+[主要] 初步更新支持WLK 3.4.0
+[易用性] 天赋面板扩展支持WLK
+[单位框体] 暂时移除坦克框体
+
 v2.2.6
 [易用性] 修复天赋面板扩展报错
 [美化] 修复某些情况下WeakAurasOptions美化报错

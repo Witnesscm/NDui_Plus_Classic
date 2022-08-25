@@ -1052,8 +1052,7 @@ function M:TalentUI_UpdateVisibility()
 		frame.panels[i]:SetShown(not frame.pet)
 	end
 	frame.panels[4]:SetShown(frame.pet)
-	frame.Glyph:SetShown(not frame.pet)
-	frame.CalcButton:SetShown(not frame.pet)
+	frame.ContainerBar:SetShown(not frame.pet)
 end
 
 function M:TalentUI_Refresh()
@@ -1200,7 +1199,12 @@ function M:TalentUI_Init()
 	P.AddTooltip(Learn, "ANCHOR_RIGHT", TALENT_TOOLTIP_LEARNTALENTGROUP, "info")
 	frame.Learn = Learn
 
-	local Glyph = P.CreateButton(frame, 70, 20, GLYPHS)
+	local ContainerBar = CreateFrame("Frame", nil, frame)
+	ContainerBar:SetSize(200, 32)
+	ContainerBar:SetPoint("BOTTOMLEFT")
+	frame.ContainerBar = ContainerBar
+
+	local Glyph = P.CreateButton(ContainerBar, 70, 20, GLYPHS)
 	Glyph:SetPoint("BOTTOMLEFT", 16, 6)
 	Glyph:SetScript("OnClick", function()
 		if GlyphFrame_Toggle then
@@ -1220,7 +1224,7 @@ function M:TalentUI_Init()
 
 	local alaEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
 	if alaEmu and alaEmu.MT and alaEmu.CT and alaEmu.CT.L then
-		local CalcButton = P.CreateButton(frame, 70, 20, alaEmu.CT.L.TalentFrameCallButtonString)
+		local CalcButton = P.CreateButton(ContainerBar, 70, 20, alaEmu.CT.L.TalentFrameCallButtonString)
 		CalcButton:SetPoint("LEFT", Glyph, "RIGHT", 4, 0)
 		CalcButton:SetScript("OnClick", function() alaEmu.MT.CreateEmulator() end)
 		frame.CalcButton = CalcButton

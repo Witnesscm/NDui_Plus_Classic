@@ -82,7 +82,7 @@ P.DefaultSettings = {
 		Enable = true,
 		Width = 328,
 		Height = 28,
-		Style = 1,
+		Style = 2,
 		Direction = 2,
 	},
 	AFK = {

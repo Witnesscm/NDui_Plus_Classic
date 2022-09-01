@@ -22,11 +22,6 @@ jobs:
         with:
           fetch-depth: 50
 
-      - name: Create BCC Package
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g bcc
-
       - name: Create Wrath Package
         uses: BigWigsMods/packager@master
         with:

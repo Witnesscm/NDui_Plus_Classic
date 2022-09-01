@@ -19,15 +19,10 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v1
 
-      - name: Create BCC Package
+      - name: Create Wrath Package
         uses: BigWigsMods/packager@master
         with:
-          args: -g bcc
-
-      - name: Create Classic Package
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g classic
+          args: -g wrath
 
       - name: Upload Github Actions
         uses: actions/upload-artifact@v2

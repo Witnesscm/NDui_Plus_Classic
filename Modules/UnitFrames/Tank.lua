@@ -90,7 +90,7 @@ function UF:SetupTankFrame()
 	"showRaid", true,
 	"xoffset", xOffset,
 	"yOffset", -yOffset,
-	"groupFilter", "MAINTANK",
+	"roleFilter", "TANK",
 	"point", "TOP",
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
@@ -114,7 +114,7 @@ function UF:SetupTankFrame()
 		"showRaid", true,
 		"xoffset", xOffset,
 		"yOffset", -yOffset,
-		"groupFilter", "MAINTANK",
+		"roleFilter", "TANK",
 		"point", "TOP",
 		"oUF-initialConfigFunction", ([[
 		self:SetWidth(%d)

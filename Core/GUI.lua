@@ -161,12 +161,12 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[3] = {
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
-		-- {},
-		-- {1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
-		-- {1, "C:UnitFrames", "TankTarget", L["Target Frame"], true},
-		-- {3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
-		-- {3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
-		-- {3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
+		{},
+		{1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
+		{1, "C:UnitFrames", "TankTarget", L["Target Frame"], true},
+		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
+		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
+		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},

@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Button name="ELVUI_UNITTARGET" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
+	<!-- <Button name="ELVUI_UNITTARGET" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
 		<Frames>
 			<Button name="$parentTarget" inherits="SecureUnitButtonTemplate">
 				<Anchors>
@@ -17,7 +17,7 @@
 				</Attributes>
 			</Button>
 		</Frames>
-	</Button>
+	</Button> -->
 
 	<Include file="Plugins\Plugins.xml"/>
 	<Script file="Core.lua"/>

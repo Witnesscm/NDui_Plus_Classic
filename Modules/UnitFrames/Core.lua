@@ -56,21 +56,16 @@ end
 
 local function UpdateHealthColorByIndex(health, index)
 	health.colorClass = (index == 2)
+	health.colorTapping = (index == 2)
 	health.colorReaction = (index == 2)
-	if health.SetColorTapping then
-		health:SetColorTapping(index == 2)
-	else
-		health.colorTapping = (index == 2)
-	end
-	if health.SetColorDisconnected then
-		health:SetColorDisconnected(index == 2)
-	else
-		health.colorDisconnected = (index == 2)
-	end
+	health.colorDisconnected = (index == 2)
 	health.colorSmooth = (index == 3)
+	health.colorHappiness = (DB.MyClass == "HUNTER" and index == 2)
 	if index == 1 then
 		health:SetStatusBarColor(.1, .1, .1)
 		health.bg:SetVertexColor(.6, .6, .6)
+	elseif index == 4 then
+		health:SetStatusBarColor(0, 0, 0, 0)
 	end
 end
 
@@ -83,6 +78,18 @@ function UF:UpdateHealthBarColor(self, force)
 
 	if force then
 		health:ForceUpdate()
+	end
+end
+
+function UF.HealthPostUpdate(element, _, cur, max)
+	local self = element.__owner
+	local mystyle = self.mystyle
+	local useGradient
+	if mystyle == "tank" then
+		useGradient = C.db["UFs"]["RaidHealthColor"] == 4
+	end
+	if useGradient then
+		self.Health.bg:SetVertexColor(self:ColorGradient(cur or 1, max or 1, 1,0,0, 1,.7,0, .7,1,0))
 	end
 end
 
@@ -99,18 +106,24 @@ function UF:CreateHealthBar(self)
 	health:SetStatusBarTexture(DB.normTex)
 	health:SetStatusBarColor(.1, .1, .1)
 	health:SetFrameLevel(self:GetFrameLevel() - 2)
-	health.backdrop = B.SetBD(health, 0)
-	health.shadow = health.backdrop.__shadow
+	self.backdrop = B.SetBD(health, 0)
+	if self.backdrop.__shadow then
+		self.backdrop.__shadow:SetOutside(self, 4+C.mult, 4+C.mult)
+		self.backdrop.__shadow:SetFrameLevel(0)
+		self.backdrop.__shadow = nil
+	end
 	B:SmoothBar(health)
 
-	local bg = health:CreateTexture(nil, "BACKGROUND")
-	bg:SetAllPoints()
+	local bg = self:CreateTexture(nil, "BACKGROUND")
+	bg:SetPoint("TOPLEFT", health:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+	bg:SetPoint("BOTTOMRIGHT", health)
 	bg:SetTexture(DB.bdTex)
 	bg:SetVertexColor(.6, .6, .6)
 	bg.multiplier = .25
 
 	self.Health = health
 	self.Health.bg = bg
+	self.Health.PostUpdate = UF.HealthPostUpdate
 
 	UF:UpdateHealthBarColor(self)
 end
@@ -129,6 +142,7 @@ local function UpdatePowerColorByIndex(power, index)
 	else
 		power.colorDisconnected = (index ~= 2)
 	end
+	power.colorHappiness = (DB.MyClass == "HUNTER" and index ~= 2)
 end
 
 function UF:UpdatePowerBarColor(self, force)
@@ -154,13 +168,10 @@ function UF:CreatePowerBar(self)
 		powerHeight = UF.db["TankPowerHeight"]
 	end
 	power:SetHeight(powerHeight)
+	power.wasHidden = powerHeight == 0
 	power:SetFrameLevel(self:GetFrameLevel() - 2)
 	power.backdrop = B.CreateBDFrame(power, 0)
 	B:SmoothBar(power)
-
-	if self.Health.shadow then
-		self.Health.shadow:SetPoint("BOTTOMRIGHT", power.backdrop, C.mult+3, -C.mult-3)
-	end
 
 	local bg = power:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -209,16 +220,35 @@ function UF:SetUnitFrameSize(unit)
 	local width = UF.db[unit.."Width"]
 	local healthHeight = UF.db[unit.."Height"]
 	local powerHeight = UF.db[unit.."PowerHeight"]
-	local height = healthHeight + powerHeight + C.mult
+	local height = powerHeight == 0 and healthHeight or healthHeight + powerHeight + C.mult
 	if not InCombatLockdown() then self:SetSize(width, height) end
 	self.Health:SetHeight(healthHeight)
 	self.Power:SetHeight(powerHeight)
+	self.Power.wasHidden = powerHeight == 0
+end
+
+function UF:CheckPowerBar()
+	if not self.Power then return end
+
+	if self.Power.wasHidden then
+		if self:IsElementEnabled("Power") then
+			self:DisableElement("Power")
+			if self.powerText then self.powerText:Hide() end
+		end
+	else
+		if not self:IsElementEnabled("Power") then
+			self:EnableElement("Power")
+			self.Power:ForceUpdate()
+			if self.powerText then self.powerText:Show() end
+		end
+	end
 end
 
 function UF:UpdateTankSize()
 	for _, frame in pairs(oUF.objects) do
 		if frame.mystyle == "tank" then
 			UF.SetUnitFrameSize(frame, "Tank")
+			UF.CheckPowerBar(frame)
 		end
 	end
 end
@@ -251,6 +281,6 @@ function UF:CreateDebuffs(self)
 end
 
 function UF:OnLogin()
-	--UF:SetupTankFrame()
+	UF:SetupTankFrame()
 	UF:UpdateUFsFader()
 end

@@ -24,6 +24,11 @@ local function AddChatIcon(link, linkType, id)
 		texture = GetSpellTexture(id)
 	elseif linkType == "item" then
 		texture = GetItemIcon(id)
+	elseif linkType == "achievement" then
+		texture = select(10, GetAchievementInfo(id))
+	elseif linkType == "currency" then
+		local info = C_CurrencyInfo.GetCurrencyInfo(id)
+		texture = info and info.iconFileID
 	end
 
 	cache[link] = GetHyperlink(link, texture)

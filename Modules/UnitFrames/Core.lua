@@ -81,15 +81,28 @@ function UF:UpdateHealthBarColor(self, force)
 	end
 end
 
-function UF.HealthPostUpdate(element, _, cur, max)
+function UF.HealthPostUpdate(element, unit, cur, max)
 	local self = element.__owner
 	local mystyle = self.mystyle
-	local useGradient
+	local useGradient, useGradientClass
 	if mystyle == "tank" then
-		useGradient = C.db["UFs"]["RaidHealthColor"] == 4
+		useGradient = C.db["UFs"]["RaidHealthColor"] > 3
+		useGradientClass = C.db["UFs"]["RaidHealthColor"] == 5
 	end
 	if useGradient then
 		self.Health.bg:SetVertexColor(self:ColorGradient(cur or 1, max or 1, 1,0,0, 1,.7,0, .7,1,0))
+	end
+	if useGradientClass then
+		local color
+		if UnitIsPlayer(unit) then
+			local _, class = UnitClass(unit)
+			color = self.colors.class[class]
+		elseif UnitReaction(unit, "player") then
+			color = self.colors.reaction[UnitReaction(unit, "player")]
+		end
+		if color then
+			element:GetStatusBarTexture():SetGradientAlpha("HORIZONTAL", color[1],color[2],color[3], .75, 0,0,0, .25)
+		end
 	end
 end
 
@@ -129,7 +142,7 @@ function UF:CreateHealthBar(self)
 end
 
 local function UpdatePowerColorByIndex(power, index)
-	power.colorPower = (index == 2)
+	power.colorPower = (index == 2) or (index == 5)
 	power.colorClass = (index ~= 2)
 	power.colorReaction = (index ~= 2)
 	if power.SetColorTapping then

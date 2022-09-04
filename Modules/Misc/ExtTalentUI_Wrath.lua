@@ -320,7 +320,7 @@ local function TalentSpecTab_OnEnter(self)
 		if not spec.pet then
 			GameTooltip:AddLine(" ")
 			if numTalentGroups > 1 and specIndex ~= activeSpec then
-				GameTooltip:AddLine(P.LeftButtonTip("双击切换"), .6, .8, 1)
+				GameTooltip:AddLine(P.LeftButtonTip(L["QuickChangeTalents"]), .6, .8, 1)
 			end
 			GameTooltip:AddLine(P.RightButtonTip(SET_ROLE_TOOLTIP), .6, .8, 1)
 		end

@@ -133,6 +133,7 @@ P.CharacterSettings = {
 		TankHeight = 30,
 		TankPowerHeight = 2,
 		TankTarget = false,
+		TankFilter = 1,
 	},
 }
 

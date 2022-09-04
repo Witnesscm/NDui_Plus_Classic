@@ -4,6 +4,8 @@ local oUF = ns.oUF
 local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
+local headers = {}
+
 local function CreateTankStyle(self)
 	self.mystyle = "tank"
 	self.Range = {
@@ -90,14 +92,13 @@ function UF:SetupTankFrame()
 	"showRaid", true,
 	"xoffset", xOffset,
 	"yOffset", -yOffset,
-	"roleFilter", "TANK",
 	"point", "TOP",
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
 	self:SetHeight(%d)
 	]]):format(tankWidth, tankFrameHeight))
 	--enableTarget and "template", enableTarget and "ELVUI_UNITTARGET")
-
+	tinsert(headers, tank)
 	RegisterStateDriver(tank, "visibility", "[group:raid] show;hide")
 
 	if enableTarget then
@@ -114,14 +115,13 @@ function UF:SetupTankFrame()
 		"showRaid", true,
 		"xoffset", xOffset,
 		"yOffset", -yOffset,
-		"roleFilter", "TANK",
 		"point", "TOP",
 		"oUF-initialConfigFunction", ([[
 		self:SetWidth(%d)
 		self:SetHeight(%d)
 		self:SetAttribute("unitsuffix", "target")
 		]]):format(tankWidth, tankFrameHeight))
-
+		tinsert(headers, tankTarget)
 		RegisterStateDriver(tankTarget, "visibility", "[group:raid] show;hide")
 
 		tankTarget:ClearAllPoints()
@@ -131,4 +131,12 @@ function UF:SetupTankFrame()
 	local tankMover = B.Mover(tank, L["TankFrame"], "TankFrame", {"TOPLEFT", UIParent, 35, -414}, tankMoverWidth, tankMoverHeight)
 	tank:ClearAllPoints()
 	tank:SetPoint("TOPLEFT", tankMover)
+
+	UF:UpdateTankHeaders()
+end
+
+function UF:UpdateTankHeaders()
+	for _, header in pairs(headers) do
+		header:SetAttribute("roleFilter", UF.db["TankFilter"] == 1 and "TANK" or "MAINTANK")
+	end
 end

@@ -67,6 +67,10 @@ local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
 
+local function updateTankHeaders()
+	P:GetModule("UnitFrames"):UpdateTankHeaders()
+end
+
 local function updateTankSize()
 	P:GetModule("UnitFrames"):UpdateTankSize()
 end
@@ -163,7 +167,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},
 		{1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
-		{1, "C:UnitFrames", "TankTarget", L["Target Frame"], true},
+		{1, "C:UnitFrames", "TankTarget", L["Target Frame"]},
+		{4, "C:UnitFrames", "TankFilter", FILTER.."*", true, {TANK, MAINTANK}, updateTankHeaders},
 		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
 		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
 		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},

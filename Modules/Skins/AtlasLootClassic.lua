@@ -74,21 +74,93 @@ end
 local function reskinSubFrame(frame)
 	B.StripTextures(frame)
 	local bg = B.CreateBDFrame(frame)
-	bg:SetAllPoints() 
+	bg:SetAllPoints()
 end
 
-local function reskinFilter(self)
+local function reskinSelect(self)
 	local frame = self.selectionFrame
 	if frame and not frame.styled then
 		B.StripTextures(frame, 0)
 		B.SetBD(frame, .7)
 
 		for _, button in ipairs(frame.buttons) do
-			B.ReskinIcon(button.icon)
+			if button.icon then
+				B.ReskinIcon(button.icon)
+			else
+				local hl = button:GetHighlightTexture()
+				hl:SetColorTexture(r, g, b, .25)
+				hl:SetAllPoints()
+			end
 		end
 
 		frame.styled = true
 	end
+end
+
+local gold = {r = 1, g = .84, b = 0}
+
+local function updateIconBorderColor(self, quality)
+	local color = quality == "gold" and gold or DB.QualityColors[quality or 1]
+	if color then
+		self.__owner.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+	else
+		self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+end
+
+local function updateAchievementColor(self, set)
+	if set then
+		if self:GetDesaturation() == 1 then
+			self.__owner.bg:SetBackdropBorderColor(.5, .5, .5)
+		else
+			self.__owner.bg:SetBackdropBorderColor(gold.r, gold.g, gold.b)
+		end
+	else
+		self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+end
+
+local function resetIconBorderColor(self)
+	self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
+local function UpdateIconTexCoord(self, left, right, top, bottom)
+	if self.isCutting then return end
+	self.isCutting = true
+
+	if left == 0 and right == 1 and top == 0 and bottom == 1 then
+		self:SetTexCoord(unpack(DB.TexCoord))
+	end
+
+	self.isCutting = nil
+end
+
+local function reskinIconBorder(self)
+	self:SetAlpha(0)
+	self.__owner = self:GetParent()
+	if not self.__owner.bg then return end
+	hooksecurefunc(self, "SetQualityBorder", updateIconBorderColor)
+	hooksecurefunc(self, "SetAchievementBorder", updateAchievementColor)
+	hooksecurefunc(self, "Hide", resetIconBorderColor)
+end
+
+local function reskinSecButton(self)
+	self.icon:SetInside()
+	self.bg = B.ReskinIcon(self.icon)
+	reskinIconBorder(self.overlay)
+	local hl = self:GetHighlightTexture()
+	hl:SetColorTexture(1, 1, 1, .25)
+	hl:SetInside(self.bg)
+end
+
+local function reskinItemButton(self)
+	self.icon:ClearAllPoints()
+	self.icon:SetPoint("LEFT", 2, 0)
+	self.icon:SetSize(24, 24)
+	self.bg = B.ReskinIcon(self.icon)
+	hooksecurefunc(self.icon, "SetTexCoord", UpdateIconTexCoord)
+	reskinIconBorder(self.overlay)
+	reskinSecButton(self.secButton)
 end
 
 function S:AtlasLootClassic()
@@ -105,6 +177,7 @@ function S:AtlasLootClassic()
 	B.ReskinClose(frame.CloseButton)
 	reskinDropDown(frame.moduleSelect.frame)
 	reskinDropDown(frame.subCatSelect.frame)
+	frame.gameVersionButton:HookScript("OnClick", reskinSelect)
 	frame.moduleSelect.frame:HookScript("OnClick", reskinCatFrame)
 	frame.moduleSelect.frame.button:HookScript("OnClick", reskinCatFrame)
 	frame.subCatSelect.frame:HookScript("OnClick", reskinCatFrame)
@@ -133,14 +206,30 @@ function S:AtlasLootClassic()
 	filterButton.HL = filterButton:CreateTexture(nil, "HIGHLIGHT")
 	filterButton.HL:SetColorTexture(1, 1, 1, .25)
 	filterButton.HL:SetAllPoints(filterButton.texture)
-	filterButton:HookScript("PostClick", reskinFilter)
+	filterButton:HookScript("PostClick", reskinSelect)
 
 	for _, button in ipairs(AtlasLoot.GUI.ItemFrame.frame.ItemButtons) do
-		B.ReskinIcon(button.icon)
-		button.overlay:SetOutside(button.icon)
+		reskinItemButton(button)
 	end
 
-	local Set = AtlasLoot.Button:GetType("Set")
+	local Button = AtlasLoot.Button
+	local origButtonCreate = Button.Create
+	Button.Create = function(self)
+		local bu = origButtonCreate(self)
+		reskinItemButton(bu)
+
+		return bu
+	end
+
+	local origCreateSecOnly = Button.CreateSecOnly
+	Button.CreateSecOnly = function(self, ...)
+		local bu = origCreateSecOnly(self, ...)
+		reskinSecButton(bu.secButton)
+
+		return bu
+	end
+
+	local Set = Button:GetType("Set")
 	hooksecurefunc(Set, "ShowToolTipFrame", function()
 		local tip = Set.tooltipFrame
 		if tip and not tip.styled then
@@ -152,7 +241,7 @@ function S:AtlasLootClassic()
 		end
 	end)
 
-	local Faction = AtlasLoot.Button:GetType("Faction")
+	local Faction = Button:GetType("Faction")
 	hooksecurefunc(Faction, "ShowToolTipFrame", function()
 		local tip = Faction.tooltipFrame
 		if tip and not tip.styled then
@@ -162,7 +251,7 @@ function S:AtlasLootClassic()
 		end
 	end)
 
-	local Item = AtlasLoot.Button:GetType("Item")
+	local Item = Button:GetType("Item")
 	hooksecurefunc(Item, "ShowQuickDressUp", function()
 		local tip = Item.previewTooltipFrame
 		if tip and not tip.styled then
@@ -172,7 +261,6 @@ function S:AtlasLootClassic()
 		end
 	end)
 
-	local Button = AtlasLoot.Button
 	hooksecurefunc(Button, "ExtraItemFrame_GetFrame", function()
 		local secButton1 = AtlasLoot_SecButton_1_container
 		local extraFrame = secButton1 and secButton1:GetParent()
@@ -183,21 +271,6 @@ function S:AtlasLootClassic()
 			extraFrame.styled = true
 		end
 	end)
-
-	local origCreateSecOnly = Button.CreateSecOnly
-	Button.CreateSecOnly = function(self, ...)
-		local bu = origCreateSecOnly(self, ...)
-		bu.secButton.icon:SetInside()
-		bu.secButton.icbg = B.ReskinIcon(bu.secButton.icon)
-		bu.secButton.overlay:SetOutside(bu.secButton.icon)
-
-		bu.secButton:SetHighlightTexture(DB.bdTex)
-		local hl = bu.secButton:GetHighlightTexture()
-		hl:SetInside(bu.secButton.icbg)
-		hl:SetVertexColor(r, g, b, .25)
-
-		return bu
-	end
 end
 
 S:RegisterSkin("AtlasLootClassic", S.AtlasLootClassic)

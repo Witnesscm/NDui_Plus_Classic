@@ -124,7 +124,7 @@ local function resetIconBorderColor(self)
 	self.__owner.bg:SetBackdropBorderColor(0, 0, 0)
 end
 
-local function UpdateIconTexCoord(self, left, right, top, bottom)
+local function updateIconTexCoord(self, left, right, top, bottom)
 	if self.isCutting then return end
 	self.isCutting = true
 
@@ -147,6 +147,7 @@ end
 local function reskinSecButton(self)
 	self.icon:SetInside()
 	self.bg = B.ReskinIcon(self.icon)
+	hooksecurefunc(self.icon, "SetTexCoord", updateIconTexCoord)
 	reskinIconBorder(self.overlay)
 	local hl = self:GetHighlightTexture()
 	hl:SetColorTexture(1, 1, 1, .25)
@@ -158,7 +159,7 @@ local function reskinItemButton(self)
 	self.icon:SetPoint("LEFT", 2, 0)
 	self.icon:SetSize(24, 24)
 	self.bg = B.ReskinIcon(self.icon)
-	hooksecurefunc(self.icon, "SetTexCoord", UpdateIconTexCoord)
+	hooksecurefunc(self.icon, "SetTexCoord", updateIconTexCoord)
 	reskinIconBorder(self.overlay)
 	reskinSecButton(self.secButton)
 end

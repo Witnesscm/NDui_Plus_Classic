@@ -6,7 +6,7 @@ local M = B:GetModule("Misc")
 local _G = getfenv(0)
 local select, pairs = select, pairs
 
-local function reskinFrame(frame)
+local function reskinInspect(frame)
 	frame:SetBackdrop(nil)
 	frame.SetBackdrop = B.Dummy
 	frame:SetBackdropColor(0, 0, 0, 0)
@@ -17,7 +17,8 @@ local function reskinFrame(frame)
 		return self.backdrop
 	end
 
-	B.SetBD(frame, nil, 0, 0, 0, 0)
+	if frame:GetHeight() == 424 then frame:SetHeight(422) end
+	frame.bg = B.SetBD(frame, nil, 0, C.mult, 0, -C.mult)
 end
 
 function S:MerInspect()
@@ -29,23 +30,26 @@ function S:MerInspect()
 		local frame = parent.inspectFrame
 		if not frame then return end
 
-		for i = 1, frame:GetNumChildren() do
-			local child = select(i, frame:GetChildren())
-			if child and child.itemString then
-				child.itemString:SetFont(child.itemString:GetFont(), 13, "OUTLINE") -- 装备字体描边
+		if not frame.styled then
+			reskinInspect(frame)
+
+			for i = 1, frame:GetNumChildren() do
+				local child = select(i, frame:GetChildren())
+				if child and child.itemString then
+					child.itemString:SetFont(child.itemString:GetFont(), 13, "OUTLINE") -- 装备字体描边
+				end
 			end
+
+			frame.styled = true
 		end
 
 		local frameName = parent:GetName()
-		if frameName == "InspectFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15)
-		elseif frameName ~= "PaperDollFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
-		end
-
-		if not frame.styled then
-			reskinFrame(frame)
-			frame.styled = true
+		if frameName == "PaperDollFrame" then
+			frame.bg:SetPoint("TOPLEFT", -C.mult, C.mult)
+		elseif frameName == "InspectFrame" then
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15-C.mult)
+		else
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
 		end
 	end)
 
@@ -54,7 +58,7 @@ function S:MerInspect()
 	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
 		if not self.styled then
 			B.StripTextures(self)
-			reskinFrame(self)
+			reskinInspect(self)
 
 			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
 				local category = self[key]

@@ -147,9 +147,11 @@ function S:NovaWorldBuffs()
 		reskinCheck(NWB, {"copyDiscordButton"})
 	end)
 
-	hooksecurefunc(NWB, "createDmfHelperButtons", function()
-		reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
-	end)
+	if NWB.createDmfHelperButtons then
+		hooksecurefunc(NWB, "createDmfHelperButtons", function()
+			reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
+		end)
+	end
 
 	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
 		reskinCheck(NWB, {"timerLogShowRendButton", "timerLogShowOnyButton", "timerLogShowNefButton"})

@@ -401,7 +401,7 @@ function LR:LootRollTest()
 	local itemID = 17103
 	local bop = 1
 	local name, link, quality, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-	if not name then 
+	if not name then
 		name, link, quality, icon = "碧空之歌", "|cffa335ee|Hitem:17103::::::::17:::::::|h[碧空之歌]|h|r", 4, 135349
 	end
 	testFrame.button.icon:SetTexture(icon)

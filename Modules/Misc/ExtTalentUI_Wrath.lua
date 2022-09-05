@@ -1010,17 +1010,24 @@ function M.TalentUI_UpdateControls()
 	local preview = GetCVarBool("previewTalents")
 
 	local talentPoints = GetUnspentTalentPoints(false, spec.pet, spec.talentGroup)
-	if (spec.pet or isActiveSpec) and talentPoints > 0 and preview then
-		M.TalentUI.PreviewBar:Show()
-		if GetGroupPreviewTalentPointsSpent(spec.pet, spec.talentGroup) > 0 then
-			M.TalentUI.Learn:Enable()
-			M.TalentUI.Reset:Enable()
+	if (spec.pet or isActiveSpec) and talentPoints > 0 then
+		if preview then
+			M.TalentUI.PreviewBar:Show()
+			M.TalentUI.PreviewButton:Hide()
+			if GetGroupPreviewTalentPointsSpent(spec.pet, spec.talentGroup) > 0 then
+				M.TalentUI.Learn:Enable()
+				M.TalentUI.Reset:Enable()
+			else
+				M.TalentUI.Learn:Disable()
+				M.TalentUI.Reset:Disable()
+			end
 		else
-			M.TalentUI.Learn:Disable()
-			M.TalentUI.Reset:Disable()
+			M.TalentUI.PreviewBar:Hide()
+			M.TalentUI.PreviewButton:Show()
 		end
 	else
 		M.TalentUI.PreviewBar:Hide()
+		M.TalentUI.PreviewButton:Hide()
 	end
 end
 
@@ -1177,6 +1184,15 @@ function M:TalentUI_Init()
 	for i, spec in ipairs(specsIndex) do
 		frame.tabs[i] = M.TalentUI_CreateSpecTab(frame, i, spec)
 	end
+
+	local PreviewButton = P.CreateButton(frame, 80, 20, PREVIEW)
+	PreviewButton:SetPoint("BOTTOMRIGHT", -16, 6)
+	PreviewButton:SetScript("OnClick", function()
+		SetCVar("previewTalents", 1)
+		M.TalentUI_UpdateControls()
+	end)
+	P.AddTooltip(PreviewButton, "ANCHOR_RIGHT", OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION, "info")
+	frame.PreviewButton = PreviewButton
 
 	local PreviewBar = CreateFrame("Frame", nil, frame)
 	PreviewBar:SetSize(200, 32)

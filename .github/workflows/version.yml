@@ -15,7 +15,7 @@ jobs:
       - name: Update TOC Interface version
         uses: p3lim/toc-interface-updater@v2
         with:
-          base: bcc
+          base: wrath
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3

@@ -50,7 +50,7 @@ local function reskinHeader(header)
 	for i = 4, 18 do
 		select(i, header.Button:GetRegions()):SetTexture("")
 	end
-	B.Reskin(header.Button) 
+	B.Reskin(header.Button)
 	header.Button.Title:SetTextColor(1, 1, 1)
 	header.Button.Title.SetTextColor = B.Dummy
 	header.Button.ExpandedIcon:SetWidth(20)
@@ -77,12 +77,12 @@ local function reskinItemButton(self)
 	B.StripTextures(self, 0)
 	self.icon:SetAlpha(1)
 	self.bg = B.ReskinIcon(self.icon)
-	B.ReskinIconBorder(self.IconBorder)
+	B.ReskinIconBorder(self.IconBorder, true)
 end
 
 local function strToPath(str)
 	local path = {}
-	for v in string.gmatch(str, "([^%.]+)") do 
+	for v in string.gmatch(str, "([^%.]+)") do
 		table.insert(path, v)
 	end
 	return path

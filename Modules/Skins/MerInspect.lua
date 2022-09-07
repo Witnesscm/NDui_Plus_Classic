@@ -17,7 +17,7 @@ local function reskinInspect(frame)
 		return self.backdrop
 	end
 
-	if frame:GetHeight() == 424 then frame:SetHeight(422) end
+	if frame:GetHeight() <= 424 then frame:SetHeight(422) end
 	frame.bg = B.SetBD(frame, nil, 0, C.mult, 0, -C.mult)
 end
 

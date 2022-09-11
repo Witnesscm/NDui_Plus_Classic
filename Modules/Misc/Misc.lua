@@ -32,7 +32,6 @@ do
 			frame.LinkNameButton:Show()
 			_G.TradeSkillFrameTitleText:SetFormattedText("%s %s[%s]|r", TRADE_SKILL_TITLE:format(GetTradeSkillLine()), HIGHLIGHT_FONT_COLOR_CODE, linkedName)
 			frame.LinkNameButton.linkedName = linkedName
-			frame.LinkNameButton:SetWidth(_G.TradeSkillFrameTitleText:GetStringWidth())
 		else
 			frame.LinkNameButton:Hide()
 			frame.LinkNameButton.linkedName = nil
@@ -58,4 +57,29 @@ do
 	end
 
 	P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.TradeSkill_AddName)
+end
+
+do
+	local titleString = "Frame Attributes %- (.+)"
+
+	local function hookTitleButton(frame)
+		if frame.hooked then return end
+
+		frame.TitleButton:HookScript("OnDoubleClick", function(self)
+			local text = self.Text:GetText()
+			local title = text and strmatch(text, titleString)
+			if title then
+				ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
+			end
+		end)
+
+		frame.hooked = true
+	end
+
+	function M:Blizzard_TableInspector()
+		hookTitleButton(_G.TableAttributeDisplay)
+		hooksecurefunc(_G.TableInspectorMixin, "InspectTable", hookTitleButton)
+	end
+
+	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end

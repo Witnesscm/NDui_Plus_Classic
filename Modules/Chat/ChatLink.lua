@@ -12,6 +12,19 @@ local function GetHyperlink(hyperlink, texture)
 	end
 end
 
+local tip = B.ScanTip
+local talentLink = "talent:%d:0"
+
+local function GetTalentIconByID(id)
+	tip:SetOwner(UIParent, "ANCHOR_NONE")
+	tip:SetHyperlink(format(talentLink, id))
+
+	local _, spell = tip:GetSpell()
+	if spell then
+		return GetSpellTexture(spell)
+	end
+end
+
 local cache = {}
 
 local function AddChatIcon(link, linkType, id)
@@ -24,6 +37,8 @@ local function AddChatIcon(link, linkType, id)
 		texture = GetSpellTexture(id)
 	elseif linkType == "item" then
 		texture = GetItemIcon(id)
+	elseif linkType == "talent" then
+		texture = GetTalentIconByID(id)
 	elseif linkType == "achievement" then
 		texture = select(10, GetAchievementInfo(id))
 	elseif linkType == "currency" then

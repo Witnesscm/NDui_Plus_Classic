@@ -16,6 +16,7 @@ function S:Immersion()
 	B.StripTextures(TalkBox.PortraitFrame)
 	B.StripTextures(TalkBox.BackgroundFrame)
 	B.StripTextures(TalkBox.Hilite)
+	TalkBox.TextFrame.SpeechProgress:SetFont(DB.Font[1], 16, DB.Font[3])
 
 	local hilite = B.CreateBDFrame(TalkBox.Hilite, 0)
 	hilite:SetAllPoints(TalkBox)

@@ -56,6 +56,8 @@ function S:MerInspect()
 	if not _G.ClassicStatsFrameTemplate_OnShow then return end
 
 	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
+		if self:GetHeight() <= 424 then self:SetHeight(422) end
+
 		if not self.styled then
 			B.StripTextures(self)
 			reskinInspect(self)

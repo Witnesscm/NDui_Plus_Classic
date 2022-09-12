@@ -85,6 +85,7 @@ StaticPopupDialogs["NDUIPLUS_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
 	button2 = NO,
 	OnAccept = function (self)
 		LearnPreviewTalents(M.TalentUI.pet)
+		PlaySound(1455)
 	end,
 	OnCancel = function (self)
 	end,
@@ -181,7 +182,7 @@ function M:TalentUI_CreatePanel(i)
 
 	local ArrowFrame = CreateFrame("Frame", nil, frame)
 	ArrowFrame:SetAllPoints()
-	ArrowFrame:SetFrameLevel(frame:GetFrameLevel() + 100)
+	ArrowFrame:SetFrameLevel(frame:GetFrameLevel() + 2)
 
 	local Label = frame:CreateFontString(nil, "OVERLAY")
 	Label:SetFont(DB.Font[1], 16, DB.Font[3])
@@ -235,6 +236,8 @@ local roleList = {
 }
 
 local function TalentSpecTab_OnClick(self, btn)
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+
 	local specIndex = self.specIndex
 	local spec = specs[specIndex]
 
@@ -259,6 +262,7 @@ local function TalentSpecTab_OnClick(self, btn)
 	M.TalentUI.pet = spec.pet
 	M.TalentUI.unit = spec.unit
 	M.TalentUI.talentGroup = spec.talentGroup
+	M.GlyphUI.talentGroup = spec.talentGroup
 
 	M:TalentUI_Refresh()
 end
@@ -336,15 +340,15 @@ local function TalentSpecTab_OnEvent(self)
 end
 
 function M:TalentUI_CreateTab()
-	local tab = CreateFrame("CheckButton", nil, self, "PlayerSpecTabTemplate")
+	local tab = CreateFrame("CheckButton", nil, self)
+	tab:SetSize(32, 32)
+	tab:SetNormalTexture("")
 	tab:GetNormalTexture():SetTexCoord(unpack(DB.TexCoord))
-	tab:GetRegions():Hide()
-	tab:SetCheckedTexture(DB.textures.pushed)
+	tab:SetHighlightTexture("")
 	tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+	tab:SetCheckedTexture(DB.textures.pushed)
 	B.CreateBDFrame(tab)
-	tab:SetScript("OnClick", nil)
-	tab:SetScript("OnEnter", nil)
-	tab:SetScript("OnLeave", nil)
+	tab:Hide()
 
 	return tab
 end
@@ -533,11 +537,12 @@ function M:TalentUI_GetButton(i)
 		RankBorder:SetPoint("CENTER", button, "BOTTOMRIGHT")
 		RankBorder:SetTexture([[Interface\TalentFrame\TalentFrame-RankBorder]])
 
-		local Rank = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+		local Rank = button:CreateFontString(nil, "OVERLAY")
+		Rank:SetFont(DB.Font[1], 15, DB.Font[3])
 		Rank:SetPoint("CENTER", RankBorder, "CENTER")
 
 		B.StripTextures(button)
-		button.icon:SetTexCoord(.08, .92, .08, .92)
+		button.icon:SetTexCoord(unpack(DB.TexCoord))
 		B.CreateBDFrame(button.icon)
 		local hl = button:GetHighlightTexture()
 		hl:SetColorTexture(1, 1, 1, .25)
@@ -1075,6 +1080,10 @@ function M:TalentUI_Refresh()
 			M.TalentUI_Update(M.TalentUI.panels[i])
 		end
 	end
+
+	if M.GlyphUI:IsShown() then
+		M:GlyphUI_Update()
+	end
 end
 
 function M.TalentUI_PreUpdate(event)
@@ -1114,6 +1123,8 @@ function M:TalentUI_UpdatePortrait(unit)
 end
 
 function M:TalentUI_Toggle(expand)
+	if not IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
+
 	if expand then
 		M.TalentUI:Show()
 		HideUIPanel(PlayerTalentFrame)
@@ -1223,8 +1234,8 @@ function M:TalentUI_Init()
 	local Glyph = P.CreateButton(ContainerBar, 70, 20, GLYPHS)
 	Glyph:SetPoint("BOTTOMLEFT", 16, 6)
 	Glyph:SetScript("OnClick", function()
-		if GlyphFrame_Toggle then
-			GlyphFrame_Toggle()
+		if M.GlyphUI then
+			B:TogglePanel(M.GlyphUI)
 		end
 	end)
 	frame.Glyph = Glyph
@@ -1247,6 +1258,23 @@ function M:TalentUI_Init()
 	end
 end
 
+function M.TalentUI_Wipe(_, arg1, arg2)
+	HideUIPanel(GossipFrame)
+	StaticPopupDialogs["CONFIRM_TALENT_WIPE"].text = _G["CONFIRM_TALENT_WIPE_"..arg2]
+	local dialog = StaticPopup_Show("CONFIRM_TALENT_WIPE")
+	if dialog then
+		MoneyFrame_Update(dialog:GetName().."MoneyFrame", arg1)
+		M.TalentUI:Show()
+		local talentGroup = GetActiveTalentGroup()
+		for index, spec in next, specs do
+			if spec.pet == false and spec.talentGroup == talentGroup then
+				TalentSpecTab_OnClick(specTabs[index])
+				break
+			end
+		end
+	end
+end
+
 function M:TalentUI_Load()
 	P:Delay(.5,function()
 		for i = 1, MAX_NUM_TALENTS do
@@ -1265,16 +1293,6 @@ function M:TalentUI_Load()
 		bu:SetScript("OnClick", function()
 			M:TalentUI_Toggle(true)
 		end)
-
-		_G.PlayerTalentFrame_Open = function(pet, talentGroup)
-			M.TalentUI:Show()
-			for index, spec in next, specs do
-				if spec.pet == pet and spec.talentGroup == talentGroup then
-					TalentSpecTab_OnClick(specTabs[index])
-					break
-				end
-			end
-		end
 	end
 end
 P:AddCallbackForAddon("Blizzard_TalentUI", M.TalentUI_Load)
@@ -1286,6 +1304,9 @@ function M:ExtTalentUI()
 		if M.db["TalentExpand"] then
 			B:TogglePanel(M.TalentUI)
 		else
+			if not IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
+			if not IsAddOnLoaded("Blizzard_GlyphUI") then GlyphFrame_LoadUI() end
+
 			if PlayerTalentFrame:IsShown() then
 				HideUIPanel(PlayerTalentFrame)
 			else
@@ -1294,21 +1315,17 @@ function M:ExtTalentUI()
 		end
 	end
 
-	if not IsAddOnLoaded("Blizzard_TalentUI") then
-		UIParentLoadAddOn("Blizzard_TalentUI")
-	end
-
-	if not IsAddOnLoaded("Blizzard_GlyphUI") then
-		UIParentLoadAddOn("Blizzard_GlyphUI")
-	end
-
 	M:TalentUI_Init()
+	M:GlyphUI_Init()
+	_G.UIParent:UnregisterEvent("CONFIRM_TALENT_WIPE")
+	B:RegisterEvent("CONFIRM_TALENT_WIPE", M.TalentUI_Wipe)
 	B:RegisterEvent("PLAYER_TALENT_UPDATE", M.TalentUI_Refresh)
 	B:RegisterEvent("PET_TALENT_UPDATE", M.TalentUI_Refresh)
 	B:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED", M.TalentUI_PreUpdate)
 	B:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED", M.TalentUI_PreUpdate)
 	B:RegisterEvent("UNIT_PET", M.TalentUI_UpdatePet)
 	B:RegisterEvent("UNIT_PORTRAIT_UPDATE", M.TalentUI_UpdatePortrait)
+	B:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", function() PlaySound(SOUNDKIT.GLYPH_MAJOR_CREATE) end)
 end
 
 M:RegisterMisc("ExtTalentUI", M.ExtTalentUI)

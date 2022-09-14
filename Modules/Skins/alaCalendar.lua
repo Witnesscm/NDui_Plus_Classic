@@ -95,68 +95,70 @@ end
 local function alaCalendarSkin()
 	-- calendar
 	local frame = _G.ALA_CALENDAR
-	B.StripTextures(frame)
-	B.SetBD(frame, nil, 3, C.mult, -3, 3)
-	B.ReskinClose(frame.close, nil, -10, -6)
-	B.ReskinArrow(frame.prev, "left")
-	B.ReskinArrow(frame.next, "right")
-	reskinArrowButton(frame.call_board, "right")
-	frame.call_board:ClearAllPoints()
-	frame.call_board:SetPoint("TOP", frame.close, "BOTTOM", 0, -8)
+	if frame then
+		B.StripTextures(frame)
+		B.SetBD(frame, nil, 3, C.mult, -3, 3)
+		B.ReskinClose(frame.close, nil, -10, -6)
+		B.ReskinArrow(frame.prev, "left")
+		B.ReskinArrow(frame.next, "right")
+		reskinArrowButton(frame.call_board, "right")
+		frame.call_board:ClearAllPoints()
+		frame.call_board:SetPoint("TOP", frame.close, "BOTTOM", 0, -8)
 
-	for col = 1, 7 do
-		local bg = frame.weekTitles[col][1]
-		bg:Hide()
-	end
+		for col = 1, 7 do
+			local bg = frame.weekTitles[col][1]
+			bg:Hide()
+		end
 
-	for row, rowcells in ipairs(frame.cells) do
-		for col, cell in ipairs(rowcells) do
-			cell:DisableDrawLayer("BACKGROUND")
-			cell:DisableDrawLayer("OVERLAY")
-			cell:SetHighlightTexture(DB.bdTex)
-			local hl = cell:GetHighlightTexture()
-			hl:SetVertexColor(r, g, b, .25)
+		for row, rowcells in ipairs(frame.cells) do
+			for col, cell in ipairs(rowcells) do
+				cell:DisableDrawLayer("BACKGROUND")
+				cell:DisableDrawLayer("OVERLAY")
+				cell:SetHighlightTexture(DB.bdTex)
+				local hl = cell:GetHighlightTexture()
+				hl:SetVertexColor(r, g, b, .25)
 
-			if row == 1 and col < 7 then
-				local vline = CreateFrame("Frame", nil, cell, "BackdropTemplate")
-				vline:SetHeight(540)
-				vline:SetWidth(1)
-				vline:SetPoint("TOP", cell, "TOPRIGHT")
-				B.CreateBD(vline)
+				if row == 1 and col < 7 then
+					local vline = CreateFrame("Frame", nil, cell, "BackdropTemplate")
+					vline:SetHeight(540)
+					vline:SetWidth(1)
+					vline:SetPoint("TOP", cell, "TOPRIGHT")
+					B.CreateBD(vline)
+				end
+
+				if col == 1 then
+					local hline = CreateFrame("Frame", nil, cell, "BackdropTemplate")
+					hline:SetWidth(631)
+					hline:SetHeight(1)
+					hline:SetPoint("LEFT", cell, "TOPLEFT")
+					B.CreateBD(hline)
+				end
+
+				cell.todayBD = B.CreateBDFrame(cell)
+				cell.todayBD:SetAllPoints()
+				cell.todayBD:SetBackdropColor(r, g, b, .25)
+				cell.todayBD:SetBackdropBorderColor(r, g, b)
+				cell.todayBD:SetFrameLevel(cell:GetFrameLevel() + 5)
+				cell.todayBD:Hide()
+				hooksecurefunc(cell, "Today", function(self)
+					self.todayBD:Show()
+				end)
+
+				hooksecurefunc(cell, "NotToday", function(self)
+					self.todayBD:Hide()
+				end)
+
+				cell.dark = B.CreateBDFrame(cell, .4)
+				cell.dark:SetAllPoints()
+				cell.dark:SetBackdropBorderColor(0, 0, 0, 0)
+				hooksecurefunc(cell, "Bright", function(self)
+					self.dark:Hide()
+				end)
+
+				hooksecurefunc(cell, "Dark", function(self)
+					self.dark:Show()
+				end)
 			end
-
-			if col == 1 then
-				local hline = CreateFrame("Frame", nil, cell, "BackdropTemplate")
-				hline:SetWidth(631)
-				hline:SetHeight(1)
-				hline:SetPoint("LEFT", cell, "TOPLEFT")
-				B.CreateBD(hline)
-			end
-
-			cell.todayBD = B.CreateBDFrame(cell)
-			cell.todayBD:SetAllPoints()
-			cell.todayBD:SetBackdropColor(r, g, b, .25)
-			cell.todayBD:SetBackdropBorderColor(r, g, b)
-			cell.todayBD:SetFrameLevel(cell:GetFrameLevel() + 5)
-			cell.todayBD:Hide()
-			hooksecurefunc(cell, "Today", function(self)
-				self.todayBD:Show()
-			end)
-
-			hooksecurefunc(cell, "NotToday", function(self)
-				self.todayBD:Hide()
-			end)
-
-			cell.dark = B.CreateBDFrame(cell, .4)
-			cell.dark:SetAllPoints()
-			cell.dark:SetBackdropBorderColor(0, 0, 0, 0)
-			hooksecurefunc(cell, "Bright", function(self)
-				self.dark:Hide()
-			end)
-
-			hooksecurefunc(cell, "Dark", function(self)
-				self.dark:Show()
-			end)
 		end
 	end
 
@@ -167,10 +169,13 @@ local function alaCalendarSkin()
 	B.ReskinClose(board.close)
 	board.close:ClearAllPoints()
 	board.close:SetPoint("TOPLEFT", board, "TOPLEFT", 6, -6)
-	reskinArrowButton(board.call_calendar, "left")
-	board.call_calendar:ClearAllPoints()
-	board.call_calendar:SetPoint("TOP", board.close, "BOTTOM", 0, -8)
-	board.call_calendar.str:SetPoint("LEFT", board.call_calendar, "RIGHT", 4, 0)
+
+	if board.call_calendar then
+		reskinArrowButton(board.call_calendar, "left")
+		board.call_calendar:ClearAllPoints()
+		board.call_calendar:SetPoint("TOP", board.close, "BOTTOM", 0, -8)
+		board.call_calendar.str:SetPoint("LEFT", board.call_calendar, "RIGHT", 4, 0)
+	end
 
 	reskinArrowButton(board.call_char_list, "left")
 	board.call_char_list.str:SetPoint("LEFT", board.call_char_list, "RIGHT", 4, 0)
@@ -223,9 +228,7 @@ function S:alaCalendar()
 	local alaCal = _G.__ala_meta__ and _G.__ala_meta__.cal
 	if not alaCal then return end
 
-	if _G.ALA_CALENDAR then
-		alaCalendarSkin()
-	elseif alaCal.CreateUI then
+	if alaCal.CreateUI then
 		hooksecurefunc(alaCal, "CreateUI", alaCalendarSkin)
 	end
 end

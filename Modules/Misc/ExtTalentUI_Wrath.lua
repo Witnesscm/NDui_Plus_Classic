@@ -235,6 +235,8 @@ local roleList = {
 	{text = P.TextureString(B.GetRoleTex("DAMAGER"), ":16:16")..DAMAGER, func = SelectRole, classicChecks = true, value = "DAMAGER", checked = IsRoleChecked},
 }
 
+local RoleDropDown
+
 local function TalentSpecTab_OnClick(self, btn)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 
@@ -246,7 +248,14 @@ local function TalentSpecTab_OnClick(self, btn)
 
 		if not spec.pet then
 			currentSpecTab = spec.talentGroup
-			EasyMenu(roleList, P.EasyMenu, "cursor", 0, 0, "MENU", 1)
+
+			if not RoleDropDown then
+				RoleDropDown = CreateFrame("Frame", "NDuiPlus_RoleDropMenu", UIParent, "UIDropDownMenuTemplate")
+				RoleDropDown.displayMode = "MENU"
+				RoleDropDown.initialize = EasyMenu_Initialize
+			end
+
+			ToggleDropDownMenu(1, nil, RoleDropDown, "cursor", 10, -10, roleList)
 		end
 
 		return
@@ -262,7 +271,6 @@ local function TalentSpecTab_OnClick(self, btn)
 	M.TalentUI.pet = spec.pet
 	M.TalentUI.unit = spec.unit
 	M.TalentUI.talentGroup = spec.talentGroup
-	M.GlyphUI.talentGroup = spec.talentGroup
 
 	M:TalentUI_Refresh()
 end
@@ -1054,6 +1062,7 @@ function M:TalentUI_UpdateVisibility()
 		frame:SetSize(frame.petWidth, frame.petHeight)
 		frame.Points:ClearAllPoints()
 		frame.Points:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 14, 8)
+		if M.GlyphUI:IsShown() then M.GlyphUI:Hide() end
 	else
 		frame:SetSize(frame.playerWidth, frame.playerHeight)
 		frame.Points:ClearAllPoints()

@@ -66,7 +66,7 @@ StaticPopupDialogs["NDUIPLUS_CONFIRM_REMOVE_GLYPH"] = {
 	button1 = YES,
 	button2 = NO,
 	OnAccept = function (self)
-		local talentGroup = M.GlyphUI and M.GlyphUI.talentGroup or 1
+		local talentGroup = M.TalentUI and M.TalentUI.talentGroup or 1
 		if talentGroup == GetActiveTalentGroup() then
 			RemoveGlyphFromSocket(self.data.id)
 		end
@@ -83,7 +83,7 @@ StaticPopupDialogs["NDUIPLUS_CONFIRM_REMOVE_GLYPH"] = {
 
 local function GlyphButton_OnClick(self, button)
 	local id = self:GetID()
-	local talentGroup = M.GlyphUI.talentGroup
+	local talentGroup = M.TalentUI.talentGroup
 
 	if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
 		local link = GetGlyphLink(id, talentGroup)
@@ -114,7 +114,7 @@ local function GlyphButton_OnEnter(self)
 	end
 
 	_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	_G.GameTooltip:SetGlyph(self:GetID(), M.GlyphUI.talentGroup)
+	_G.GameTooltip:SetGlyph(self:GetID(), M.TalentUI.talentGroup)
 	_G.GameTooltip:Show()
 end
 
@@ -155,7 +155,7 @@ end
 
 function M:GlyphUI_UpdateSlot()
 	local id = self:GetID()
-	local talentGroup = M.GlyphUI.talentGroup
+	local talentGroup = M.TalentUI.talentGroup
 	local enabled, glyphType, glyphSpell  = GetGlyphSocketInfo(id, talentGroup)
 	local icon = M.GlyphSpellToIcon[glyphSpell]
 
@@ -191,9 +191,9 @@ function M:GlyphUI_UpdateSlot()
 end
 
 function M:GlyphUI_Update()
-	if not M.GlyphUI or not M.GlyphUI:IsShown() then return end
+	if not M.GlyphUI or not M.GlyphUI:IsVisible() then return end
 
-	local isActiveTalentGroup = not M.TalentUI.pet and M.GlyphUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
+	local isActiveTalentGroup = not M.TalentUI.pet and M.TalentUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
 
 	for i = 1, NUM_GLYPH_SLOTS do
 		SetDesaturation(M.GlyphUI.slots[i].icon, not isActiveTalentGroup)
@@ -203,7 +203,6 @@ end
 
 function M.GlyphUI_OnShow(self)
 	PlaySound(SOUNDKIT.TALENT_SCREEN_OPEN)
-	self.talentGroup = M.TalentUI:IsShown() and M.TalentUI.talentGroup or GetActiveTalentGroup()
 	M:GlyphUI_Update()
 end
 
@@ -260,17 +259,32 @@ function M.GlyphUI_GlyphUpdate(event, index)
 	end
 end
 
+function M.GlyphUI_Open()
+	if M.db["TalentExpand"] then
+		if M.GlyphUI:IsVisible() then
+			M:GlyphUI_Update()
+		else
+			M.TalentUI:Show()
+			M.GlyphUI:Show()
+		end
+	else
+		OpenGlyphFrame()
+	end
+end
+
 function M:GlyphUI_Init()
-	local frame = CreateFrame("Frame", "NDuiPlusGlyphFrame", UIParent)
-	tinsert(UISpecialFrames, "NDuiPlusGlyphFrame")
-	frame:SetSize(444, 382)
-	frame:SetPoint("CENTER")
+	local frame = CreateFrame("Frame", "NDuiPlusGlyphFrame", M.TalentUI)
+	frame:SetSize(238, M.TalentUI.playerHeight)
+	frame:SetPoint("TOPRIGHT", M.TalentUI, "TOPLEFT", -4, 0)
 	frame:SetFrameLevel(15)
 	B.SetBD(frame)
-	B.CreateMF(frame)
+	B.CreateMF(frame, M.TalentUI)
+	frame:SetClampedToScreen(true)
 	frame:SetScript("OnShow", M.GlyphUI_OnShow)
 	frame:SetScript("OnHide", function() PlaySound(SOUNDKIT.TALENT_SCREEN_CLOSE) end)
 	frame:SetScript("OnUpdate", M.GlyphUI_OnUpdate)
+	frame:Hide()
+	M.GlyphUI = frame
 
 	local Close = CreateFrame("Button", nil, frame)
 	B.ReskinClose(Close)
@@ -285,46 +299,43 @@ function M:GlyphUI_Init()
 		if index == 1 then
 			glyph:SetPoint("TOPLEFT", 24, -100)
 		elseif index == 4 then
-			glyph:SetPoint("LEFT", frame.slots[1], "RIGHT", 16, 0)
+			glyph:SetPoint("TOPLEFT", 24, -100-383)
 		else
-			glyph:SetPoint("TOP", frame.slots[GlyphMap[index-1]], "BOTTOM", 0, -16)
+			glyph:SetPoint("TOP", frame.slots[GlyphMap[index-1]], "BOTTOM", 0, -24)
 		end
 		frame.slots[id] = glyph
 	end
 
+	frame.labels = {}
 	for i = 1, 2 do
 		local label = frame:CreateFontString(nil, "OVERLAY")
 		label:SetFont(DB.Font[1], 16, DB.Font[3])
 		label:SetTextColor(1, .8, 0)
-		label:SetPoint("CENTER", frame, "TOP", i == 1 and -103 or 103, -60)
+		label:SetPoint("CENTER", frame, "TOP", 0, i == 1 and -50 or -50-383)
 		label:SetText(i == 1 and MAJOR_GLYPH or MINOR_GLYPH)
+		frame.labels[i] = label
 	end
-
-	frame.talentGroup = GetActiveTalentGroup()
-
-	M.GlyphUI = frame
 
 	B:RegisterEvent("PLAYER_LEVEL_UP", M.GlyphUI_Update)
 	B:RegisterEvent("GLYPH_ADDED", M.GlyphUI_GlyphUpdate)
 	B:RegisterEvent("GLYPH_REMOVED", M.GlyphUI_GlyphUpdate)
 	B:RegisterEvent("GLYPH_UPDATED", M.GlyphUI_GlyphUpdate)
-	B:RegisterEvent("USE_GLYPH", function()
-		if M.GlyphUI:IsShown() then
-			M:GlyphUI_Update()
-		else
-			M.GlyphUI:Show()
-		end
-	end)
 	_G.UIParent:UnregisterEvent("USE_GLYPH")
+	B:RegisterEvent("USE_GLYPH", M.GlyphUI_Open)
 
 	_G.ToggleGlyphFrame = function()
 		if M.db["TalentExpand"] then
-			B:TogglePanel(M.GlyphUI)
+			if M.TalentUI:IsShown() then
+				M.TalentUI:Hide()
+			else
+				M.TalentUI:Show()
+				M.GlyphUI:Show()
+			end
 		else
 			if not IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
 			if not IsAddOnLoaded("Blizzard_GlyphUI") then GlyphFrame_LoadUI() end
 
-			if GlyphFrame_Toggle  then
+			if GlyphFrame_Toggle then
 				GlyphFrame_Toggle()
 			end
 		end

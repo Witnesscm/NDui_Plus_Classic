@@ -274,9 +274,6 @@ function P:GetModule(name)
 end
 
 function P:Initialize()
-	if not B.Modules then return end -- compatible
-	if P.Initialized then return end -- compatible
-
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(L["Version Check"], P.SupportVersion)
@@ -316,7 +313,6 @@ end
 
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
-loader:RegisterEvent("PLAYER_LOGIN") -- compatible
 loader:SetScript("OnEvent", function(self, event, addon)
 	if event == "ADDON_LOADED" and addon == "NDui_Plus" then
 		P:InitialSettings(P.DefaultSettings, NDuiPlusDB, true)
@@ -337,7 +333,5 @@ loader:SetScript("OnEvent", function(self, event, addon)
 		P:ReplaceTexture()
 
 		self:UnregisterEvent(event)
-	elseif event == "PLAYER_LOGIN" then
-		P:Initialize()
 	end
 end)

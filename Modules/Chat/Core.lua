@@ -7,6 +7,7 @@ local CH = P:RegisterModule("Chat")
 CH.GuidCache = {}
 CH.ClassNames = {}
 CH.GroupNames = {}
+CH.GroupRoles = {}
 
 CH.ChatEvents = {
 	"CHAT_MSG_BATTLEGROUND",
@@ -28,7 +29,8 @@ CH.ChatEvents = {
 	"CHAT_MSG_WHISPER",
 	"CHAT_MSG_WHISPER_INFORM",
 	"CHAT_MSG_YELL",
-	"CHAT_MSG_LOOT"
+	"CHAT_MSG_LOOT",
+	"CHAT_MSG_CURRENCY",
 }
 
 local isCalling = false

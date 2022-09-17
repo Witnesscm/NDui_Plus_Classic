@@ -8,13 +8,15 @@ local gsub = string.gsub
 
 function CH:UpdateGroupInfo()
 	wipe(CH.GroupNames)
+	wipe(CH.GroupRoles)
 
-	if not IsInRaid() then return end
+	if not IsInGroup() then return end
 
 	for i = 1, GetNumGroupMembers() do
-		local name, _, subgroup = GetRaidRosterInfo(i)
-		if name and subgroup then
+		local name, _, subgroup, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
+		if name and subgroup and role then
 			CH.GroupNames[name] = tostring(subgroup)
+			CH.GroupRoles[name] = role
 		end
 	end
 end
@@ -22,16 +24,18 @@ end
 local function addRaidIndex(fullName, info, nameText)
 	local name = Ambiguate(fullName, "none")
 	local group = name and CH.GroupNames[name]
+	local role = name and CH.GroupRoles[name]
+	local icon = CH.db["Role"] and role and CH.RolePaths[role] or ""
 
-	if group then
+	if group and IsInRaid() and CH.db["RaidIndex"] then
 		nameText = nameText..":"..group
 	end
 
-	return "|Hplayer:"..fullName..info.."|h["..nameText.."]|h"
+	return "|Hplayer:"..fullName..info.."|h"..icon.."["..nameText.."]|h"
 end
 
 function CH:UpdateRaidIndex(text, ...)
-	if IsInRaid() and CH.db["RaidIndex"] then
+	if IsInGroup() and (CH.db["RaidIndex"] or CH.db["Role"]) then
 		text = gsub(text, "|Hplayer:([^:]+)([^|Hh]+)|h%[([^:]+)%]|h", addRaidIndex)
 	end
 
@@ -39,6 +43,12 @@ function CH:UpdateRaidIndex(text, ...)
 end
 
 function CH:ChatRaidIndex()
+	CH.RolePaths = {
+		TANK = P.TextureString(B.GetRoleTex("TANK"), ":16:16"),
+		HEALER = P.TextureString(B.GetRoleTex("HEALER"), ":16:16"),
+		DAMAGER = P.TextureString(B.GetRoleTex("DAMAGER"), ":16:16")
+	}
+
 	local eventList = {
 		"GROUP_ROSTER_UPDATE",
 		"PLAYER_ENTERING_WORLD",

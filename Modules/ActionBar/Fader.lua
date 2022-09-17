@@ -54,7 +54,8 @@ function AB:FadeParent_OnEvent(event)
 		(AB.db["Combat"] and UnitAffectingCombat("player")) or
 		(AB.db["Target"] and UnitExists("target")) or
 		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
-		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player")))
+		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
+		(AB.db["Vehicle"] and UnitHasVehicleUI("player"))
 	then
 		self.mouseLock = true
 		ClearTimers(AB.fadeParent)
@@ -96,6 +97,14 @@ local options = {
 			self:RegisterUnitEvent("UNIT_HEALTH", "player")
 		end,
 		events = {"UNIT_HEALTH"}
+	},
+	Vehicle = {
+		enable = function(self)
+			self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+			self:RegisterEvent("UNIT_EXITED_VEHICLE")
+			self:RegisterEvent("VEHICLE_UPDATE")
+		end,
+		events = {"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE"}
 	},
 }
 

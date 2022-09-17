@@ -163,7 +163,8 @@ function G:SetupABFader(parent)
 		[1] = {"Combat", L["Combat"]},
 		[2] = {"Target", L["Target"]},
 		[3] = {"Health", L["Health"]},
-		[4] = {"Casting", L["Casting"]},
+		[4] = {"Vehicle", L["Vehicle"]},
+		[5] = {"Casting", L["Casting"]},
 	}
 
 	offset = offset + 40
@@ -242,7 +243,8 @@ function G:SetupUFsFader(parent)
 		[3] = {"Target", L["Target"]},
 		[4] = {"Focus", L["Focus"]},
 		[5] = {"Health", L["Health"]},
-		[6] = {"Casting", L["Casting"]},
+		[6] = {"Vehicle", L["Vehicle"]},
+		[7] = {"Casting", L["Casting"]},
 	}
 
 	offset = offset + 40

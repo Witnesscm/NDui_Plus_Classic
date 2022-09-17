@@ -202,7 +202,7 @@ function P:Print(...)
 end
 
 function P:Error(...)
-	_G.UIErrorsFrame:AddMessage("|cFF70B8FF"..format(...).."|r ")
+	_G.UIErrorsFrame:AddMessage(DB.InfoColor..format(...).."|r")
 end
 
 function P:VersionCheck_Compare(new, old)

@@ -119,7 +119,10 @@ local function GlyphButton_OnEnter(self)
 end
 
 local function GlyphButton_OnLeave(self)
-	self.bg:SetBackdropBorderColor(0, 0, 0)
+	if self.enabled then
+		self.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+
 	_G.GameTooltip:Hide()
 end
 
@@ -176,12 +179,13 @@ function M:GlyphUI_UpdateSlot()
 		self.icon:SetTexture(nil)
 
 		if not enabled then
-			self.bg:SetBackdropColor(.5,.5,.5, .25)
+			self.bg:SetBackdropColor(.5, .5, .5, .25)
 		end
 	else
 		self.spell = glyphSpell
 		self.glyphName = GetSpellInfo(glyphSpell)
 		self.name:SetText(self.glyphName)
+
 		if icon then
 			self.icon:SetTexture(icon)
 		else

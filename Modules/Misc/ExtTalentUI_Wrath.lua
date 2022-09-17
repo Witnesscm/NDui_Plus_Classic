@@ -216,16 +216,15 @@ end
 local currentSpecTab
 
 local function SelectRole(self)
+	if InCombatLockdown() then P:Error(ERR_NOT_IN_COMBAT) return end
+
 	if currentSpecTab then
 		SetTalentGroupRole(currentSpecTab, self.value)
 	end
 end
 
 local function IsRoleChecked(self)
-	local currentRole = "NONE"
-	if currentSpecTab then
-		currentRole = GetTalentGroupRole(currentSpecTab)
-	end
+	local currentRole = currentSpecTab and GetTalentGroupRole(currentSpecTab) or "NONE"
 	return currentRole == self.value
 end
 

@@ -62,6 +62,8 @@ local function reskinCatFrame(self)
 					end
 
 					bu.bg:Show()
+					bu.label:ClearAllPoints()
+					bu.label:SetPoint("LEFT", check, "RIGHT", 4, 0)
 				end
 			end
 		end
@@ -71,13 +73,30 @@ local function reskinCatFrame(self)
 	end
 end
 
-local function reskinSubFrame(frame)
+local function reskinSelectFrame(self)
+	local frame = self.frame
 	B.StripTextures(frame)
-	local bg = B.CreateBDFrame(frame)
+	local bg = B.CreateBDFrame(frame, .25)
 	bg:SetAllPoints()
+
+	hooksecurefunc(self, "Update", function()
+		for i = 1, #self.buttons do
+			local button = self.buttons[i]
+			if not button.styled then
+				local hl = button:GetHighlightTexture()
+				hl:SetColorTexture(r, g, b, .25)
+				hl:SetOutside(nil, 4)
+				local check = button:GetCheckedTexture()
+				check:SetColorTexture(r, g, b, .25)
+				check:SetOutside(nil, 4)
+
+				button.styled = true
+			end
+		end
+	end)
 end
 
-local function reskinSelect(self)
+local function reskinSelectMenu(self)
 	local frame = self.selectionFrame
 	if frame and not frame.styled then
 		B.StripTextures(frame, 0)
@@ -149,6 +168,9 @@ local function reskinSecButton(self)
 	self.bg = B.ReskinIcon(self.icon)
 	hooksecurefunc(self.icon, "SetTexCoord", updateIconTexCoord)
 	reskinIconBorder(self.overlay)
+	self.count:ClearAllPoints()
+	self.count:SetPoint("BOTTOMRIGHT", self.icon, "BOTTOMRIGHT", -1, 1)
+	self.count:SetFont(unpack(DB.Font))
 	local hl = self:GetHighlightTexture()
 	hl:SetColorTexture(1, 1, 1, .25)
 	hl:SetInside(self.bg)
@@ -161,6 +183,9 @@ local function reskinItemButton(self)
 	self.bg = B.ReskinIcon(self.icon)
 	hooksecurefunc(self.icon, "SetTexCoord", updateIconTexCoord)
 	reskinIconBorder(self.overlay)
+	self.count:ClearAllPoints()
+	self.count:SetPoint("BOTTOMRIGHT", self.icon, "BOTTOMRIGHT", -1, 1)
+	self.count:SetFont(unpack(DB.Font))
 	reskinSecButton(self.secButton)
 end
 
@@ -178,16 +203,17 @@ function S:AtlasLootClassic()
 	B.ReskinClose(frame.CloseButton)
 	reskinDropDown(frame.moduleSelect.frame)
 	reskinDropDown(frame.subCatSelect.frame)
-	frame.gameVersionButton:HookScript("OnClick", reskinSelect)
+	frame.gameVersionButton:HookScript("OnClick", reskinSelectMenu)
 	frame.moduleSelect.frame:HookScript("OnClick", reskinCatFrame)
 	frame.moduleSelect.frame.button:HookScript("OnClick", reskinCatFrame)
 	frame.subCatSelect.frame:HookScript("OnClick", reskinCatFrame)
 	frame.subCatSelect.frame.button:HookScript("OnClick", reskinCatFrame)
 
-	reskinSubFrame(frame.contentFrame)
-	reskinSubFrame(frame.difficulty.frame)
-	reskinSubFrame(frame.boss.frame)
-	reskinSubFrame(frame.extra.frame)
+	B.StripTextures(frame.contentFrame)
+	B.CreateBDFrame(frame.contentFrame, .25)
+	reskinSelectFrame(frame.difficulty)
+	reskinSelectFrame(frame.boss)
+	reskinSelectFrame(frame.extra)
 	frame.contentFrame.downBG:Hide()
 	frame.contentFrame.itemBG:Hide()
 	B.ReskinInput(frame.contentFrame.searchBox)
@@ -207,7 +233,7 @@ function S:AtlasLootClassic()
 	filterButton.HL = filterButton:CreateTexture(nil, "HIGHLIGHT")
 	filterButton.HL:SetColorTexture(1, 1, 1, .25)
 	filterButton.HL:SetAllPoints(filterButton.texture)
-	filterButton:HookScript("PostClick", reskinSelect)
+	filterButton:HookScript("PostClick", reskinSelectMenu)
 
 	for _, button in ipairs(AtlasLoot.GUI.ItemFrame.frame.ItemButtons) do
 		reskinItemButton(button)
@@ -248,6 +274,9 @@ function S:AtlasLootClassic()
 		if tip and not tip.styled then
 			tip:HideBackdrop()
 			B.SetBD(tip)
+			tip.standing:HideBackdrop()
+			tip.standing.bar:SetStatusBarTexture(DB.normTex)
+			B.CreateBDFrame(tip.standing.bar, .25)
 			tip.styled = true
 		end
 	end)
@@ -263,10 +292,10 @@ function S:AtlasLootClassic()
 	end)
 
 	hooksecurefunc(Button, "ExtraItemFrame_GetFrame", function()
-		local secButton1 = AtlasLoot_SecButton_1_container
+		local secButton1 = _G.AtlasLoot_SecButton_1_container
 		local extraFrame = secButton1 and secButton1:GetParent()
 		if extraFrame and not extraFrame.styled then
-			extraFrame:SetBackdrop({ bgFile = DB.bdTex, edgeFile = DB.bdTex, edgeSize = 1 })
+			extraFrame:SetBackdrop({bgFile = DB.bdTex, edgeFile = DB.bdTex, edgeSize = 1})
 			extraFrame:SetBackdropColor(.5, .5, .5, .9)
 			extraFrame:SetBackdropBorderColor(.6, .6, .6, .9)
 			extraFrame.styled = true

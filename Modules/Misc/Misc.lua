@@ -49,11 +49,10 @@ do
 					ChatFrame_OpenChat(SLASH_WHISPER1.." "..self.linkedName.." ", DEFAULT_CHAT_FRAME)
 				end
 			end)
-
 			frame.LinkNameButton = button
-		end
 
-		hooksecurefunc("TradeSkillFrame_Update", TradeSkill_UpdateTitle)
+			hooksecurefunc("TradeSkillFrame_Update", TradeSkill_UpdateTitle)
+		end
 	end
 
 	P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.TradeSkill_AddName)

@@ -85,4 +85,10 @@ function S:ls_Toasts()
 	LC.options.args.general.args.skin.disabled = true
 end
 
+function S:LSPreviewBoxCurrency(widget)
+	S:Ace3_EditBox(widget)
+	P.ReskinTooltip(widget.preview)
+end
+
 S:RegisterSkin("ls_Toasts", S.ls_Toasts)
+S:RegisterAceGUIWidget("LSPreviewBoxCurrency")

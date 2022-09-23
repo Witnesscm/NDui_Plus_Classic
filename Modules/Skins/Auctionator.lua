@@ -173,6 +173,7 @@ local function reskinItemDialog(self)
 	B.ReskinInput(self.SearchContainer.SearchString)
 	B.ReskinCheck(self.SearchContainer.IsExact)
 	P.ReskinDropDown(self.FilterKeySelector)
+	P.ReskinDropDown(self.QualityContainer.DropDown.DropDown)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
 
 	if self.Inset then
@@ -323,6 +324,7 @@ local function reskinBuyFrame(self)
 	if BuyDialog then
 		reskinSimplePanel(BuyDialog)
 		reskinButtons(BuyDialog, {"Cancel", "BuyStack"})
+		B.ReskinCheck(BuyDialog.ChainBuy.CheckBox)
 	end
 end
 
@@ -542,10 +544,12 @@ function S:Auctionator()
 			end
 		end
 
-		local PageStatusDialogFrame = _G.AuctionatorPageStatusDialogFrame
-		if PageStatusDialogFrame then
-			B.StripTextures(PageStatusDialogFrame)
-			B.SetBD(PageStatusDialogFrame)
+		for _, key in ipairs({"AuctionatorPageStatusDialogFrame", "AuctionatorThrottlingTimeoutDialogFrame"}) do
+			local dialog = _G[key]
+			if dialog then
+				B.StripTextures(dialog)
+				B.SetBD(dialog)
+			end
 		end
 
 		for _, tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do

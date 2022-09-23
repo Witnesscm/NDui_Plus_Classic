@@ -2,6 +2,19 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.2
+[动作条] 添加载具渐隐条件
+[单位框体] 添加载具渐隐条件
+[聊天框] 添加团队职责图标
+[易用性] 宝箱开锁等级添加WLK版本宝箱
+[美化] 更新部分插件美化:
+AceGUI
+AtlasLootClassic
+Auctionator
+AutoBarWrath
+LibUIDropDownMenuQuestie
+ls_Toasts
+
 v2.3.1
 [|cffFF1414重要|r] 需要NDui v3.3.0 以上版本
 [易用性] 调整雕文面板显示方式

@@ -424,9 +424,6 @@ end
 
 function S:WeakAurasTreeGroup(widget)
 	S:Ace3_Frame(widget)
-	--local treeframe = widget.treeframe
-	--local treeframeBG = treeframe:GetChildren()
-	--treeframeBG:SetAlpha(0)
 	widget.treeframe:GetChildren():HideBackdrop()
 end
 

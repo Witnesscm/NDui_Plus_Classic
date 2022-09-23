@@ -3,8 +3,45 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-
 local cr, cg, cb = DB.r, DB.g, DB.b
+
+local function updateItemBorder(self)
+	if not self.bg then return end
+
+	if self.objectType == "item" then
+		local quality = select(4, GetQuestItemInfo(self.type, self:GetID()))
+		local color = DB.QualityColors[quality or 1]
+		self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+	elseif self.objectType == "currency" then
+		local name, texture, numItems, quality = GetQuestCurrencyInfo(self.type, self:GetID())
+		local currencyID = GetQuestCurrencyID(self.type, self:GetID())
+		if name and texture and numItems and quality and currencyID then
+			local currencyQuality = select(4, CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality))
+			local color = DB.QualityColors[currencyQuality or 1]
+			self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+		end
+	else
+		self.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+end
+
+local function reskinItemButton(buttons)
+	for i = 1, #buttons do
+		local button = buttons[i]
+		if button and not button.styled then
+			button.Border:Hide()
+			button.Mask:Hide()
+			button.NameFrame:Hide()
+			button.bg = B.ReskinIcon(button.Icon)
+			button.textBg = B.CreateBDFrame(button, .25)
+			button.textBg:SetPoint("TOPLEFT", button.bg, "TOPRIGHT", 2, 0)
+			button.textBg:SetPoint("BOTTOMRIGHT", -5, 1)
+
+			button.styled = true
+		end
+		updateItemBorder(button)
+	end
+end
 
 function S:Immersion()
 	if not S.db["Immersion"] then return end
@@ -16,8 +53,9 @@ function S:Immersion()
 	B.StripTextures(TalkBox.PortraitFrame)
 	B.StripTextures(TalkBox.BackgroundFrame)
 	B.StripTextures(TalkBox.Hilite)
-	TalkBox.TextFrame.SpeechProgress:SetFont(DB.Font[1], 16, DB.Font[3])
-	TalkBox.TextFrame.SpeechProgress.SetFont = B.Dummy
+	hooksecurefunc(TalkBox.TextFrame.Text, "OnDisplayLineCallback", function()
+		TalkBox.TextFrame.SpeechProgress:SetFont(DB.Font[1], 16, DB.Font[3])
+	end)
 
 	local hilite = B.CreateBDFrame(TalkBox.Hilite, 0)
 	hilite:SetAllPoints(TalkBox)
@@ -60,44 +98,6 @@ function S:Immersion()
 		end
 	end)
 
-	local function updateItemBorder(self)
-		if not self.bg then return end
-
-		if self.objectType == "item" then
-			local quality = select(4, GetQuestItemInfo(self.type, self:GetID()))
-			local color = DB.QualityColors[quality or 1]
-			self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
-		elseif self.objectType == "currency" then
-			local name, texture, numItems, quality = GetQuestCurrencyInfo(self.type, self:GetID())
-			local currencyID = GetQuestCurrencyID(self.type, self:GetID())
-			if name and texture and numItems and quality and currencyID then
-				local currencyQuality = select(4, CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality))
-				local color = DB.QualityColors[currencyQuality or 1]
-				self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
-			end
-		else
-			self.bg:SetBackdropBorderColor(0, 0, 0)
-		end
-	end
-
-	local function reskinItemButton(buttons)
-		for i = 1, #buttons do
-			local button = buttons[i]
-			if button and not button.styled then
-				button.Border:Hide()
-				button.Mask:Hide()
-				button.NameFrame:Hide()
-				button.bg = B.ReskinIcon(button.Icon)
-				button.textBg = B.CreateBDFrame(button, .25)
-				button.textBg:SetPoint("TOPLEFT", button.bg, "TOPRIGHT", 2, 0)
-				button.textBg:SetPoint("BOTTOMRIGHT", -5, 1)
-
-				button.styled = true
-			end
-			updateItemBorder(button)
-		end
-	end
-
 	hooksecurefunc(ImmersionFrame, "AddQuestInfo", function(self)
 		local rewardsFrame = self.TalkBox.Elements.Content.RewardsFrame
 
@@ -123,19 +123,29 @@ function S:Immersion()
 			end
 		end
 
+		-- Title Rewards
+		local titleFrame = rewardsFrame.TitleFrame
+		if titleFrame and not titleFrame.textBg then
+			local icon = titleFrame.Icon
+			B.StripTextures(titleFrame, 0)
+			icon:SetAlpha(1)
+			B.ReskinIcon(icon)
+			titleFrame.textBg = B.CreateBDFrame(titleFrame, .25)
+			titleFrame.textBg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, C.mult)
+			titleFrame.textBg:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 216, -C.mult)
+		end
+
 		-- Spell Rewards
 		if GetNumRewardSpells() > 0 then
 			for spellReward in rewardsFrame.spellRewardPool:EnumerateActive() do
-				if not spellReward.styled then
+				if not spellReward.textBg then
 					local icon = spellReward.Icon
 					local nameFrame = spellReward.NameFrame
 					B.ReskinIcon(icon)
 					nameFrame:Hide()
-					local bg = B.CreateBDFrame(nameFrame, .25)
-					bg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, 1)
-					bg:SetPoint("BOTTOMRIGHT", nameFrame, "BOTTOMRIGHT", -24, 15)
-
-					spellReward.styled = true
+					spellReward.textBg = B.CreateBDFrame(nameFrame, .25)
+					spellReward.textBg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, C.mult)
+					spellReward.textBg:SetPoint("BOTTOMRIGHT", nameFrame, "BOTTOMRIGHT", -24, 15)
 				end
 			end
 		end

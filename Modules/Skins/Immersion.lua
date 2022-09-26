@@ -25,20 +25,24 @@ local function updateItemBorder(self)
 	end
 end
 
-local function reskinItemButton(buttons)
+local function reskinItemButton(self)
+	if not self.textBg then
+		self.Border:Hide()
+		self.Mask:Hide()
+		self.NameFrame:Hide()
+		self.bg = B.ReskinIcon(self.Icon)
+		self.textBg = B.CreateBDFrame(self, .25)
+		self.textBg:ClearAllPoints()
+		self.textBg:SetPoint("TOPLEFT", self.bg, "TOPRIGHT", 2, 0)
+		self.textBg:SetPoint("RIGHT", -5, 0)
+		self.textBg:SetPoint("BOTTOM", self.bg, "BOTTOM")
+	end
+end
+
+local function reskinItemButtons(buttons)
 	for i = 1, #buttons do
 		local button = buttons[i]
-		if button and not button.styled then
-			button.Border:Hide()
-			button.Mask:Hide()
-			button.NameFrame:Hide()
-			button.bg = B.ReskinIcon(button.Icon)
-			button.textBg = B.CreateBDFrame(button, .25)
-			button.textBg:SetPoint("TOPLEFT", button.bg, "TOPRIGHT", 2, 0)
-			button.textBg:SetPoint("BOTTOMRIGHT", -5, 1)
-
-			button.styled = true
-		end
+		reskinItemButton(button)
 		updateItemBorder(button)
 	end
 end
@@ -102,25 +106,17 @@ function S:Immersion()
 		local rewardsFrame = self.TalkBox.Elements.Content.RewardsFrame
 
 		-- Item Rewards
-		reskinItemButton(rewardsFrame.Buttons)
+		reskinItemButtons(rewardsFrame.Buttons)
 
 		-- Honor Rewards
 		local honorFrame = rewardsFrame.HonorFrame
 		if honorFrame then
-			local faction = UnitFactionGroup("player")
-			local icon = honorFrame.Icon
-			icon:SetTexture(format("Interface\\TargetingFrame\\UI-PVP-%s", faction))
-			icon:SetTexCoord(0, 0.66, 0, 0.66)
+			reskinItemButton(honorFrame)
 
-			if not honorFrame.textBg then
-				honorFrame.Border:Hide()
-				honorFrame.Mask:Hide()
-				honorFrame.NameFrame:Hide()
-				honorFrame.bg = B.CreateBDFrame(icon, .25)
-				honorFrame.textBg = B.CreateBDFrame(honorFrame, .25)
-				honorFrame.textBg:SetPoint("TOPLEFT", honorFrame.bg, "TOPRIGHT", 2, 0)
-				honorFrame.textBg:SetPoint("BOTTOMRIGHT", -5, 1)
-			end
+			-- Classic honor icon
+			local icon = honorFrame.Icon
+			icon:SetTexture(format("Interface\\TargetingFrame\\UI-PVP-%s", (DB.MyFaction or "Horde")))
+			icon:SetTexCoord(0, .66, 0, .66)
 		end
 
 		-- Title Rewards
@@ -133,6 +129,19 @@ function S:Immersion()
 			titleFrame.textBg = B.CreateBDFrame(titleFrame, .25)
 			titleFrame.textBg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, C.mult)
 			titleFrame.textBg:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 216, -C.mult)
+		end
+
+		-- ArtifactXP Rewards
+		local artifactXPFrame = rewardsFrame.ArtifactXPFrame
+		if artifactXPFrame then
+			reskinItemButton(artifactXPFrame)
+			artifactXPFrame.Overlay:SetAlpha(0)
+		end
+
+		-- Skill Point Rewards
+		local skillPointFrame = rewardsFrame.SkillPointFrame
+		if skillPointFrame then
+			reskinItemButton(skillPointFrame)
 		end
 
 		-- Spell Rewards
@@ -152,7 +161,7 @@ function S:Immersion()
 	end)
 
 	hooksecurefunc(ImmersionFrame, "QUEST_PROGRESS", function(self)
-		reskinItemButton(self.TalkBox.Elements.Progress.Buttons)
+		reskinItemButtons(self.TalkBox.Elements.Progress.Buttons)
 	end)
 
 	hooksecurefunc(ImmersionFrame, "ShowItems", function(self)

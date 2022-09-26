@@ -52,55 +52,75 @@ function S:tdInspect()
 	local UISlotItem = tdInspect:GetClass("UI.SlotItem")
 	local UIInspectFrame = tdInspect:GetClass("UI.InspectFrame")
 
-	hooksecurefunc(tdInspect, "SetupUI", function()
-		B.ReskinCheck(InspectPaperDollFrame.ToggleButton)
-		InspectPaperDollFrame.RaceBackground:SetAlpha(0)
-		InspectPaperDollFrame.LastUpdate:ClearAllPoints()
-		InspectPaperDollFrame.LastUpdate:SetPoint("BOTTOMLEFT", InspectPaperDollFrame, "BOTTOMRIGHT", -130, 80) 
+	hooksecurefunc(tdInspect, "SetupUI", function(self)
+		local InspectFrame = self.InspectFrame
+		M:CreateItemString(InspectFrame, "Inspect")
 
-		local slots = {
-			"Head", "Neck", "Shoulder", "Shirt", "Chest", "Waist", "Legs", "Feet", "Wrist",
-			"Hands", "Finger0", "Finger1", "Trinket0", "Trinket1", "Back", "MainHand",
-			"SecondaryHand", "Tabard", "Ranged",
-		}
+		for i, tab in pairs(InspectFrame.groupTabs) do
+			if i == 1 then
+				tab:SetPoint("TOPLEFT", InspectFrame, "TOPRIGHT", -34, -65)
+			end
+			B.StripTextures(tab)
+			B.ReskinIcon(tab.nt)
+			tab.ct:SetTexture(DB.textures.pushed)
+			tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+			tab:HookScript("OnEnter", function()
+				GameTooltip:Show() -- fix
+			end)
+		end
 
-		for i = 1, #slots do
-			local slot = _G["Inspect"..slots[i].."Slot"]
+		local PaperDoll = InspectFrame.PaperDoll
+		B.ReskinCheck(PaperDoll.ToggleButton)
+		PaperDoll.RaceBackground:SetAlpha(0)
+		PaperDoll.LastUpdate:ClearAllPoints()
+		PaperDoll.LastUpdate:SetPoint("BOTTOMLEFT", PaperDoll, "BOTTOMRIGHT", -130, 80)
 
+		for _, slot in pairs(PaperDoll.buttons) do
 			slot.IconBorder:SetTexture("")
 			slot:DisableDrawLayer("BACKGROUND")
 		end
 
-		M:CreateItemString(_G.InspectFrame, "Inspect")
+		for _, item in pairs(PaperDoll.EquipFrame.buttons) do
+			P.ReskinFont(item.Name)
+		end
 
-		local talentFrame = _G.InspectFrame.TalentFrame
-		B.StripTextures(talentFrame)
+		local TalentFrame = InspectFrame.TalentFrame
+		B.StripTextures(TalentFrame)
 
-		for i, tab in ipairs(talentFrame.Tabs) do
+		local ScrollBar = TalentFrame.TalentFrame.ScrollBar
+		if ScrollBar then
+			B.ReskinScroll(ScrollBar)
+		end
+
+		local SummaryBG = TalentFrame.Summary and TalentFrame.Summary:GetParent()
+		if SummaryBG then
+			B.StripTextures(SummaryBG)
+		end
+
+		for i, tab in ipairs(TalentFrame.Tabs) do
 			if i == 1 then
 				tab:SetPoint("TOPLEFT", 70, -45)
 			end
 			B.ReskinTab(tab)
 		end
 
-		local scrollBar = talentFrame.TalentFrame.ScrollBar
-		if scrollBar then
-			B.ReskinScroll(scrollBar)
-		end
-
-		local bottomFrame = talentFrame.Summary and talentFrame.Summary:GetParent()
-		if bottomFrame then
-			B.StripTextures(bottomFrame)
-		end
-
-		local equipButtons = InspectPaperDollFrame.EquipFrame.buttons
-		for _, item in pairs(equipButtons) do
-			P.ReskinFont(item.Name)
-		end
+		local GlyphFrame = InspectFrame.GlyphFrame
+		B.StripTextures(GlyphFrame)
 	end)
 
 	hooksecurefunc(UIInspectFrame, "AddTab", function(self)
-		B.ReskinTab(_G["InspectFrameTab".. _G.InspectFrame.numTabs])
+		B.ReskinTab(_G["InspectFrameTab".. self.numTabs])
+	end)
+
+	hooksecurefunc(UITalentFrame, "GetTalentButton", function(self, i)
+		local button = self.buttons[i]
+		if button and not button.styled then
+			B.StripTextures(button, 1)
+			B.ReskinIcon(button.icon)
+			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+
+			button.styled = true
+		end
 	end)
 
 	hooksecurefunc(UISlotItem, "Update", function(self)
@@ -137,24 +157,12 @@ function S:tdInspect()
 		end
 	end)
 
-	local done
-	hooksecurefunc(UITalentFrame, "Update", function()
-		if done then return end
-		for _, button in ipairs(_G.InspectFrame.TalentFrame.TalentFrame.buttons) do
-			B.StripTextures(button, 1)
-			B.ReskinIcon(button.icon)
-			local hl = button:GetHighlightTexture()
-			hl:SetColorTexture(1, 1, 1, .25)
-		end
-		done = true
-	end)
-
 	local anchored
 	hooksecurefunc(UIInspectFrame, "OnShow", function()
 		if anchored then return end
 
-		InspectModelFrameRotateRightButton:Hide()
-		InspectModelFrameRotateLeftButton:Hide()
+		_G.InspectModelFrameRotateRightButton:Hide()
+		_G.InspectModelFrameRotateLeftButton:Hide()
 
 		anchored = true
 	end)

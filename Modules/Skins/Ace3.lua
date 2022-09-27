@@ -84,17 +84,6 @@ function S:Ace3_SkinTab(tab)
 	end)
 end
 
-function S:Ace3_SkinIcon(icon, ...)
-	if not icon or not self.image or not self.image:GetTexture() or not self.image.bg then return end
-
-	if type(icon) == "number" then
-		self.image:SetTexCoord(unpack(DB.TexCoord))
-		self.image.bg:Show()
-	else
-		self.image.bg:Hide()
-	end
-end
-
 function S:Ace3_RegisterAsWidget(widget)
 	if self.aceWidgets[widget.type] then
 		self.aceWidgets[widget.type](self, widget)
@@ -254,6 +243,24 @@ function S:Ace3_ColorPicker(widget)
 	text:SetPoint("LEFT", colorSwatch, "RIGHT", 4, 0)
 end
 
+function S:Ace3_SetImage(path, ...)
+	local image = self.image
+	image:SetTexture(path)
+	image.bg:Hide()
+
+	if image:GetTexture() then
+		local n = select("#", ...)
+		if n == 4 or n == 8 then
+			image:SetTexCoord(...)
+		elseif tonumber(path) then
+			image:SetTexCoord(unpack(DB.TexCoord))
+			image.bg:Show()
+		else
+			image:SetTexCoord(0, 1, 0, 1)
+		end
+	end
+end
+
 function S:Ace3_Icon(widget)
 	local button = widget.frame
 	local image = widget.image
@@ -266,7 +273,7 @@ function S:Ace3_Icon(widget)
 	button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	button:GetHighlightTexture():SetInside(image.bg)
 
-	hooksecurefunc(widget, "SetImage", S.Ace3_SkinIcon)
+	widget.SetImage = S.Ace3_SetImage
 end
 
 function S:Ace3_DropdownPullout(widget)

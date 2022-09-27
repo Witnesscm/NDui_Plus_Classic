@@ -422,6 +422,26 @@ function S:WeakAurasTextureButton(widget)
 	hl:SetInside()
 end
 
+local function TalentButton_Red(self)
+	self.bg:SetBackdropBorderColor(1, 0, 0)
+end
+
+local function TalentButton_Clear(self)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
+function S:WeakAurasMiniTalent(widget)
+	for _, button in pairs(widget.buttons) do
+		button:SetNormalTexture("")
+		button.bg = B.ReskinIcon(button:GetNormalTexture())
+		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+		button.cover:SetTexture("")
+		hooksecurefunc(button, "Yellow", TalentButton_Clear)
+		hooksecurefunc(button, "Red", TalentButton_Red)
+		hooksecurefunc(button, "Clear", TalentButton_Clear)
+	end
+end
+
 function S:WeakAurasTreeGroup(widget)
 	S:Ace3_Frame(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
@@ -437,4 +457,5 @@ S:RegisterAceGUIWidget("WeakAurasMultiLineEditBox")
 S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
+S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")

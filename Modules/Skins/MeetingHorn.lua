@@ -24,17 +24,27 @@ local function reskinDropDown(dropdown)
 end
 
 local function reskinQRTooltip(self)
-	B.StripTextures(self)
-	B.SetBD(self, .7)
+	B.StripTextures(self, 0)
+	self.bg = B.SetBD(self, .7)
 	B.ReskinClose(self.Close)
 	self.Close:SetHitRectInsets(0, 0, 0, 0)
+
+	if self.Image then
+		self.Image:SetAlpha(1)
+		self.bg:SetFrameLevel(self:GetFrameLevel())
+	end
 end
 
-local function reskinLeaderQRTooltip(self)
-	local tooltip = self.QRApplyLeaderTooltip or mainFrame.Browser and mainFrame.Browser.ApplyLeaderBtn and mainFrame.Browser.ApplyLeaderBtn.QRApplyLeaderTooltip
-	if tooltip and not tooltip.styled then
-		reskinQRTooltip(tooltip)
-		tooltip.styled = true
+local imageFrameStyled
+local function reskinImageFrame(self)
+	if imageFrameStyled then return end
+
+	for _, child in pairs {self:GetChildren()} do
+		if child:GetObjectType() == "Frame" and child.Image and child.Close then
+			reskinQRTooltip(child)
+			imageFrameStyled = true
+			break
+		end
 	end
 end
 
@@ -158,6 +168,8 @@ function S:MeetingHorn()
 	local Buttons = {
 		"Browser.Reset",
 		"Browser.Refresh",
+		"Browser.ApplyLeaderBtn",
+		"Browser.RechargeBtn",
 		"Manage.Creator.CreateButton",
 		"Manage.Creator.CloseButton",
 		"Manage.Creator.RecruitButton",
@@ -275,8 +287,7 @@ function S:MeetingHorn()
 		for _, key in ipairs({"ApplyLeaderBtn", "RechargeBtn",}) do
 			local bu = Browser[key]
 			if bu then
-				B.Reskin(bu)
-				bu:HookScript("PostClick", reskinLeaderQRTooltip)
+				bu:HookScript("PostClick", reskinImageFrame)
 			end
 		end
 
@@ -325,7 +336,7 @@ function S:MeetingHorn()
 
 		local LookFall = Encounter.LookFall
 		if LookFall then
-			LookFall:HookScript("PostClick", reskinLeaderQRTooltip)
+			LookFall:HookScript("PostClick", reskinImageFrame)
 		end
 	end
 
@@ -447,7 +458,7 @@ function S:MeetingHorn()
 					local ApplyLeaderBtn = subFrame.ApplyLeaderBtn
 					if ApplyLeaderBtn then
 						B.Reskin(ApplyLeaderBtn)
-						ApplyLeaderBtn:HookScript("PostClick", reskinLeaderQRTooltip)
+						ApplyLeaderBtn:HookScript("PostClick", reskinImageFrame)
 					end
 				end
 			end
@@ -456,9 +467,8 @@ function S:MeetingHorn()
 		local instances = GoodLeader.Result.Raids.instances
 		if instances then
 			for _, button in ipairs(instances) do
-				button.Mask:Hide()
-				B.CreateBD(button)
-				button.Image:SetInside()
+				button:HideBackdrop()
+				B.CreateBDFrame(button.Image, 0)
 			end
 		end
 	end

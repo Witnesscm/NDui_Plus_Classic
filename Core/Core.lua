@@ -114,6 +114,7 @@ P.DefaultSettings = {
 		tdAuction = true,
 		Auctionator = true,
 		ShadowDancer = true,
+		Krowi_AchievementFilter = true,
 		HideToggle = false,
 		CategoryArrow = false,
 	},

@@ -25,6 +25,18 @@ local function GetTalentIconByID(id)
 	end
 end
 
+local honorTextures = {
+	[136998] = "Interface\\PVPFrame\\PVP-Currency-Alliance",
+	[137000] = "Interface\\PVPFrame\\PVP-Currency-Horde",
+}
+
+local function GetCurrencyIconByID(id)
+	local info = C_CurrencyInfo.GetCurrencyInfo(id)
+	local icon = info and info.iconFileID
+
+	return honorTextures[icon] or icon
+end
+
 local cache = {}
 
 local function AddChatIcon(link, linkType, id)
@@ -42,8 +54,7 @@ local function AddChatIcon(link, linkType, id)
 	elseif linkType == "achievement" then
 		texture = select(10, GetAchievementInfo(id))
 	elseif linkType == "currency" then
-		local info = C_CurrencyInfo.GetCurrencyInfo(id)
-		texture = info and info.iconFileID
+		texture = GetCurrencyIconByID(id)
 	end
 
 	cache[link] = GetHyperlink(link, texture)
@@ -63,8 +74,8 @@ end
 
 function CH:ChatLinkfilter(_, msg, ...)
 	if CH.db["Icon"] then
-		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x.-|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
-		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x.-|Htrade:[^:]-:(%d+).-|h.-|h.-|r)", AddTradeIcon)
+		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
+		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|Htrade:[^:]-:(%d+).-|h.-|h.-|r)", AddTradeIcon)
 	end
 
 	return false, msg, ...

@@ -82,3 +82,62 @@ do
 
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
+
+-- Learn all available skills. Credit: TrainAll
+do
+	local function TrainAllButton_OnEnter(self)
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine(format(L["Train All Cost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
+		GameTooltip:Show()
+	end
+
+	function M:TrainAllSkills()
+		local button = CreateFrame("Button", nil, ClassTrainerFrame, "MagicButtonTemplate")
+		button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -2, 0)
+		button:SetText(L["Train All"])
+		button.Count = 0
+		button.Cost = 0
+		ClassTrainerFrame.TrainAllButton = button
+
+		button:SetScript("OnClick", function()
+			for i = 1, GetNumTrainerServices() do
+				if select(3, GetTrainerServiceInfo(i)) == "available" then
+					BuyTrainerService(i)
+				end
+			end
+		end)
+
+		button:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			self.UpdateTooltip = TrainAllButton_OnEnter
+			TrainAllButton_OnEnter(self)
+		end)
+
+		button:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+			self.UpdateTooltip = nil
+		end)
+
+		if C.db["Skins"]["BlizzardSkins"] then
+			B.Reskin(button)
+			if button.LeftSeparator then button.LeftSeparator:SetAlpha(0) end
+			if button.RightSeparator then button.RightSeparator:SetAlpha(0) end
+		end
+
+		hooksecurefunc("ClassTrainerFrame_Update",function()
+			local sum, total = 0, 0;
+			for i = 1, GetNumTrainerServices() do
+				if select(3, GetTrainerServiceInfo(i)) == "available" then
+					sum = sum + 1
+					total = total + GetTrainerServiceCost(i)
+				end
+			end
+
+			button:SetEnabled(sum > 0)
+			button.Count = sum
+			button.Cost = total
+		end)
+	end
+
+	P:AddCallbackForAddon("Blizzard_TrainerUI", M.TrainAllSkills)
+end

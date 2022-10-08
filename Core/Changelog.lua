@@ -2,6 +2,15 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.3
+[动作条] 法师动作条添加造餐术
+[易用性] 添加按钮训练所有可用技能
+[美化] 添加Krowi_AchievementFilter插件美化
+[美化] 更新部分插件美化:
+AceWidget:WeakAurasMiniTalent
+MeetingHorn
+tdInspect
+
 v2.3.2
 [动作条] 添加载具渐隐条件
 [单位框体] 添加载具渐隐条件

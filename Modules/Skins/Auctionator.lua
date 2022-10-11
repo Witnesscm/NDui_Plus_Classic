@@ -355,7 +355,7 @@ function S:Auctionator()
 			end
 		end
 
-		local ShoppingList = _G.AuctionatorShoppingListFrame
+		local ShoppingList = _G.AuctionatorShoppingFrame
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
 			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})

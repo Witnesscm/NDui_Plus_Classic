@@ -30,6 +30,12 @@ end
 local function updateAchievementBorder(button)
 	if not button.bg then return end
 
+	if button.accountWide then
+		button.Header:SetTextColor(0, .6, 1)
+	else
+		button.Header:SetTextColor(.9, .9, .9)
+	end
+
 	local achievement = button.Achievement
 	local state = achievement and achievement.TemporaryObtainable and achievement.TemporaryObtainable.Obtainable()
 	if state and (state == false or state == "Past" or state == "Future") then
@@ -41,13 +47,7 @@ local function updateAchievementBorder(button)
 	end
 end
 
-local function updateAchievementLight(button)
-	if button.accountWide then
-		button.Header:SetTextColor(0, .6, 1)
-	else
-		button.Header:SetTextColor(.9, .9, .9)
-	end
-
+local function reskinAchievementLight(button)
 	if not button.bg then
 		button:DisableDrawLayer("BORDER")
 		button:HideBackdrop()
@@ -64,8 +64,9 @@ local function updateAchievementLight(button)
 		button.bg = B.CreateBDFrame(button, .25)
 		button.bg:SetPoint("TOPLEFT", 2, -1)
 		button.bg:SetPoint("BOTTOMRIGHT", -2, 1)
+
+		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 	end
-	updateAchievementBorder(button)
 end
 
 local function reskinStatusBar(self, isTip)
@@ -102,6 +103,28 @@ local function reskinAlertFrame(self)
 	B.SetFontSize(self.Unlocked, 13)
 end
 
+local function reskinSummaryFrame(self)
+	local buttons = self.ScrollFrame.buttons
+	for _, button in ipairs(buttons) do
+		reskinAchievementLight(button)
+	end
+end
+
+local function reskinCategoriesFrame(self)
+	local buttons = self.ScrollFrame.buttons
+	for _, button in ipairs(buttons) do
+		if not button.styled then
+			B.StripTextures(button)
+			local bg = B.CreateBDFrame(button, .25)
+			bg:SetPoint("TOPLEFT", 0, -1)
+			bg:SetPoint("BOTTOMRIGHT")
+			SetupButtonHighlight(button, bg)
+
+			button.styled = true
+		end
+	end
+end
+
 local function SkinAchievementFrame()
 	for i = 1, _G.AchievementFrame.numTabs do
 		local tab = _G["AchievementFrameTab"..i]
@@ -110,11 +133,20 @@ local function SkinAchievementFrame()
 		end
 	end
 
-	local filterButton = _G.KrowiAF_AchievementFrameFilterButton
-	B.ReskinFilterButton(filterButton)
-	filterButton:SetSize(116, 20)
-	filterButton:SetPoint("TOPLEFT", 142, -2)
+	local FilterButton = _G.KrowiAF_AchievementFrameFilterButton
+	B.ReskinFilterButton(FilterButton)
+	FilterButton:SetSize(116, 20)
+	FilterButton:SetPoint("TOPLEFT", 142, -2)
 	_G.KrowiAF_AchievementFrameHeaderLeftDDLInset:SetAlpha(0)
+
+	local CalendarButton = _G.KrowiAF_AchievementCalendarButton
+	B.Reskin(CalendarButton)
+	CalendarButton:SetSize(24, 24)
+	B.SetFontSize(CalendarButton:GetFontString(), 13)
+	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
+	CalendarButton.Icon:SetInside()
+	CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
+	CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.11)
 
 	-- Search Box
 	local SearchBox = _G.KrowiAF_SearchBoxFrame
@@ -158,6 +190,24 @@ local function SkinAchievementFrame()
 		end
 	end)
 
+	-- AchievementsObjectives
+	local AchievementsObjectives = _G.KrowiAF_AchievementsObjectives
+	hooksecurefunc(AchievementsObjectives, "AddMeta", function(self, index)
+		local metaCriteria = self:GetMeta(index)
+		local label = metaCriteria.Label
+		if label and select(2, label:GetTextColor()) == 0 then
+			label:SetTextColor(1, 1, 1)
+		end
+	end)
+
+	hooksecurefunc(AchievementsObjectives, "AddTextCriteria", function(self, index)
+		local criteria = self:GetTextCriteria(index)
+		local label = criteria.Label
+		if label and select(2, label:GetTextColor()) == 0 then
+			label:SetTextColor(1, 1, 1)
+		end
+	end)
+
 	-- AchievementsFrame
 	local AchievementsFrame = _G.KrowiAF_AchievementsFrame
 	B.StripTextures(AchievementsFrame)
@@ -183,8 +233,8 @@ local function SkinAchievementFrame()
 				button.Check:SetAlpha(0)
 
 				hooksecurefunc(button, "UpdatePlusMinusTexture", updateAccountString)
+				hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 			end
-			updateAchievementBorder(button)
 		end
 	end)
 
@@ -206,12 +256,8 @@ local function SkinAchievementFrame()
 	SummaryFrame.Achievements.Header.Texture:SetAlpha(0)
 	SummaryFrame.Categories.Header.Texture:SetAlpha(0)
 	B.ReskinScroll(SummaryFrame.ScrollFrameBorder.ScrollFrame.ScrollBar)
-	hooksecurefunc(SummaryFrame.ScrollFrameBorder, "Update", function(self)
-		local buttons = self.ScrollFrame.buttons
-		for _, button in ipairs(buttons) do
-			updateAchievementLight(button)
-		end
-	end)
+	reskinSummaryFrame(SummaryFrame.ScrollFrameBorder)
+	hooksecurefunc(SummaryFrame.ScrollFrameBorder, "Update", reskinSummaryFrame)
 
 	reskinStatusBar(SummaryFrame.TotalStatusBar)
 	for _, statusBar in ipairs(SummaryFrame.StatusBars) do
@@ -222,20 +268,8 @@ local function SkinAchievementFrame()
 	local CategoriesFrame = _G.KrowiAF_CategoriesFrame
 	B.StripTextures(CategoriesFrame)
 	B.ReskinScroll(CategoriesFrame.ScrollFrame.ScrollBar)
-	hooksecurefunc(CategoriesFrame, "Update", function(self)
-		local buttons = self.ScrollFrame.buttons
-		for _, button in ipairs(buttons) do
-			if not button.styled then
-				B.StripTextures(button)
-				local bg = B.CreateBDFrame(button, .25)
-				bg:SetPoint("TOPLEFT", 0, -1)
-				bg:SetPoint("BOTTOMRIGHT")
-				SetupButtonHighlight(button, bg)
-
-				button.styled = true
-			end
-		end
-	end)
+	reskinCategoriesFrame(CategoriesFrame)
+	hooksecurefunc(CategoriesFrame, "Update", reskinCategoriesFrame)
 
 	-- Calendar
 	local CalendarFrame = _G.KrowiAF_AchievementCalendarFrame
@@ -281,7 +315,7 @@ local function SkinAchievementFrame()
 	hooksecurefunc(CalendarSideFrame.ScrollFrameBorder, "Update", function(self)
 		local buttons = self.ScrollFrame.buttons
 		for _, button in ipairs(buttons) do
-			updateAchievementLight(button)
+			reskinAchievementLight(button)
 		end
 	end)
 
@@ -346,7 +380,11 @@ function S:Krowi_AchievementFilter()
 	end
 
 	P:AddCallbackForAddon("Blizzard_AchievementUI", function()
-		P:Delay(.1, SkinAchievementFrame)
+		if _G.KrowiAF_AchievementsFrame then
+			SkinAchievementFrame()
+		else
+			P:Delay(.1, SkinAchievementFrame)
+		end
 	end)
 end
 

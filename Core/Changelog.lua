@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.4
+[易用性] 添加飞行地图缩放
+[美化] 更新Auctionator美化
+[美化] 更新Krowi_AchievementFilter美化
+
 v2.3.3
 [动作条] 法师动作条添加造餐术
 [易用性] 添加按钮训练所有可用技能

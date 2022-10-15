@@ -71,7 +71,8 @@ end
 
 local function reskinStatusBar(self, isTip)
 	B.StripTextures(self)
-	B.CreateBDFrame(self.Background, .25)
+	self.bg = B.CreateBDFrame(self.Background, .25)
+	self.bg:SetPoint("BOTTOMRIGHT", self.Background, "BOTTOMRIGHT", 2*C.mult, -C.mult)
 
 	for i, tex in ipairs(self.Fill) do
 		tex:SetTexture(DB.bdTex)
@@ -126,7 +127,7 @@ local function reskinCategoriesFrame(self)
 end
 
 local function SkinAchievementFrame()
-	for i = 1, _G.AchievementFrame.numTabs do
+	for i = 4, _G.AchievementFrame.numTabs do
 		local tab = _G["AchievementFrameTab"..i]
 		if tab and not tab.bg then
 			B.ReskinTab(tab)
@@ -137,12 +138,15 @@ local function SkinAchievementFrame()
 	B.ReskinFilterButton(FilterButton)
 	FilterButton:SetSize(116, 20)
 	FilterButton:SetPoint("TOPLEFT", 142, -2)
-	_G.KrowiAF_AchievementFrameHeaderLeftDDLInset:SetAlpha(0)
+	if _G.AchievementFrameHeaderLeftDDLInset then _G.AchievementFrameHeaderLeftDDLInset:SetAlpha(0) end
 
 	local CalendarButton = _G.KrowiAF_AchievementCalendarButton
 	B.Reskin(CalendarButton)
 	CalendarButton:SetSize(24, 24)
-	B.SetFontSize(CalendarButton:GetFontString(), 13)
+	local CalendarFS = CalendarButton:GetFontString()
+	B.SetFontSize(CalendarFS, 13)
+	CalendarFS:ClearAllPoints()
+	CalendarFS:SetPoint("CENTER", 1, -1)
 	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
 	CalendarButton.Icon:SetInside()
 	CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")

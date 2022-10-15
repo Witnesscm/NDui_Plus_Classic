@@ -141,3 +141,17 @@ do
 
 	P:AddCallbackForAddon("Blizzard_TrainerUI", M.TrainAllSkills)
 end
+
+-- Scale FlightMap
+do
+	function M:UpdateFlightMapScale()
+		local scale = M.db["FlightMapScale"]
+		_G.TAXI_MAP_WIDTH = 316*scale
+		_G.TAXI_MAP_HEIGHT = 352*scale
+		_G.TaxiFrame:SetSize(384 + (scale - 1)*316, 512 + (scale - 1)*352)
+		_G.TaxiMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
+		_G.TaxiRouteMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
+	end
+
+	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
+end

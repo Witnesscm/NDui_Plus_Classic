@@ -127,6 +127,7 @@ P.DefaultSettings = {
 		ExtVendorUI = false,
 		ExtMacroUI =  false,
 		SearchForIcons = true,
+		FlightMapScale = 1.2,
 	},
 }
 

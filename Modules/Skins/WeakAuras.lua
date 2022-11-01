@@ -20,8 +20,8 @@ end
 local function removeBorder(frame)
 	for _, region in pairs {frame:GetRegions()} do
 		if region:GetObjectType() == "Texture" then
-			local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
-			if texturePath and type(texturePath) == "string" and strfind(texturePath, "Quickslot2") then
+			local texture = region.GetTexture and region:GetTexture()
+			if texture and (texture == 130841 or strfind(texture, "Quickslot2")) then
 				region:SetTexture("")
 			end
 		end
@@ -41,25 +41,23 @@ local function SkinProfilingWindow(frame)
 	if titleFrame then
 		for _, child in pairs {titleFrame:GetChildren()} do
 			if child:GetObjectType() == "Button" then
-				local texturePath = child.GetNormalTexture and child:GetNormalTexture():GetTextureFilePath()
-				if texturePath and type(texturePath) == "string" then
-					if strfind(texturePath, "CollapseButton") then
-						B.ReskinArrow(child, "up")
-						child:SetSize(16, 16)
-						child:ClearAllPoints()
-						child:SetPoint("TOPRIGHT", titleFrame, "TOPRIGHT", -20, -2)
-						child.SetNormalTexture = B.Dummy
-						child.SetPushedTexture = B.Dummy
-						child:HookScript("OnClick",function(self)
-							if frame.minimized then
-								B.SetupArrow(self.__texture, "down")
-							else
-								B.SetupArrow(self.__texture, "up")
-							end
-						end)
-					elseif strfind(texturePath, "MinimizeButton") then
-						B.ReskinClose(child, titleFrame, -2, -2)
-					end
+				local texture = child.GetNormalTexture and child:GetNormalTexture():GetTexture()
+				if texture and (texture == 252125 or strfind(texture, "CollapseButton")) then
+					B.ReskinArrow(child, "up")
+					child:SetSize(16, 16)
+					child:ClearAllPoints()
+					child:SetPoint("TOPRIGHT", titleFrame, "TOPRIGHT", -20, -2)
+					child.SetNormalTexture = B.Dummy
+					child.SetPushedTexture = B.Dummy
+					child:HookScript("OnClick",function(self)
+						if frame.minimized then
+							B.SetupArrow(self.__texture, "down")
+						else
+							B.SetupArrow(self.__texture, "up")
+						end
+					end)
+				else
+					B.ReskinClose(child, titleFrame, -2, -2)
 				end
 			end
 		end
@@ -115,10 +113,9 @@ local function SkinWeakAurasOptions()
 
 		if numRegions == 3 and numChildren == 1 and child.PixelSnapDisabled then
 			B.StripTextures(child)
-
 			local button = child:GetChildren()
-			local texturePath = button.GetNormalTexture and button:GetNormalTexture():GetTextureFilePath()
-			if texturePath and type(texturePath) == "string" and strfind(texturePath, "CollapseButton") then
+			local texture = button.GetNormalTexture and button:GetNormalTexture():GetTexture()
+			if texture and (texture == 252125 or strfind(texture, "CollapseButton")) then
 				B.ReskinArrow(button, "up")
 				button:SetSize(18, 18)
 				button:ClearAllPoints()
@@ -149,6 +146,7 @@ local function SkinWeakAurasOptions()
 		"texteditor",
 		"codereview",
 		"update",
+		"debugLog",
 	}
 
 	for _, key in pairs(childGroups) do
@@ -332,7 +330,7 @@ function S:WeakAurasDisplayButton(widget)
 	local button = widget.frame
 
 	P.ReskinCollapse(widget.expand)
-	widget.expand:SetPushedTexture("")
+	widget.expand:SetPushedTexture(P.ClearTexture)
 	widget.expand.SetPushedTexture = B.Dummy
 	B.ReskinInput(widget.renamebox)
 	button.group.texture:SetTexture(P.RotationRightTex)
@@ -401,7 +399,7 @@ end
 
 function S:WeakAurasLoadedHeaderButton(widget)
 	P.ReskinCollapse(widget.expand)
-	widget.expand:SetPushedTexture("")
+	widget.expand:SetPushedTexture(P.ClearTexture)
 	widget.expand.SetPushedTexture = B.Dummy
 end
 
@@ -432,7 +430,7 @@ end
 
 function S:WeakAurasMiniTalent(widget)
 	for _, button in pairs(widget.buttons) do
-		button:SetNormalTexture("")
+		button:SetNormalTexture(P.ClearTexture)
 		button.bg = B.ReskinIcon(button:GetNormalTexture())
 		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		button.cover:SetTexture("")

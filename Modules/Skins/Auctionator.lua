@@ -251,7 +251,7 @@ local function reskinBagItem(button)
 
 	button.IconMask:Hide()
 	button.EmptySlot:Hide()
-	button:SetPushedTexture("")
+	button:SetPushedTexture(P.ClearTexture)
 	button.Icon:SetInside(button, 2, 2)
 	button.Highlight:SetColorTexture(1, 1, 1, .25)
 	button.Highlight:SetAllPoints(button.Icon)
@@ -570,22 +570,22 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	if Auctionator.ReagentSearch and Auctionator.ReagentSearch.InitializeSearchButton then
-		hooksecurefunc(Auctionator.ReagentSearch, "InitializeSearchButton", function()
-			local button = _G.AuctionatorTradeSkillSearch
-			if button and not button.styled then
-				B.Reskin(button)
-				button.styled = true
+	if Auctionator.CraftingInfo and Auctionator.CraftingInfo.Initialize then
+		hooksecurefunc(Auctionator.CraftingInfo, "Initialize", function()
+			local frame = _G.AuctionatorCraftingInfo
+			if frame and frame.SearchButton and not frame.styled then
+				B.Reskin(frame.SearchButton)
+				frame.styled = true
 			end
 		end)
 	end
 
-	if Auctionator.CraftSearch and Auctionator.CraftSearch.InitializeSearchButton then
-		hooksecurefunc(Auctionator.CraftSearch, "InitializeSearchButton", function()
-			local button = _G.AuctionatorCraftFrameSearch
-			if button and not button.styled then
-				B.Reskin(button)
-				button.styled = true
+	if Auctionator.EnchantInfo and Auctionator.EnchantInfo.Initialize then
+		hooksecurefunc(Auctionator.EnchantInfo, "Initialize", function()
+			local frame = _G.AuctionatorEnchantInfoFrame
+			if frame and frame.SearchButton and not frame.styled then
+				B.Reskin(frame.SearchButton)
+				frame.styled = true
 			end
 		end)
 	end

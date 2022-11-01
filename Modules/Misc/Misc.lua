@@ -59,7 +59,7 @@ do
 end
 
 do
-	local titleString = "Frame Attributes %- (.+)"
+	local titleString = "%a+ Attributes %- (.+)"
 
 	local function hookTitleButton(frame)
 		if frame.hooked then return end

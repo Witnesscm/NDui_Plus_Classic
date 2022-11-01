@@ -82,7 +82,7 @@ local function reskinFunc()
 		if button.icon and not button.styled then
 			B.ReskinIcon(button:GetNormalTexture())
 			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-			button:SetPushedTexture("")
+			button:SetPushedTexture(P.ClearTexture)
 			button.SetPushedTexture = B.Dummy
 			button.icon:SetTexCoord(unpack(DB.TexCoord))
 			button.styled = true

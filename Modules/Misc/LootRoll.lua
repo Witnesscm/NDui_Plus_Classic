@@ -28,6 +28,8 @@ local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
 local GREED, NEED, PASS = GREED, NEED, PASS
 local ROLL_DISENCHANT = ROLL_DISENCHANT
 
+local enableDisenchant = false
+
 local cachedRolls = {}
 local cancelled_rolls = {}
 local completedRolls = {}
@@ -142,7 +144,7 @@ local function CreateRollButton(parent, texture, rolltype, tiptext, ...)
 	f:SetScript("OnEnter", SetTip)
 	f:SetScript("OnLeave", GameTooltip_Hide)
 	f:SetMotionScriptsWhileDisabled(true)
-	--f:SetHitRectInsets(3, 3, 3, 3)
+	f:SetHitRectInsets(3, 3, 3, 3)
 
 	RollButtonTextures(f, texture.."-Up", rolltype)
 
@@ -182,13 +184,6 @@ function LR:CreateRollFrame(name)
 	button.stack:SetPoint("BOTTOMRIGHT", -1, 2)
 	button.stack:SetFont(unpack(DB.Font))
 
-	local tfade = frame:CreateTexture(nil, "BORDER")
-	tfade:SetPoint("TOPLEFT", frame, "TOPLEFT", 4, 0)
-	tfade:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -4, 0)
-	tfade:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
-	tfade:SetBlendMode("ADD")
-	tfade:SetGradientAlpha("VERTICAL", .1, .1, .1, 0, .1, .1, .1, 0)
-
 	local status = CreateFrame("StatusBar", nil, frame)
 	status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and frame:GetHeight() / 1.6 or C.mult))
 	status:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
@@ -199,13 +194,13 @@ function LR:CreateRollFrame(name)
 	status.parent = frame
 	frame.status = status
 
-	frame.need = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, "LEFT", frame.button, "RIGHT", 5, -1)
-	frame.greed = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, "LEFT", frame.need, "RIGHT", 0, -1)
-	frame.pass = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, "LEFT", frame.greed, "RIGHT", 0, 2)
-	-- frame.disenchant = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT) -- TODO
+	frame.need = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, "LEFT", frame.button, "RIGHT", 6, 0)
+	frame.greed = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, "LEFT", frame.need, "RIGHT", 3, 0)
+	frame.disenchant = enableDisenchant and CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, "LEFT", frame.greed, "RIGHT", 3, 0)
+	frame.pass = CreateRollButton(frame, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, "LEFT", frame.disenchant or frame.greed, "RIGHT", 3, 0)
 
 	local bind = frame:CreateFontString()
-	bind:SetPoint("LEFT", frame.pass, "RIGHT", 3, 1)
+	bind:SetPoint("LEFT", frame.pass, "RIGHT", 3, 0)
 	bind:SetFont(DB.Font[1], fontSize, DB.Font[3])
 	frame.fsbind = bind
 
@@ -247,7 +242,7 @@ end
 function LR:LootRoll_Start(rollID, rollTime)
 	if cancelled_rolls[rollID] then return end
 	local link = GetLootRollItemLink(rollID)
-	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed  = GetLootRollItemInfo(rollID)
+	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
 	local color = ITEM_QUALITY_COLORS[quality]
 
 	local f = GetFrame()
@@ -266,26 +261,29 @@ function LR:LootRoll_Start(rollID, rollTime)
 
 	if canNeed then
 		f.need:Enable()
-		f.need:SetAlpha(1)
 		f.need.tiptext = NEED
 	else
 		f.need:Disable()
-		f.need:SetAlpha(0.2)
 		f.need.tiptext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
 	end
 
 	if canGreed then
 		f.greed:Enable()
-		f.greed:SetAlpha(1)
 		f.greed.tiptext = GREED
 	else
 		f.greed:Disable()
-		f.greed:SetAlpha(0.2)
 		f.greed.tiptext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 	end
 
-	if canDisenchant then
-		-- TODO
+	if f.disenchant then
+		f.disenchant.text:SetText(0)
+		if canDisenchant then
+			f.disenchant:Enable()
+			f.disenchant.tiptext = ROLL_DISENCHANT
+		else
+			f.disenchant:Disable()
+			f.disenchant.tiptext = format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
+		end
 	end
 
 	f.fsbind:SetText(bop and "BoP" or "BoE")

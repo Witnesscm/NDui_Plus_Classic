@@ -57,8 +57,8 @@ function S:WhisperPop()
 	end
 
 	local config = _G.WhisperPopFrameConfig
-	config:SetNormalTexture("")
-	config:SetPushedTexture("")
+	config:SetNormalTexture(P.ClearTexture)
+	config:SetPushedTexture(P.ClearTexture)
 	config:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 	B.ReskinIcon(config.icon)
 

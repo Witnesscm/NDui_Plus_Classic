@@ -185,12 +185,7 @@ function M:GlyphUI_UpdateSlot()
 		self.spell = glyphSpell
 		self.glyphName = GetSpellInfo(glyphSpell)
 		self.name:SetText(self.glyphName)
-
-		if icon then
-			self.icon:SetTexture(icon)
-		else
-			self.icon:SetTexture("Interface\\Spellbook\\UI-Glyph-Rune1")
-		end
+		self.icon:SetTexture(icon or "Interface\\Spellbook\\UI-Glyph-Rune1")
 	end
 end
 

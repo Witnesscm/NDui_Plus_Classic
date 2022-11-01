@@ -58,7 +58,7 @@ end
 local function hook_SetNormalTexture(self, texture)
 	if self.settingTexture then return end
 	self.settingTexture = true
-	self:SetNormalTexture("")
+	self:SetNormalTexture(P.ClearTexture)
 
 	if texture and texture ~= "" then
 		self.Icon:SetTexture(texture)
@@ -85,7 +85,7 @@ local function reskinPDFbutton(self)
 	self.Icon:SetTexCoord(unpack(DB.TexCoord))
 
 	hooksecurefunc(self, "SetNormalTexture", hook_SetNormalTexture)
-	self:SetPushedTexture("")
+	self:SetPushedTexture(P.ClearTexture)
 	self.SetPushedTexture = B.Dummy
 	self:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 

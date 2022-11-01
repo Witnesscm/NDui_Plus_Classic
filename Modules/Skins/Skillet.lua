@@ -19,7 +19,7 @@ local function reskinTradeButton(bu)
 	bu:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	bu:GetHighlightTexture():SetInside()
 
-	if bu.SetPushedTexture then bu:SetPushedTexture("") end
+	if bu.SetPushedTexture then bu:SetPushedTexture(P.ClearTexture) end
 	if bu.SetCheckedTexture then bu:SetCheckedTexture(DB.textures.pushed) end
 
 	local icon = _G[bu:GetName().."Icon"]

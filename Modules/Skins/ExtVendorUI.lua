@@ -47,7 +47,7 @@ function S:ExtVendor()
 	B.ReskinInput(MerchantFrameSearchBox)
 
 	MerchantFrameSellJunkButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-	MerchantFrameSellJunkButton:SetPushedTexture("")
+	MerchantFrameSellJunkButton:SetPushedTexture(P.ClearTexture)
 	B.ReskinIcon(MerchantFrameSellJunkButtonIcon)
 	S:ExtVendor_SkinButtons()
 

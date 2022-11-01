@@ -159,8 +159,8 @@ function S:FeatureFrame()
 		local ic = _G["FeatureFrameButton"..i.."IconTexture"]
 		local name = _G["FeatureFrameButton"..i.."OtherName"]
 
-		bu:SetNormalTexture("")
-		bu:SetPushedTexture("")
+		bu:SetNormalTexture(P.ClearTexture)
+		bu:SetPushedTexture(P.ClearTexture)
 		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		B.ReskinIcon(ic)
 		name:SetTextColor(1, 1, 1)

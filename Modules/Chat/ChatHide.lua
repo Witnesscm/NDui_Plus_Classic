@@ -66,16 +66,6 @@ function CH:SetupChat()
 	_G[self:GetName() .. "Tab"]:SetParent(CH.ChatBG)
 end
 
-function CH:UpdateChatSize()
-	CH.ChatBG:ClearAllPoints()
-	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
-	CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
-	CH.ChatBG:SetHeight(C.db["Chat"]["ChatHeight"])
-
-	_G.ChatFrame1:ClearAllPoints()
-	_G.ChatFrame1:SetAllPoints(CH.ChatBG)
-end
-
 function CH:AutoShow()
 	timeout = 0
 	if not chatIn then
@@ -148,6 +138,18 @@ end
 
 local function finishFunc()
 	CH.ChatToggle.text:SetText(chatIn and "<" or ">")
+end
+
+local function resetChatAnchor(self, _, parent)
+	if parent == UIParent then
+		CH.ChatBG:ClearAllPoints()
+		CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
+		CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
+		CH.ChatBG:SetHeight(C.db["Chat"]["ChatHeight"])
+
+		self:ClearAllPoints()
+		self:SetAllPoints(CH.ChatBG)
+	end
 end
 
 function CH:ChatHide()
@@ -233,17 +235,13 @@ function CH:ChatHide()
 		end
 	end)
 
+	-- Misc
 	_G.GeneralDockManager:SetParent(CH.ChatBG)
 	_G.ChatFrameMenuButton:GetParent():SetParent(CH.ChatBG)
+	if copy then copy:SetParent(CH.ChatBG) end
 
-	if copy then
-		copy:SetParent(CH.ChatBG)
-	end
-
-	CH:UpdateChatSize()
-	hooksecurefunc("FCF_SavePositionAndDimensions", function()
-		P:Delay(.1, CH.UpdateChatSize)
-	end)
+	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
+	FCF_SavePositionAndDimensions(_G.ChatFrame1)
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()

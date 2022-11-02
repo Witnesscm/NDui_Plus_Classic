@@ -189,11 +189,31 @@ local function reskinItemDialog(self)
 	end
 end
 
-local function reskinListHeader(frame)
-	if not frame or not frame.tableBuilder then P:Debug("Unknown: ListHeader") return end
+local function reskinListIcon(self)
+	if not self.tableBuilder then return end
 
-	B.CreateBDFrame(frame.ScrollFrame, .25)
-	B.ReskinScroll(frame.ScrollFrame.scrollBar)
+	for _, row in ipairs(self.tableBuilder.rows) do
+		local cells = row.cells
+		if cells then
+			for _, cell in ipairs(cells) do
+				if cell and cell.Icon then
+					if not cell.styled then
+						cell.Icon.bg = B.ReskinIcon(cell.Icon)
+						if cell.IconBorder then cell.IconBorder:Hide() end
+						cell.styled = true
+					end
+					cell.Icon.bg:SetShown(cell.Icon:IsShown())
+				end
+			end
+		end
+	end
+end
+
+local function reskinListHeader(frame)
+	if not frame or not frame.tableBuilder or not frame.ScrollArea then P:Debug("Unknown: ListHeader") return end
+
+	B.CreateBDFrame(frame.ScrollArea, .25)
+	B.ReskinTrimScroll(frame.ScrollArea.ScrollBar)
 
 	for _, column in ipairs(frame.tableBuilder.columns) do
 		local header = column.headerFrame
@@ -206,16 +226,8 @@ local function reskinListHeader(frame)
 		end
 	end
 
-	for _, row in ipairs(frame.tableBuilder.rows) do
-		local cells = row.cells
-		if cells then
-			for _, cell in ipairs(cells) do
-				if cell.Icon then
-					cell.Icon.bg = B.ReskinIcon(cell.Icon)
-					if cell.IconBorder then cell.IconBorder:Hide() end
-				end
-			end
-		end
+	if frame.UpdateTable then
+		hooksecurefunc(frame, "UpdateTable", reskinListIcon)
 	end
 end
 
@@ -395,10 +407,15 @@ function S:Auctionator()
 
 			for _, key in ipairs({"ScrollListShoppingList", "ScrollListRecents"}) do
 				local scrollList = ShoppingList[key]
-				if scrollList and scrollList.ScrollFrame then
+				if scrollList and scrollList.ScrollBox then
 					B.StripTextures(scrollList)
-					B.CreateBDFrame(scrollList.ScrollFrame, .25)
-					B.ReskinScroll(scrollList.ScrollFrame.scrollBar)
+					scrollList.bg = B.CreateBDFrame(scrollList.ScrollBox, .25)
+					scrollList.bg:SetAllPoints()
+					B.ReskinTrimScroll(scrollList.ScrollBar)
+
+					if scrollList.Inset then
+						scrollList.Inset:SetAlpha(0)
+					end
 				end
 			end
 

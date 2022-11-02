@@ -145,6 +145,8 @@ end
 -- Scale FlightMap
 do
 	function M:UpdateFlightMapScale()
+		if not C.db["Skins"]["BlizzardSkins"] then return end
+
 		local scale = M.db["FlightMapScale"]
 		_G.TAXI_MAP_WIDTH = 316*scale
 		_G.TAXI_MAP_HEIGHT = 352*scale

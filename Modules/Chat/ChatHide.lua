@@ -141,7 +141,7 @@ local function finishFunc()
 end
 
 local function resetChatAnchor(self, _, parent)
-	if parent == UIParent then
+	if not parent or parent == UIParent then
 		CH.ChatBG:ClearAllPoints()
 		CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
 		CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
@@ -242,6 +242,11 @@ function CH:ChatHide()
 
 	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
 	FCF_SavePositionAndDimensions(_G.ChatFrame1)
+	hooksecurefunc("FCF_RestorePositionAndDimensions", function(chatFrame)
+		if chatFrame == DEFAULT_CHAT_FRAME then
+			resetChatAnchor(chatFrame)
+		end
+	end)
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()

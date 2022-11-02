@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.5
+[易用性] 飞行地图缩放仅在启用暴雪界面美化时生效
+[美化] 添加LibDropDown美化
+[美化] 更新Auctionator美化
+[美化] 更新WeakAurasOptions美化
+
 v2.3.4
 [易用性] 添加飞行地图缩放
 [美化] 更新Auctionator美化

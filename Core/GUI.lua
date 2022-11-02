@@ -32,6 +32,10 @@ local function setupUFsFader()
 	G:SetupUFsFader(guiPage[3])
 end
 
+local function setupChatAutoShow()
+	G:SetupChatAutoShow(guiPage[4])
+end
+
 local function updateABFaderState()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
@@ -185,7 +189,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Chat", "Icon", L["ChatLinkIcon"].."*"},
 		{},
 		{1, "Chat", "ChatHide", HeaderTag..L["ChatHide"], nil, nil, nil, L["ChatHideTip"]},
-		{1, "Chat", "AutoShow", L["AutoShow"].."*", nil, nil, updateChatAutoShow, L["AutoShowTip"]},
+		{1, "Chat", "AutoShow", L["AutoShow"].."*", nil, setupChatAutoShow, updateChatAutoShow, L["AutoShowTip"]},
 		{1, "Chat", "AutoHide", L["AutoHide"].."*", nil, nil, updateChatAutoHide, L["AutoHideTip"]},
 		{3, "Chat", "AutoHideTime", L["AutoHideTime"].."*", true, {5, 60, 1}},
 	},

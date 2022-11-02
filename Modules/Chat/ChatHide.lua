@@ -97,21 +97,37 @@ function CH.WhisperFlash(event)
 	P:Flash(CH.ChatToggle.bg.__shadow, 1, true)
 end
 
+local ChatEvents = {
+	["ASWhisper"] = {"CHAT_MSG_WHISPER", "CHAT_MSG_BN_WHISPER"},
+	["ASGroup"] = {"CHAT_MSG_PARTY", "CHAT_MSG_RAID", "CHAT_MSG_INSTANCE_CHAT"},
+	["ASGuild"] = {"CHAT_MSG_GUILD"},
+}
+
 function CH:UpdateAutoShow()
 	if not CH.ChatBG then return end
 
+	for key, events in pairs(ChatEvents) do
+		for _, event in ipairs(events) do
+			if CH.db["AutoShow"] and CH.db[key]  then
+				B:RegisterEvent(event, CH.AutoShow)
+			else
+				B:UnregisterEvent(event, CH.AutoShow)
+			end
+		end
+	end
+
 	if CH.db["AutoShow"] then
-		B:RegisterEvent("CHAT_MSG_WHISPER", CH.AutoShow)
-		B:RegisterEvent("CHAT_MSG_BN_WHISPER", CH.AutoShow)
 		B:RegisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
+	else
+		B:UnregisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
+	end
+
+	if CH.db["AutoShow"] and CH.db["ASWhisper"]  then
 		B:UnregisterEvent("CHAT_MSG_WHISPER", CH.WhisperFlash)
 		B:UnregisterEvent("CHAT_MSG_BN_WHISPER", CH.WhisperFlash)
 	else
 		B:RegisterEvent("CHAT_MSG_WHISPER", CH.WhisperFlash)
 		B:RegisterEvent("CHAT_MSG_BN_WHISPER", CH.WhisperFlash)
-		B:UnregisterEvent("CHAT_MSG_WHISPER", CH.AutoShow)
-		B:UnregisterEvent("CHAT_MSG_BN_WHISPER", CH.AutoShow)
-		B:UnregisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
 	end
 end
 

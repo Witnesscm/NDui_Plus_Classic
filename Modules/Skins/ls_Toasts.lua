@@ -84,17 +84,8 @@ function S:ls_Toasts()
 	local LE, LC = unpack(_G.ls_Toasts)
 	LE:RegisterSkin("ndui", style)
 	LE:RegisterCallback("ToastCreated", SkinToast)
-	if LC then
-		LC.db.profile.skin = "ndui"
-		LC.options.args.general.args.skin.disabled = true
-	else -- temporary fix
-		local charKey = DB.MyName .. " - " .. DB.MyRealm
-		local profileKey = LS_TOASTS_GLOBAL_CONFIG["profileKeys"][charKey]
-		local profile = profileKey and LS_TOASTS_GLOBAL_CONFIG["profiles"][profileKey]
-		if profile then
-			profile.skin = "ndui"
-		end
-	end
+	LC.db.profile.skin = "ndui"
+	LC.options.args.general.args.skin.disabled = true
 end
 
 function S:LSPreviewBoxCurrency(widget)

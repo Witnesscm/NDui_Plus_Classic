@@ -145,6 +145,7 @@ local function SkinAchievementFrame()
 	CalendarButton:SetSize(24, 24)
 	local CalendarFS = CalendarButton:GetFontString()
 	B.SetFontSize(CalendarFS, 13)
+	CalendarFS:SetTextColor(1, 1, 1)
 	CalendarFS:ClearAllPoints()
 	CalendarFS:SetPoint("CENTER", 1, -1)
 	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
@@ -383,13 +384,17 @@ function S:Krowi_AchievementFilter()
 		end
 	end
 
-	P:AddCallbackForAddon("Blizzard_AchievementUI", function()
-		if _G.KrowiAF_AchievementsFrame then
-			SkinAchievementFrame()
-		else
-			P:Delay(.1, SkinAchievementFrame)
-		end
-	end)
+	if IsAddOnLoaded("Blizzard_AchievementUI") then
+		SkinAchievementFrame()
+	else
+		P:AddCallbackForAddon("Blizzard_AchievementUI", function()
+			if _G.KrowiAF_AchievementsFrame then
+				SkinAchievementFrame()
+			else
+				P:Delay(.1, SkinAchievementFrame)
+			end
+		end)
+	end
 end
 
 S:RegisterSkin("Krowi_AchievementFilter", S.Krowi_AchievementFilter)

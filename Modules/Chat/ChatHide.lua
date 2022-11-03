@@ -257,12 +257,7 @@ function CH:ChatHide()
 	if copy then copy:SetParent(CH.ChatBG) end
 
 	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
-	FCF_SavePositionAndDimensions(_G.ChatFrame1)
-	hooksecurefunc("FCF_RestorePositionAndDimensions", function(chatFrame)
-		if chatFrame == DEFAULT_CHAT_FRAME then
-			resetChatAnchor(chatFrame)
-		end
-	end)
+	resetChatAnchor(_G.ChatFrame1)
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()

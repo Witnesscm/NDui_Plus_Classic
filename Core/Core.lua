@@ -131,6 +131,7 @@ P.DefaultSettings = {
 		ExtMacroUI =  false,
 		SearchForIcons = true,
 		FlightMapScale = 1.2,
+		TrainAll = true,
 	},
 }
 

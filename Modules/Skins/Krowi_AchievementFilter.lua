@@ -126,6 +126,25 @@ local function reskinCategoriesFrame(self)
 	end
 end
 
+local function reskinCharacterListButton(self)
+	for _, key in ipairs({"HeaderTooltip", "EarnedByAchievementTooltip", "IgnoreCharacter"}) do
+		local check = self[key]
+		if check and check.GetObjectType and check:GetObjectType() == "CheckButton" then
+			B.ReskinCheck(check)
+		end
+	end
+end
+
+local function reskinCharacterList(self)
+	local buttons = self.ScrollFrame.buttons
+	for _, button in ipairs(buttons) do
+		if not button.styled then
+			reskinCharacterListButton(button)
+			button.styled = true
+		end
+	end
+end
+
 local function SkinAchievementFrame()
 	for i = 4, _G.AchievementFrame.numTabs do
 		local tab = _G["AchievementFrameTab"..i]
@@ -331,6 +350,31 @@ local function SkinAchievementFrame()
 			reskinAlertFrame(child)
 		end
 	end
+
+	-- DataManagerFrame
+	local DataManagerFrame = _G.KrowiAF_DataManagerFrame
+	if DataManagerFrame then
+		B.ReskinPortraitFrame(DataManagerFrame)
+		local CharacterList = DataManagerFrame.CharacterList
+		if CharacterList then
+			CharacterList.InsetFrame:Hide()
+			CharacterList.bg = B.CreateBDFrame(CharacterList, .25)
+			CharacterList.bg:SetPoint("BOTTOMRIGHT", -2, 0)
+			B.StripTextures(CharacterList.ColumnDisplay)
+
+			for header in CharacterList.ColumnDisplay.columnHeaders:EnumerateActive() do
+				header:DisableDrawLayer("BACKGROUND")
+				header.bg = B.CreateBDFrame(header, .25)
+				header.bg:SetPoint("BOTTOMRIGHT", -4, 1)
+				local hl = header:GetHighlightTexture()
+				hl:SetColorTexture(r, g, b, .25)
+				hl:SetAllPoints(header.bg)
+			end
+
+			reskinCharacterList(CharacterList)
+			hooksecurefunc(CharacterList, "Update", reskinCharacterList)
+		end
+	end
 end
 
 function S:Krowi_AchievementFilter()
@@ -339,36 +383,6 @@ function S:Krowi_AchievementFilter()
 	local GameTooltipProgressBar = _G.Krowi_ProgressBar1
 	if GameTooltipProgressBar then
 		reskinStatusBar(GameTooltipProgressBar, true)
-	end
-
-	local DataManagerFrame = _G.KrowiAF_DataManagerFrame
-	B.ReskinPortraitFrame(DataManagerFrame)
-	local CharacterList = DataManagerFrame.CharacterList
-	if CharacterList then
-		CharacterList.InsetFrame:Hide()
-		CharacterList.bg = B.CreateBDFrame(CharacterList, .25)
-		CharacterList.bg:SetPoint("BOTTOMRIGHT", -2, 0)
-		B.StripTextures(CharacterList.ColumnDisplay)
-
-		for header in CharacterList.ColumnDisplay.columnHeaders:EnumerateActive() do
-			header:DisableDrawLayer("BACKGROUND")
-			header.bg = B.CreateBDFrame(header, .25)
-			header.bg:SetPoint("BOTTOMRIGHT", -4, 1)
-			local hl = header:GetHighlightTexture()
-			hl:SetColorTexture(r, g, b, .25)
-			hl:SetAllPoints(header.bg)
-		end
-
-		hooksecurefunc(CharacterList, "Update", function(self)
-			local buttons = self.ScrollFrame.buttons
-			for _, button in ipairs(buttons) do
-				if not button.styled then
-					B.ReskinCheck(button.HeaderTooltip)
-					button.styled = true
-				end
-			end
-		end)
-		CharacterList:Update()
 	end
 
 	-- AlertSystem

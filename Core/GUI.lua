@@ -178,8 +178,9 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "C:UnitFrames", "TankTarget", L["Target Frame"]},
 		{4, "C:UnitFrames", "TankFilter", FILTER.."*", true, {TANK, MAINTANK}, updateTankHeaders},
 		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
-		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", true, {25, 60, 1}, updateTankSize},
-		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", nil, {0, 20, 1}, updateTankSize},
+		{4, "C:UnitFrames", "TankDirec", L["Growth Direction"], true, {L["GO_DOWN"], L["GO_UP"], L["GO_RIGHT"], L["GO_LEFT"]}},
+		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", nil, {25, 60, 1}, updateTankSize},
+		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", true, {0, 20, 1}, updateTankSize},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},

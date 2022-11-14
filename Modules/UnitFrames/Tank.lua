@@ -69,33 +69,50 @@ local function CreateTankTargetStyle(self)
 	UF.SetUnitFrameSize(self, "Tank")
 end
 
+UF.TankDirections = {
+	[1] = {name = L["GO_DOWN"], point = "TOP", xOffset = 0, yOffset = -5, initAnchor = "TOPLEFT"},
+	[2] = {name = L["GO_UP"], point = "BOTTOM", xOffset = 0, yOffset = 5, initAnchor = "BOTTOMLEFT"},
+	[3] = {name = L["GO_RIGHT"], point = "LEFT", xOffset = 5, yOffset = 0, initAnchor = "TOPLEFT"},
+	[4] = {name = L["GO_LEFT"], point = "RIGHT", xOffset = -5, yOffset = 0, initAnchor = "TOPRIGHT"},
+}
+
+local TargetAnchors = {
+	[1] = {point = "TOPLEFT", relPoint = "TOPRIGHT", xOffset = 6, yOffset = 0},
+	[2] = {point = "BOTTOMLEFT", relPoint = "BOTTOMRIGHT", xOffset = 6, yOffset = 0},
+	[3] = {point = "TOPLEFT", relPoint = "BOTTOMLEFT", xOffset = 0, yOffset = -6},
+	[4] = {point = "TOPRIGHT", relPoint = "BOTTOMRIGHT", xOffset = 0, yOffset = -6},
+}
+
 function UF:SetupTankFrame()
 	if not UF.db["TankFrame"] then return end
 
 	oUF:RegisterStyle("Tank", CreateTankStyle)
 	oUF:SetActiveStyle("Tank")
 
-	local xOffset, yOffset = 5, 5
+	local offset = 5
+	local tankDirec = UF.db["TankDirec"]
+	local horizon = tankDirec > 2
 	local tankWidth, tankHeight = UF.db["TankWidth"], UF.db["TankHeight"]
 	local tankPower = UF.db["TankPowerHeight"]
 	local tankFrameHeight = tankHeight + tankPower + C.mult
-	local tankMoverWidth = tankWidth
-	local tankMoverHeight = tankFrameHeight*5+yOffset*4
+	local tankMoverWidth = horizon and tankWidth*5+offset*4 or tankWidth
+	local tankMoverHeight = horizon and tankFrameHeight or tankFrameHeight*5+offset*4
 	local enableTarget = UF.db["TankTarget"]
+	local sortData = UF.TankDirections[tankDirec]
 
 	local tank = oUF:SpawnHeader("oUF_Tank", nil, nil,
 	"showPlayer", true,
 	"showSolo", true,
 	"showParty", true,
 	"showRaid", true,
-	"xoffset", xOffset,
-	"yOffset", -yOffset,
-	"point", "TOP",
 	"oUF-initialConfigFunction", ([[
 	self:SetWidth(%d)
 	self:SetHeight(%d)
 	]]):format(tankWidth, tankFrameHeight))
 	--enableTarget and "template", enableTarget and "ELVUI_UNITTARGET")
+	tank:SetAttribute("point", sortData.point)
+	tank:SetAttribute("xOffset", sortData.xOffset)
+	tank:SetAttribute("yOffset", sortData.yOffset)
 	tinsert(headers, tank)
 	RegisterStateDriver(tank, "visibility", "[group:raid] show;hide")
 
@@ -104,31 +121,36 @@ function UF:SetupTankFrame()
 		oUF:SetActiveStyle("TankTarget")
 
 		local targetOffset = 6
-		tankMoverWidth = tankWidth*2+targetOffset
+		if horizon then
+			tankMoverHeight = tankFrameHeight*2+targetOffset
+		else
+			tankMoverWidth = tankWidth*2+targetOffset
+		end
 
 		local tankTarget = oUF:SpawnHeader("oUF_TankTarget", nil, nil,
 		"showPlayer", true,
 		"showSolo", true,
 		"showParty", true,
 		"showRaid", true,
-		"xoffset", xOffset,
-		"yOffset", -yOffset,
-		"point", "TOP",
 		"oUF-initialConfigFunction", ([[
 		self:SetWidth(%d)
 		self:SetHeight(%d)
 		self:SetAttribute("unitsuffix", "target")
 		]]):format(tankWidth, tankFrameHeight))
+		tankTarget:SetAttribute("point", sortData.point)
+		tankTarget:SetAttribute("xOffset", sortData.xOffset)
+		tankTarget:SetAttribute("yOffset", sortData.yOffset)
 		tinsert(headers, tankTarget)
 		RegisterStateDriver(tankTarget, "visibility", "[group:raid] show;hide")
 
+		local anchor = TargetAnchors[tankDirec]
 		tankTarget:ClearAllPoints()
-		tankTarget:SetPoint("TOPLEFT", tank, "TOPRIGHT", targetOffset, 0)
+		tankTarget:SetPoint(anchor.point, tank, anchor.relPoint, anchor.xOffset, anchor.yOffset)
 	end
 
 	local tankMover = B.Mover(tank, L["TankFrame"], "TankFrame", {"TOPLEFT", UIParent, 35, -414}, tankMoverWidth, tankMoverHeight)
 	tank:ClearAllPoints()
-	tank:SetPoint("TOPLEFT", tankMover)
+	tank:SetPoint(sortData.initAnchor, tankMover)
 
 	UF:UpdateTankHeaders()
 end

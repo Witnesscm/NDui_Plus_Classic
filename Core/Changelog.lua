@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.6
+[单位框体] 坦克框体添加方向选择
+[易用性] 修复天赋面板ala模拟器按钮
+[易用性] 添加选项禁用训练全部按钮
+[美化] 更新Auctionator美化
+[美化] 更新Krowi_AchievementFilter美化
+
 v2.3.5
 [易用性] 飞行地图缩放仅在启用暴雪界面美化时生效
 [美化] 添加LibDropDown美化

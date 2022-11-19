@@ -178,6 +178,12 @@ local function SkinAchievementFrame()
 	SearchBox:ClearAllPoints()
 	SearchBox:SetPoint("TOPLEFT", 580, -2)
 
+	local SearchButton = _G.KrowiAF_SearchOptionsMenuButton
+	B.Reskin(SearchButton)
+	SearchButton:SetSize(18, 20)
+	SearchButton:ClearAllPoints()
+	SearchButton:SetPoint("RIGHT", SearchBox, "LEFT", -C.mult, 0)
+
 	local PreviewContainer = _G.KrowiAF_SearchPreviewContainer
 	B.StripTextures(PreviewContainer)
 	PreviewContainer:ClearAllPoints()

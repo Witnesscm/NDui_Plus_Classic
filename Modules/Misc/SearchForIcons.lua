@@ -43,9 +43,10 @@ function module:CreateSearchFrame()
 	local frame = CreateFrame("Frame", "NDuiPlus_SearchForIcons")
 	frame:SetSize(240, 60)
 
-	local editbox = B.CreateEditBox(frame, 160, 20)
+	local editbox = CreateFrame("EditBox", nil, frame, "SearchBoxTemplate")
+	B.ReskinInput(editbox)
+	editbox:SetSize(160, 20)
 	editbox:SetMaxLetters(10)
-	editbox.bg:SetBackdropColor(0, 0, 0, 0)
 	editbox:SetPoint("TOPRIGHT", -50, -35)
 	editbox:HookScript("OnEscapePressed", function(self)
 		self:SetText("")
@@ -73,8 +74,8 @@ function module:CreateSearchFrame()
 		module:PopupFrame_Update()
 	end)
 
-	local helpInfo = B.CreateHelpInfo(frame)
-	helpInfo:SetPoint("TOPRIGHT", -5, -5)
+	local helpInfo = CreateFrame("Frame", nil, editbox)
+	helpInfo:SetOutside(editbox.searchIcon, 10, 10)
 	helpInfo.title = L["SearchForIcons"]
 	B.AddTooltip(helpInfo, "ANCHOR_RIGHT", L["SearchForIconsTip"], "info")
 

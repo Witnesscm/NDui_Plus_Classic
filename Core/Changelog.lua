@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.7
+[主要] 更新支持PTR 3.4.1
+[美化] 添加WeakAurasSpinBox组件美化
+[美化] 更新Auctionator美化
+[美化] 更新Krowi_AchievementFilter美化
+
 v2.3.6
 [单位框体] 坦克框体添加方向选择
 [易用性] 修复天赋面板ala模拟器按钮

@@ -75,7 +75,7 @@ function module:CreateSearchFrame()
 	end)
 
 	local helpInfo = CreateFrame("Frame", nil, editbox)
-	helpInfo:SetOutside(editbox.searchIcon, 10, 10)
+	helpInfo:SetOutside(editbox.searchIcon, 6, 6)
 	helpInfo.title = L["SearchForIcons"]
 	B.AddTooltip(helpInfo, "ANCHOR_RIGHT", L["SearchForIconsTip"], "info")
 

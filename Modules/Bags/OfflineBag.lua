@@ -6,6 +6,8 @@ local strfind = string.find
 ----------------------------
 -- Credit: tdBag2
 ----------------------------
+local GetContainerNumSlots = GetContainerNumSlots or C_Container.GetContainerNumSlots
+
 local BAGS = {0, 1, 2, 3, 4}
 local BANKS = {-1, 5, 6, 7, 8, 9, 10, 11}
 local KEYS = {-2}
@@ -103,8 +105,15 @@ local function SaveBag(bag)
 		items.size = size
 
 		for slot = 1, size do
-			local _, count, _, _, _, _, link = GetContainerItemInfo(bag, slot)
-			items[slot] = parseItem(link, count)
+			if P.isNewPatch then
+				local info = C_Container.GetContainerItemInfo(bag, slot)
+				if info then
+					items[slot] = parseItem(info.hyperlink, info.stackCount)
+				end
+			else
+				local _, count, _, _, _, _, link = GetContainerItemInfo(bag, slot)
+				items[slot] = parseItem(link, count)
+			end
 		end
 	end
 
@@ -233,8 +242,8 @@ local function CreateItemButton(bag, slot)
 	local button = CreateFrame("Button", name, nil, "ItemButtonTemplate")
 	local iconSize = module.db["IconSize"]
 
-	button:SetNormalTexture(nil)
-	button:SetPushedTexture(nil)
+	button:SetNormalTexture(P.ClearTexture)
+	button:SetPushedTexture(P.ClearTexture)
 	button:SetHighlightTexture(DB.bdTex)
 	button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	button:GetHighlightTexture():SetInside()

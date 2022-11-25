@@ -314,29 +314,32 @@ end
 local function reskinBuyFrame(self)
 	if not self then P:Debug("Unknown: BuyFrame") return end
 
-	reskinListHeader(self.SearchResultsListing)
-	reskinListHeader(self.HistoryResultsListing)
-
-	if self.Inset then
-		self.Inset:SetAlpha(0)
+	if self.HistoryButton then
+		B.Reskin(self.HistoryButton)
 	end
 
-	for _, key in ipairs({"HistoryButton", "CancelButton", "RefreshButton", "BuyButton"}) do
-		local bu = self[key]
-		if bu then
-			B.Reskin(bu)
+	local CurrentPrices = self.CurrentPrices
+	if CurrentPrices then
+		reskinButtons(CurrentPrices, {"BuyButton", "CancelButton", "RefreshButton"})
+		reskinListHeader(CurrentPrices.SearchResultsListing)
 
-			if (key == "HistoryButton" or key == "CancelButton") and self.SearchResultsListing then
-				bu:SetPoint("TOP", self.SearchResultsListing, "BOTTOM", 0, -2)
-			end
+		local BuyDialog = CurrentPrices.BuyDialog
+		if BuyDialog then
+			reskinSimplePanel(BuyDialog)
+			reskinButtons(BuyDialog, {"Cancel", "BuyStack"})
+			B.ReskinCheck(BuyDialog.ChainBuy.CheckBox)
 		end
+
+		if CurrentPrices.Inset then CurrentPrices.Inset:SetAlpha(0) end
 	end
 
-	local BuyDialog = self.BuyDialog
-	if BuyDialog then
-		reskinSimplePanel(BuyDialog)
-		reskinButtons(BuyDialog, {"Cancel", "BuyStack"})
-		B.ReskinCheck(BuyDialog.ChainBuy.CheckBox)
+	local HistoryPrices = self.HistoryPrices
+	if HistoryPrices then
+		reskinButtons(HistoryPrices, {"PostingHistoryButton", "RealmHistoryButton"})
+		reskinListHeader(HistoryPrices.PostingHistoryResultsListing)
+		reskinListHeader(HistoryPrices.RealmHistoryResultsListing)
+
+		if HistoryPrices.Inset then HistoryPrices.Inset:SetAlpha(0) end
 	end
 end
 

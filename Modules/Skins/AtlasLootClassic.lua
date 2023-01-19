@@ -86,9 +86,6 @@ local function reskinSelectFrame(self)
 				local hl = button:GetHighlightTexture()
 				hl:SetColorTexture(r, g, b, .25)
 				hl:SetOutside(nil, 4)
-				local check = button:GetCheckedTexture()
-				check:SetColorTexture(r, g, b, .25)
-				check:SetOutside(nil, 4)
 
 				button.styled = true
 			end

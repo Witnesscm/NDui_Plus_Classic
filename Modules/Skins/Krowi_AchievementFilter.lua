@@ -79,9 +79,9 @@ local function reskinStatusBar(self, isTip)
 		tex.SetVertexColor = B.Dummy
 
 		if i == 1 then
-			tex:SetGradient("VERTICAL", 0, .4, 0, 0, .6, 0)
+			tex:SetGradient("VERTICAL", CreateColor(0, .4, 0, 1), CreateColor(0, .6, 0, 1))
 		elseif i ==2 then
-			tex:SetGradient("VERTICAL", .4, 0, 0, .6, 0, 0)
+			tex:SetGradient("VERTICAL", CreateColor(.4, 0, 0, 1), CreateColor(.6, 0, 0, 1))
 		end
 	end
 

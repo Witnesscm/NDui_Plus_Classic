@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.3.8
+[单位框体] 修复头像渐隐问题
+[美化] 更新部分插件美化报错
+
 v2.3.7
 [主要] 更新支持PTR 3.4.1
 [美化] 添加WeakAurasSpinBox组件美化

@@ -5,157 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local ipairs, pairs= ipairs, pairs
 
-local function hook_SetNormalTexture(self)
-	local icon = self:GetNormalTexture()
-	if icon then
-		icon:SetTexCoord(.08, .92, .08, .92)
-		icon:SetInside()
-	end
-end
-
-local function AuctionatorSkin_ClassicFix()
-	B.ReskinCheck(Atr_Adv_Search_Button)
-	B.ReskinCheck(Atr_Exact_Search_Button)
-	B.ReskinScroll(Atr_Hlist_ScrollFrameScrollBar)
-	B.ReskinScroll(AuctionatorScrollFrameScrollBar)
-	B.StripTextures(Atr_Hlist)
-	Atr_Hlist.SetBackdrop = B.Dummy
-
-	local bg = B.CreateBDFrame(Atr_Hlist, .25)
-	bg:SetPoint("TOPLEFT", -2, -2)
-	bg:SetPoint("BOTTOMRIGHT", 4, 2)
-
-	B.StripTextures(Atr_HeadingsBar)
-	Atr_HeadingsBar.bg = B.CreateBDFrame(Atr_HeadingsBar, .25)
-	Atr_HeadingsBar.bg:SetPoint("TOPLEFT", 0, -21)
-	Atr_HeadingsBar.bg:SetPoint("BOTTOMRIGHT", 0, 22)
-
-	for i = 1, 3 do
-		B.ReskinTab(_G["Atr_ListTabsTab"..i])
-	end
-
-	local buttons = {
-		"Atr_AddToSListButton",
-		"Atr_RemFromSListButton",
-		"Atr_SrchSListButton",
-		"Atr_MngSListsButton",
-		"Atr_NewSListButton",
-		"Atr_Search_Button",
-		"Auctionator1Button",
-		"Atr_FullScanButton",
-		"Atr_CheckActiveButton",
-		"AuctionatorCloseButton",
-		"Atr_CancelSelectionButton",
-		"Atr_Buy1_Button",
-		"Atr_Back_Button",
-		"Atr_SaveThisList_Button",
-		"Atr_CreateAuctionButton",
-		"Atr_FullScanStartButton",
-		"Atr_FullScanDone",
-		"Atr_Adv_Search_ResetBut",
-		"Atr_Adv_Search_OKBut",
-		"Atr_Adv_Search_CancelBut",
-		"Atr_Buy_Confirm_OKBut",
-		"Atr_Buy_Confirm_CancelBut",
-		"Atr_CheckActives_Yes_Button",
-		"Atr_CheckActives_No_Button",
-		"Atr_StackingOptionsFrame_Edit",
-		"Atr_StackingOptionsFrame_New",
-	}
-
-	for _, key in pairs(buttons) do
-		local bu = _G[key]
-		if bu then
-			B.Reskin(bu)
-		end
-	end
-
-	local EditBoxes = {
-		"Atr_Batch_NumAuctions",
-		"Atr_Batch_Stacksize",
-		"Atr_Search_Box",
-		"Atr_AS_Searchtext",
-		"Atr_AS_Minlevel",
-		"Atr_AS_Maxlevel",
-		"Atr_AS_MinItemlevel",
-		"Atr_AS_MaxItemlevel",
-		"Atr_Starting_Discount",
-		"Atr_ScanOpts_MaxHistAge",
-	}
-
-	for _, key in pairs(EditBoxes) do
-		local editbox = _G[key]
-		if editbox then
-			B.ReskinInput(editbox)
-		end
-	end
-
-	local MoneyEditBoxes = {
-		"UC_5000000_MoneyInput",
-		"UC_1000000_MoneyInput",
-		"UC_200000_MoneyInput",
-		"UC_50000_MoneyInput",
-		"UC_10000_MoneyInput",
-		"UC_2000_MoneyInput",
-		"UC_500_MoneyInput",
-		"Atr_StackPrice",
-		"Atr_StartingPrice",
-		"Atr_ItemPrice",
-	}
-
-	for _, key in pairs(MoneyEditBoxes) do
-		for _, coin in pairs({"Gold", "Silver", "Copper"}) do
-			local editbox = _G[key..coin]
-			if editbox then
-				B.ReskinInput(editbox)
-
-				if coin ~= "Gold" then
-					editbox.bg:SetPoint("BOTTOMRIGHT", -10, 0)
-				end
-			end
-		end
-	end
-
-	for _, key in pairs({"Atr_FullScanFrame", "Atr_FullScanResults", "Atr_Adv_Search_Dialog", "Atr_Buy_Confirm_Frame"}) do
-		local frame = _G[key]
-		if frame then
-			B.StripTextures(frame)
-			B.SetBD(frame)
-			frame.SetBackdrop = B.Dummy
-		end
-	end
-
-	local DropDownBoxes = {
-		"Atr_Duration",
-		"Atr_DropDownSL",
-		"Atr_ASDD_Class",
-		"Atr_ASDD_Subclass",
-	}
-
-	for _, key in pairs(DropDownBoxes) do
-		local dropDown = _G[key]
-		if dropDown then
-			B.ReskinDropDown(dropDown)
-		end
-	end
-
-	UIDropDownMenu_SetWidth(Atr_Duration, 80)
-	UIDropDownMenu_SetWidth(Atr_ASDD_Class, 160)
-	UIDropDownMenu_SetWidth(Atr_ASDD_Subclass, 160)
-	Atr_Duration:SetPoint("TOPLEFT", Atr_Duration_Text, "TOPLEFT", 45, 7)
-
-	P.SetupBackdrop(Atr_RecommendItem_Tex)
-	B.CreateBD(Atr_RecommendItem_Tex, .25)
-	hooksecurefunc(Atr_RecommendItem_Tex, "SetNormalTexture", hook_SetNormalTexture)
-
-	P.SetupBackdrop(Atr_SellControls_Tex)
-	B.CreateBD(Atr_SellControls_Tex, .25)
-	hooksecurefunc(Atr_SellControls_Tex, "SetNormalTexture", hook_SetNormalTexture)
-	local hl = Atr_SellControls_Tex:GetHighlightTexture()
-	hl:SetColorTexture(1, 1, 1, .25)
-	hl:SetInside()
-end
-
 local function reskinButtons(self, buttons)
 	for _, key in ipairs(buttons) do
 		local bu = self[key]
@@ -261,7 +110,6 @@ end
 local function reskinBagItem(button)
 	if not button then P:Debug("Unknown: BagItem") return end
 
-	button.IconMask:Hide()
 	button.EmptySlot:Hide()
 	button:SetPushedTexture(P.ClearTexture)
 	button.Icon:SetInside(button, 2, 2)
@@ -346,12 +194,6 @@ end
 function S:Auctionator()
 	if not S.db["Auctionator"] then return end
 
-	-- Auctionator (ClassicFix)
-	if _G.Atr_Init then
-		hooksecurefunc("Atr_Init", AuctionatorSkin_ClassicFix)
-	end
-
-	-- Auctionator (Retail)
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not _G.AuctionatorInitalizeClassicFrame or not _G.AuctionatorInitalizeClassicFrame.AuctionHouseShown then return end
 
@@ -464,9 +306,8 @@ function S:Auctionator()
 			end
 
 			for _, child in pairs {BuyFrame:GetChildren()} do
-				if child.Icon and child.IconMask then
+				if child.Icon then
 					B.ReskinIcon(child.Icon)
-					child.IconMask:Hide()
 				end
 			end
 		end

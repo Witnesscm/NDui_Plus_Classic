@@ -1,6 +1,4 @@
-## Interface: 30400
-## Interface-Classic: 11403
-## Interface-BCC: 20504
+## Interface: 30401
 ## Title: |cff0080ffNDui|r |cff00ff00Plus|r
 ## Author: Witness
 ## Notes: NDui Plugin

@@ -90,6 +90,8 @@ P.DefaultSettings = {
 		Height = 28,
 		Style = 2,
 		Direction = 2,
+		ItemLevel = false,
+		ItemQuality = false,
 	},
 	AFK = {
 		Enable = true,

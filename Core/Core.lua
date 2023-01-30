@@ -131,7 +131,7 @@ P.DefaultSettings = {
 		TalentExpand = true,
 		ExtVendorUI = true,
 		ExtMacroUI =  false,
-		SearchForIcons = true,
+		IconSearch = true,
 		FlightMapScale = 1.2,
 		TrainAll = true,
 	},

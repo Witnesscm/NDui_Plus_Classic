@@ -15,4 +15,4 @@ Locales\Locales.xml
 Libs\Libs.xml
 Media\Media.xml
 Core\Core.xml
-Modules\Modules_Wrath.xml
+Modules\Modules.xml

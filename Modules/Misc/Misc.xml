@@ -1,7 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Misc.lua"/>
 	<Script file="AFK.lua"/>
-	<Script file="ExtTalentUI_Classic.lua"/>
+	<Script file="ExtTalentUI.lua"/>
+	<Script file="ExtTalentUI_Glyph.lua"/>
 	<Script file="ExtTrainerUI.lua"/>
 	<Script file="ExtGuildUI.lua"/>
 	<Script file="ExtVendorUI.lua"/>
@@ -9,5 +10,5 @@
 	<Script file="Loot.lua"/>
 	<Script file="LootRoll.lua"/>
 	<Script file="Lockpicking.lua"/>
-	<Script file="SearchForIcons.lua"/>
+	<Script file="IconSearch.lua"/>
 </Ui>

@@ -330,7 +330,7 @@ function S:WeakAurasDisplayButton(widget)
 	local button = widget.frame
 
 	P.ReskinCollapse(widget.expand)
-	widget.expand:SetPushedTexture(P.ClearTexture)
+	widget.expand:SetPushedTexture(0)
 	widget.expand.SetPushedTexture = B.Dummy
 	B.ReskinInput(widget.renamebox)
 	button.group.texture:SetTexture(P.RotationRightTex)
@@ -399,7 +399,7 @@ end
 
 function S:WeakAurasLoadedHeaderButton(widget)
 	P.ReskinCollapse(widget.expand)
-	widget.expand:SetPushedTexture(P.ClearTexture)
+	widget.expand:SetPushedTexture(0)
 	widget.expand.SetPushedTexture = B.Dummy
 end
 
@@ -430,7 +430,7 @@ end
 
 function S:WeakAurasMiniTalent(widget)
 	for _, button in pairs(widget.buttons) do
-		button:SetNormalTexture(P.ClearTexture)
+		button:SetNormalTexture(0)
 		button.bg = B.ReskinIcon(button:GetNormalTexture())
 		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		button.cover:SetTexture("")

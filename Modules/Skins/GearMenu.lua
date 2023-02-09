@@ -30,9 +30,9 @@ local function reskinGear(slot)
 	hl:SetColorTexture(1, 1, 1, .25)
 	hl:SetInside(slot.bg)
 
-	slot:SetHighlightTexture(P.ClearTexture)
-	slot:SetNormalTexture(P.ClearTexture)
-	slot:SetPushedTexture(P.ClearTexture)
+	slot:SetHighlightTexture(0)
+	slot:SetNormalTexture(0)
+	slot:SetPushedTexture(0)
 
 	UpdateTexture(slot)
 end

@@ -105,14 +105,9 @@ local function SaveBag(bag)
 		items.size = size
 
 		for slot = 1, size do
-			if P.isNewPatch then
-				local info = C_Container.GetContainerItemInfo(bag, slot)
-				if info then
-					items[slot] = parseItem(info.hyperlink, info.stackCount)
-				end
-			else
-				local _, count, _, _, _, _, link = GetContainerItemInfo(bag, slot)
-				items[slot] = parseItem(link, count)
+			local info = C_Container.GetContainerItemInfo(bag, slot)
+			if info then
+				items[slot] = parseItem(info.hyperlink, info.stackCount)
 			end
 		end
 	end
@@ -242,8 +237,8 @@ local function CreateItemButton(bag, slot)
 	local button = CreateFrame("Button", name, nil, "ItemButtonTemplate")
 	local iconSize = module.db["IconSize"]
 
-	button:SetNormalTexture(P.ClearTexture)
-	button:SetPushedTexture(P.ClearTexture)
+	button:SetNormalTexture(0)
+	button:SetPushedTexture(0)
 	button:SetHighlightTexture(DB.bdTex)
 	button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	button:GetHighlightTexture():SetInside()

@@ -1,7 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local Bar = B:GetModule("Actionbar")
+local AB = P:GetModule("ActionBar")
 
 local _G = getfenv(0)
 
@@ -14,7 +14,7 @@ local function reskinButton(self)
 	if button then
 		button.__checkedTexture = button:CreateTexture()
 		button.GetCheckedTexture = GetCheckedTexture
-		Bar:StyleActionButton(button, P.BarConfig)
+		AB:StyleActionButton(button, AB.BarConfig)
 	end
 end
 

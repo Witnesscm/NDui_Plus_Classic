@@ -1,8 +1,8 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local AB = P:GetModule("ActionBar")
 local NS = B:GetModule("Skins")
-local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
 local select, pairs, ipairs, strfind = select, pairs, ipairs, string.find
@@ -322,7 +322,7 @@ function S:TotemTimers()
 	end
 
 	local function reskinTotemButton(self)
-		Bar:StyleActionButton(self, P.BarConfig)
+		AB:StyleActionButton(self, AB.BarConfig)
 
 		local icon = _G[self:GetName().."Icon"]
 		if icon then

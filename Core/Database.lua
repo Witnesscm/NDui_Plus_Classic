@@ -2,7 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Version = GetAddOnMetadata(addonName, "Version")
-P.SupportVersion = "3.3.0"
+P.SupportVersion = "3.8.0"
 P.isNewPatch = select(4, GetBuildInfo()) >= 30401
 
 -- Colors
@@ -22,62 +22,3 @@ P.RIGHT_MOUSE_BUTTON = [[|TInterface\TutorialFrame\UI-Tutorial-Frame:12:12:0:0:5
 -- Bindings
 BINDING_HEADER_NDUIPLUS = addonName
 BINDING_NAME_NDUIPLUSTOGGLEBAG = L["Toggle OfflineBag"]
-
-P.BarConfig = {
-	icon = {
-		texCoord = DB.TexCoord,
-		points = {
-			{"TOPLEFT", C.mult, -C.mult},
-			{"BOTTOMRIGHT", -C.mult, C.mult},
-		},
-	},
-	flyoutBorder = {file = ""},
-	flyoutBorderShadow = {file = ""},
-	border = {file = ""},
-	normalTexture = {
-		file = DB.textures.normal,
-		texCoord = DB.TexCoord,
-		color = {.3, .3, .3},
-		points = {
-			{"TOPLEFT", 0, 0},
-			{"BOTTOMRIGHT", 0, 0},
-		},
-	},
-	flash = {file = DB.textures.flash},
-	pushedTexture = {file = DB.textures.pushed},
-	checkedTexture = {file = DB.textures.checked},
-	highlightTexture = {
-		file = "",
-		points = {
-			{"TOPLEFT", C.mult, -C.mult},
-			{"BOTTOMRIGHT", -C.mult, C.mult},
-		},
-	},
-	cooldown = {
-		points = {
-			{"TOPLEFT", 0, 0},
-			{"BOTTOMRIGHT", 0, 0},
-		},
-	},
-	name = {
-		font = {DB.Font[1], DB.Font[2]+1, DB.Font[3]},
-		points = {
-			{"BOTTOMLEFT", 0, 0},
-			{"BOTTOMRIGHT", 0, 0},
-		},
-	},
-	hotkey = {
-		font = {DB.Font[1], DB.Font[2]+1, DB.Font[3]},
-		points = {
-			{"TOPRIGHT", 0, -0.5},
-			{"TOPLEFT", 0, -0.5},
-		},
-	},
-	count = {
-		font = {DB.Font[1], DB.Font[2]+1, DB.Font[3]},
-		points = {
-			{"BOTTOMRIGHT", 2, 0},
-		},
-	},
-	buttonstyle = {file = ""},
-}

@@ -1,7 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local Bar = B:GetModule("Actionbar")
+local AB = P:GetModule("ActionBar")
 
 local _G = getfenv(0)
 local pairs = pairs
@@ -24,14 +24,14 @@ function S:ItemRack()
 	for i = 0, 20 do
 		local bu = _G["ItemRackButton"..i]
 		if bu then
-			Bar:StyleActionButton(bu, P.BarConfig)
+			AB:StyleActionButton(bu, AB.BarConfig)
 		end
 	end
 
 	hooksecurefunc(ItemRack, "CreateMenuButton", function(idx)
 		local button = _G["ItemRackMenu"..idx]
 		if button and not button.styled then
-			Bar:StyleActionButton(button, P.BarConfig)
+			AB:StyleActionButton(button, AB.BarConfig)
 			setBorder(button)
 			button.styled = true
 		end
@@ -56,7 +56,7 @@ function S:ItemRackOptions()
 	for i = 0, 19 do
 		local inv = _G["ItemRackOptInv"..i]
 		if inv then
-			Bar:StyleActionButton(inv, P.BarConfig)
+			AB:StyleActionButton(inv, AB.BarConfig)
 			setBorder(inv)
 		end
 	end
@@ -237,7 +237,7 @@ function S:ItemRackOptions()
 		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 	end
 
-	Bar:StyleActionButton(ItemRackOptSetsCurrentSet, P.BarConfig)
+	AB:StyleActionButton(ItemRackOptSetsCurrentSet, AB.BarConfig)
 
 	for i = 1, 10 do
 		local icon = _G["ItemRackOptSetList"..i.."Icon"]

@@ -1,7 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local Bar = B:GetModule("Actionbar")
+local AB = P:GetModule("ActionBar")
 
 local _G = getfenv(0)
 
@@ -9,7 +9,7 @@ local function reskinButton(self)
 	local bu = self.Widget
 	local icon = self.WIcon
 
-	Bar:StyleActionButton(bu, P.BarConfig)
+	AB:StyleActionButton(bu, AB.BarConfig)
 	icon:SetTexCoord(unpack(DB.TexCoord))
 	icon.SetTexCoord = B.Dummy
 end
@@ -68,7 +68,7 @@ function S:ButtonForge()
 	for _, key in pairs(configButtons) do
 		local bu = _G[key]
 		if bu then
-			Bar:StyleActionButton(bu, P.BarConfig)
+			AB:StyleActionButton(bu, AB.BarConfig)
 		end
 	end
 

@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
-local Bar = B:GetModule("Actionbar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
 local CooldownFrame_Set = CooldownFrame_Set
@@ -159,7 +158,7 @@ function AB:CreateMageButton(name, parent, spellID)
 	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate")
 	button:SetHitRectInsets(-margin/2, -margin/2, -margin/2, -margin/2)
 	button:RegisterForClicks("AnyUp")
-	Bar:StyleActionButton(button, P.BarConfig)
+	AB:StyleActionButton(button, AB.BarConfig)
 
 	AB.MageButton_UpdateSpell(button, spellID)
 	button:SetScript("OnEnter", buttonOnEnter)

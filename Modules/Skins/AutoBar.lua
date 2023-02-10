@@ -5,15 +5,9 @@ local AB = P:GetModule("ActionBar")
 
 local _G = getfenv(0)
 
-local function GetCheckedTexture(self)
-	return self.__checkedTexture
-end
-
 local function reskinButton(self)
 	local button = self.frame
 	if button then
-		button.__checkedTexture = button:CreateTexture()
-		button.GetCheckedTexture = GetCheckedTexture
 		AB:StyleActionButton(button, AB.BarConfig)
 	end
 end

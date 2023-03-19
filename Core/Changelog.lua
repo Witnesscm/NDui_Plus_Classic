@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.4.1
+[美化] 更新Auctionator美化
+[美化] 修复AutoBar美化
+
 v2.4.0
 [主要] 更新支持NDui 3.8.0
 [易用性] 更新Roll点增强，修复某些情况下报错；添加物品等级显示、边框染色。

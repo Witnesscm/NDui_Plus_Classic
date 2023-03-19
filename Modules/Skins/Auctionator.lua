@@ -204,8 +204,14 @@ function S:Auctionator()
 		local SplashScreen = _G.AuctionatorSplashScreen
 		if SplashScreen then
 			P.ReskinFrame(SplashScreen)
-			B.ReskinScroll(SplashScreen.ScrollFrame.ScrollBar)
-			B.ReskinCheck(SplashScreen.HideCheckbox.CheckBox)
+
+			if SplashScreen.ScrollBar then
+				B.ReskinTrimScroll(SplashScreen.ScrollBar)
+			end
+
+			if SplashScreen.HideCheckbox and SplashScreen.HideCheckbox.CheckBox then
+				B.ReskinCheck(SplashScreen.HideCheckbox.CheckBox)
+			end
 
 			if SplashScreen.Inset then
 				SplashScreen.Inset:SetAlpha(0)
@@ -426,22 +432,10 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	if Auctionator.CraftingInfo and Auctionator.CraftingInfo.Initialize then
-		hooksecurefunc(Auctionator.CraftingInfo, "Initialize", function()
-			local frame = _G.AuctionatorCraftingInfo
-			if frame and frame.SearchButton and not frame.styled then
-				B.Reskin(frame.SearchButton)
-				frame.styled = true
-			end
-		end)
-	end
-
-	if Auctionator.EnchantInfo and Auctionator.EnchantInfo.Initialize then
-		hooksecurefunc(Auctionator.EnchantInfo, "Initialize", function()
-			local frame = _G.AuctionatorEnchantInfoFrame
-			if frame and frame.SearchButton and not frame.styled then
-				B.Reskin(frame.SearchButton)
-				frame.styled = true
+	if _G.AuctionatorCraftingInfoFrameMixin then
+		hooksecurefunc(_G.AuctionatorCraftingInfoFrameMixin, "OnLoad", function(self)
+			if self.SearchButton then
+				B.Reskin(self.SearchButton)
 			end
 		end)
 	end

@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.4.2
+[易用性] 修复Roll点增强报错
+[易用性] 添加缺失的雕文图标
+
 v2.4.1
 [美化] 更新Auctionator美化
 [美化] 修复AutoBar美化

@@ -14,10 +14,7 @@ end
 
 function M:OnLogin()
 	for name, func in next, M.MiscList do
-		if name and type(func) == "function" then
-			local _, catch = pcall(func)
-			P:ThrowError(catch, format("%s Misc", name))
-		end
+		xpcall(func, P.ThrowError)
 	end
 end
 

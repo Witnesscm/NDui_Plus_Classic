@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 
 local pairs, type, next= pairs, type, next
 local tinsert = table.insert
-local pcall = pcall
+local xpcall = xpcall
 
 local modules, initQueue, addonsToLoad = {}, {}, {}
 
@@ -193,15 +193,15 @@ function P.IsClassic()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
 end
 
-function P:ThrowError(err, message)
-	if not err then return end
+function P.ThrowError(...)
+	local message = strjoin(" ", ...)
+	_G.geterrorhandler()(format("|cFF70B8FFNDui_Plus:|r %s", message))
+end
 
-	err = format("NDui_Plus: %s error\n%s", message, err)
-
-	if _G.BaudErrorFrameHandler then
-		_G.BaudErrorFrameHandler(err)
-	else
-		_G.ScriptErrorsFrame:OnError(err, false, false)
+function P.Developer_ThrowError(...)
+	if NDuiPlusDB["Debug"] then
+		local message = strjoin(" ", ...)
+		_G.geterrorhandler()(format("|cFF70B8FFNDui_Plus:|r %s", message))
 	end
 end
 
@@ -251,10 +251,7 @@ end
 
 function P:CallLoadedAddon(addonName, object)
 	for _, func in next, object do
-		if type(func) == "function" then
-			local _, catch = pcall(func)
-			P:ThrowError(catch, format("%s callback", addonName))
-		end
+		xpcall(func, P.ThrowError)
 	end
 
 	addonsToLoad[addonName] = nil
@@ -297,8 +294,7 @@ function P:Initialize()
 
 	for _, module in next, initQueue do
 		if module.OnLogin then
-			local _, catch = pcall(module.OnLogin, module)
-			P:ThrowError(catch, format("%s Module", module.name))
+			xpcall(module.OnLogin, P.ThrowError, module)
 		else
 			P:Print("Module <"..module.name.."> does not loaded.")
 		end

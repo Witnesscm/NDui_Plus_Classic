@@ -412,4 +412,16 @@ do
 	function P.TextureString(texture, data)
 		return format(t, texture, data or d)
 	end
+
+	function P.CopyTable(tbl)
+		local copy = {}
+		for k, v in pairs(tbl) do
+			if type(v) == "table" then
+				copy[k] = P.CopyTable(v)
+			else
+				copy[k] = v
+			end
+		end
+		return copy
+	end
 end

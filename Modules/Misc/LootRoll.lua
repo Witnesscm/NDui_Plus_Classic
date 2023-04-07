@@ -31,7 +31,6 @@ local ROLL_DISENCHANT = ROLL_DISENCHANT
 local enableDisenchant = false
 
 local cachedRolls = {}
-local completedRolls = {}
 LR.RollBars = {}
 
 local fontSize = 14
@@ -340,17 +339,13 @@ function LR:LootRoll_Start(rollID, rollTime)
 
 	bar:Show()
 
-	for rollid, rollTable in pairs(cachedRolls) do
-		if bar.rollID == rollid then
-			for rollType, rollerInfo in pairs(rollTable) do
-				local rollerName, class = rollerInfo[1], rollerInfo[2]
-				if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
-				tinsert(bar.rolls[rollType], { rollerName, class })
-				bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
-			end
-
-			completedRolls[rollid] = true
-			break
+	local cachedInfo = cachedRolls[rollID]
+	if cachedInfo then
+		for rollType, rollerInfo in pairs(cachedInfo) do
+			local rollerName, class = rollerInfo[1], rollerInfo[2]
+			if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
+			tinsert(bar.rolls[rollType], { rollerName, class })
+			bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
 		end
 	end
 end
@@ -373,23 +368,18 @@ function LR:LootRoll_Update(itemIdx, playerIdx)
 
 		if rollIsHidden then
 			if not cachedRolls[rollID] then cachedRolls[rollID] = {} end
-			if not cachedRolls[rollID][rollType] then
-				if not cachedRolls[rollID][rollType] then cachedRolls[rollID][rollType] = {} end
-				tinsert(cachedRolls[rollID][rollType], { name, class })
-			end
+			if not cachedRolls[rollID][rollType] then cachedRolls[rollID][rollType] = {} end
+			tinsert(cachedRolls[rollID][rollType], { name, class })
 		end
 	end
-end
-
-function LR:LootRoll_Complete()
-	wipe(cachedRolls)
-	wipe(completedRolls)
 end
 
 function LR:LootRoll_Cancel(_, rollID)
 	if self.rollID == rollID then
 		self.rollID = nil
 		self.time = nil
+
+		if cachedRolls[rollID] then cachedRolls[rollID] = nil end
 	end
 end
 
@@ -402,8 +392,6 @@ function LR:OnLogin()
 	fontSize = LR.db["Height"] / 2
 
 	B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
-	B:RegisterEvent("LOOT_HISTORY_ROLL_COMPLETE", self.LootRoll_Complete)
-	B:RegisterEvent("LOOT_ROLLS_COMPLETE", self.LootRoll_Complete)
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
 	_G.UIParent:UnregisterEvent("START_LOOT_ROLL")

@@ -97,47 +97,6 @@ function S:Accountant()
 	B.ReskinDropDown(_G.AccountantClassicFrameCharacterDropDown)
 end
 
-function S:BagSync()
-	local BagSync = _G.BagSync
-	local search = BagSync:GetModule("Search")
-	local blacklist = BagSync:GetModule("Blacklist")
-	local profiles = BagSync:GetModule("Profiles")
-	local tooltip = BagSync:GetModule("Tooltip")
-
-	hooksecurefunc(tooltip, "MoneyTooltip", function()
-		local tip = _G["BagSyncMoneyTooltip"]
-		if tip and not tip.tipStyled then
-			for i = 1, tip:GetNumChildren() do
-				local child = select(i, tip:GetChildren())
-				if child:GetObjectType() == "Button" then
-					B.ReskinClose(child)
-				end
-			end
-			P.ReskinTooltip(tip)
-		end
-	end)
-
-	local function reskinFrame(frame)
-		if not frame then return end
-		if frame.bg then
-			B.CreateBD(frame.bg)
-			B.CreateSD(frame.bg)
-			B.CreateTex(frame.bg)
-		else
-			B.StripTextures(frame)
-			B.SetBD(frame)
-		end
-	end
-
-	P:Delay(.5,function()
-		reskinFrame(search.frame.frame)
-		reskinFrame(search.warningframe.frame)
-		reskinFrame(blacklist.frame.frame)
-		reskinFrame(blacklist.guildFrame.frame)
-		reskinFrame(profiles.parentFrame)
-	end)
-end
-
 function S:FeatureFrame()
 	B.ReskinPortraitFrame(FeatureFrame, 10, -10, -32, 70)
 	for i = 1, 7 do
@@ -429,7 +388,6 @@ S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
 S:RegisterSkin("Accountant_Classic", S.Accountant)
-S:RegisterSkin("BagSync", S.BagSync)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
 S:RegisterSkin("BuffomatClassicTBC", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)

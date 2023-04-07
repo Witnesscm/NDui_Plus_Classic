@@ -55,31 +55,6 @@ do
 	P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.TradeSkill_AddName)
 end
 
-do
-	local titleString = "%a+ Attributes %- (.+)"
-
-	local function hookTitleButton(frame)
-		if frame.hooked then return end
-
-		frame.TitleButton:HookScript("OnDoubleClick", function(self)
-			local text = self.Text:GetText()
-			local title = text and strmatch(text, titleString)
-			if title then
-				ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
-			end
-		end)
-
-		frame.hooked = true
-	end
-
-	function M:Blizzard_TableInspector()
-		hookTitleButton(_G.TableAttributeDisplay)
-		hooksecurefunc(_G.TableInspectorMixin, "InspectTable", hookTitleButton)
-	end
-
-	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
-end
-
 -- Learn all available skills. Credit: TrainAll
 do
 	local function TrainAllButton_OnEnter(self)
@@ -139,6 +114,37 @@ do
 	end
 
 	P:AddCallbackForAddon("Blizzard_TrainerUI", M.TrainAllSkills)
+end
+
+do
+	local titleString = "%a+ Attributes %- (.+)"
+
+	local function hookTitleButton(frame)
+		if frame.hooked then return end
+
+		frame.TitleButton:HookScript("OnDoubleClick", function(self)
+			local text = self.Text:GetText()
+			local title = text and strmatch(text, titleString)
+			if title then
+				title = gsub(title, " %- ", ".")
+
+				if ChatEdit_GetActiveWindow() then
+					ChatEdit_InsertLink(title)
+				else
+					ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
+				end
+			end
+		end)
+
+		frame.hooked = true
+	end
+
+	function M:Blizzard_TableInspector()
+		hookTitleButton(_G.TableAttributeDisplay)
+		hooksecurefunc(_G.TableInspectorMixin, "InspectTable", hookTitleButton)
+	end
+
+	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
 
 -- Scale FlightMap

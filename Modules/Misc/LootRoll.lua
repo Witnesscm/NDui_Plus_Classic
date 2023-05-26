@@ -99,14 +99,14 @@ local function StatusUpdate(button, elapsed)
 end
 
 local iconCoords = {
-	[0] = {1.05, -0.1, 1.05, -0.1}, -- pass
-	[2] = {0.05, 1.05, -0.025, 0.85}, -- greed
-	[1] = {0.05, 1.05, -0.05, 0.95}, -- need
-	[3] = {0.05, 1.05, -0.05, 0.95}, -- disenchant
+	[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
+	[1] = {0, 1, -0.05, 0.95}, -- need
+	[2] = {0, 1, -0.025, 0.85}, -- greed
+	[3] = {0, 1, -0.05, 0.95}, -- disenchant
 }
 
-local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
-	local offset = icon == button.pushedTex and (rolltype == 0 and -0.05 or 0.05) or 0
+local function RollTexCoords(button, icon, minX, maxX, minY, maxY)
+	local offset = icon == button.pushedTex and 0.05 or 0
 	icon:SetTexCoord(minX - offset, maxX, minY - offset, maxY)
 
 	if icon == button.disabledTex then
@@ -115,11 +115,18 @@ local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
 	end
 end
 
-local function RollButtonTextures(button, texture, rolltype)
-	button:SetNormalTexture(texture)
-	button:SetPushedTexture(texture)
-	button:SetDisabledTexture(texture)
-	button:SetHighlightTexture(texture)
+local function RollButtonTextures(button, texture, rolltype, atlas)
+	if atlas then
+		button:SetNormalAtlas(texture)
+		button:SetPushedAtlas(texture)
+		button:SetDisabledAtlas(texture)
+		button:SetHighlightAtlas(texture)
+	else
+		button:SetNormalTexture(texture)
+		button:SetPushedTexture(texture)
+		button:SetDisabledTexture(texture)
+		button:SetHighlightTexture(texture)
+	end
 
 	button.normalTex = button:GetNormalTexture()
 	button.disabledTex = button:GetDisabledTexture()
@@ -127,10 +134,10 @@ local function RollButtonTextures(button, texture, rolltype)
 	button.highlightTex = button:GetHighlightTexture()
 
 	local minX, maxX, minY, maxY = unpack(iconCoords[rolltype])
-	RollTexCoords(button, button.normalTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.disabledTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.pushedTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.highlightTex, rolltype, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.normalTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.disabledTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.pushedTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.highlightTex, minX, maxX, minY, maxY)
 end
 
 local function RollMouseDown(button)
@@ -145,7 +152,7 @@ local function RollMouseUp(button)
 	end
 end
 
-local function CreateRollButton(parent, texture, rolltype, tiptext, points)
+local function CreateRollButton(parent, texture, rolltype, tiptext, points, atlas)
 	local button = CreateFrame("Button", nil, parent)
 	button:SetPoint(unpack(points))
 	button:SetWidth(LR.db["Height"] - 4)
@@ -158,7 +165,7 @@ local function CreateRollButton(parent, texture, rolltype, tiptext, points)
 	button:SetMotionScriptsWhileDisabled(true)
 	button:SetHitRectInsets(3, 3, 3, 3)
 
-	RollButtonTextures(button, texture.."-Up", rolltype)
+	RollButtonTextures(button, texture.."-Up", rolltype, atlas)
 
 	button.parent = parent
 	button.rolltype = rolltype
@@ -361,7 +368,7 @@ function LR:LootRoll_Cancel(_, rollID)
 		self.rollID = nil
 		self.time = nil
 
-		if cachedRolls[rollID] then wipe(cachedRolls[rollID])end
+		if cachedRolls[rollID] then wipe(cachedRolls[rollID]) end
 	end
 end
 
@@ -403,6 +410,7 @@ function LR:LootRollTest()
 	testFrame:SetPoint("TOP", parentFrame, "TOP")
 	testFrame.need:SetScript("OnClick", OnClick_Hide)
 	testFrame.greed:SetScript("OnClick", OnClick_Hide)
+	if testFrame.disenchant then testFrame.disenchant:SetScript("OnClick", OnClick_Hide) end
 	testFrame.pass:SetScript("OnClick", OnClick_Hide)
 
 	local itemID = 17103
@@ -449,6 +457,7 @@ function LR:UpdateLootRollTest()
 	testFrame.fsloot:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.need:SetSize(height-4, height-4)
 	testFrame.greed:SetSize(height-4, height-4)
+	if testFrame.disenchant then testFrame.disenchant:SetSize(height-4, height-4) end
 	testFrame.pass:SetSize(height-4, height-4)
 	testFrame.status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and testFrame:GetHeight() / 1.6 or C.mult))
 

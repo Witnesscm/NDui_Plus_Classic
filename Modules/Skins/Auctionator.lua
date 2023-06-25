@@ -116,6 +116,7 @@ local function reskinBagItem(button)
 	B.ReskinIconBorder(button.IconBorder)
 	button.IconBorder:Hide()
 	button.IconBorder.Show = B.Dummy
+	button.IconBorder.SetShown = B.Dummy
 end
 
 local function reskinBagList(frame)

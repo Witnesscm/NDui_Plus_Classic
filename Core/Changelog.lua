@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.4.4
+[主要] 更新版本号 3.4.2
+[美化] 更新Auctionator美化
+[美化] 修复Krowi_AchievementFilter美化报错
+
 v2.4.3
 [美化] 更新Auctionator美化
 [美化] 更新BagSync美化

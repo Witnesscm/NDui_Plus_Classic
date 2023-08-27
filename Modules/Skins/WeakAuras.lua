@@ -106,35 +106,27 @@ local function SkinWeakAurasOptions()
 	B.ReskinInput(frame.filterInput, 18)
 	B.Reskin(_G.WASettingsButton)
 
-	-- Minimize, Close Button (Credit: ElvUI_WindTools)
-	for _, child in pairs {frame:GetChildren()} do
-		local numRegions = child:GetNumRegions()
-		local numChildren = child:GetNumChildren()
+	-- Minimize, Close Button
+	B.ReskinClose(frame.CloseButton, frame)
+	frame.CloseButton:SetSize(18, 18)
+	B.ReskinMinMax(frame.MaxMinButtonFrame)
+	frame.MaxMinButtonFrame:ClearAllPoints()
+	frame.MaxMinButtonFrame:SetPoint("RIGHT", frame.CloseButton, "LEFT", 8, 0)
+	frame.MaxMinButtonFrame.MaximizeButton:SetSize(18, 18)
+	frame.MaxMinButtonFrame.MinimizeButton:SetSize(18, 18)
 
-		if numRegions == 3 and numChildren == 1 and child.PixelSnapDisabled then
-			B.StripTextures(child)
-			local button = child:GetChildren()
-			local texture = button.GetNormalTexture and button:GetNormalTexture():GetTexture()
-			if texture and (texture == 252125 or strfind(texture, "CollapseButton")) then
-				B.ReskinArrow(button, "up")
-				button:SetSize(18, 18)
-				button:ClearAllPoints()
-				button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -30, -6)
-				button.SetNormalTexture = B.Dummy
-				button.SetPushedTexture = B.Dummy
-
-				button:HookScript("OnClick",function(self)
-					if frame.minimized then
-						B.SetupArrow(self.__texture, "down")
-					else
-						B.SetupArrow(self.__texture, "up")
-					end
-				end)
-			else
-				B.ReskinClose(button, frame)
-				button:SetSize(18, 18)
-			end
-		end
+	-- ToolbarContainer
+	local toolbarContainer = frame.toolbarContainer
+	if toolbarContainer then
+		local importButton, newButton, magnetButton, lockButton = toolbarContainer:GetChildren()
+		newButton:ClearAllPoints()
+		newButton:SetPoint("BOTTOMLEFT", frame.filterInput, "TOPLEFT", 0, 10)
+		importButton:ClearAllPoints()
+		importButton:SetPoint("LEFT", newButton, "RIGHT", 2, 0)
+		lockButton:ClearAllPoints()
+		lockButton:SetPoint("LEFT", importButton, "RIGHT", 2, 0)
+		magnetButton:ClearAllPoints()
+		magnetButton:SetPoint("LEFT", lockButton, "RIGHT", 2, 0)
 	end
 
 	-- Child Groups
@@ -153,6 +145,17 @@ local function SkinWeakAurasOptions()
 		local group = frame[key]
 		if group then
 			reskinChildButtons(group.frame)
+		end
+	end
+
+	-- TextEditor
+	local texteditor = frame.texteditor and frame.texteditor.frame
+	if texteditor then
+		for _, child in pairs {texteditor:GetChildren()} do
+			if child.GetObjectType and child:GetObjectType() == "EditBox" then
+				B.ReskinInput(child)
+				break
+			end
 		end
 	end
 
@@ -197,6 +200,7 @@ local function SkinWeakAurasOptions()
 	if snippets then
 		B.StripTextures(snippets)
 		B.SetBD(snippets)
+		B.ReskinClose(snippets.CloseButton)
 		reskinChildButtons(snippets)
 	end
 

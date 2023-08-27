@@ -1258,7 +1258,7 @@ function M:TalentUI_Init()
 	M.TalentUI = frame
 
 	local alaEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
-	if alaEmu and alaEmu.MT  then
+	if alaEmu and alaEmu.MT then
 		local CalcButton = P.CreateButton(ContainerBar, 70, 20, L["TalentEmu"])
 		CalcButton:SetPoint("LEFT", Glyph, "RIGHT", 4, 0)
 		CalcButton:SetScript("OnClick", function() alaEmu.MT.CreateEmulator() end)

@@ -145,7 +145,8 @@ function S:Immersion()
 		end
 
 		-- Spell Rewards
-		if GetNumRewardSpells() > 0 then
+		local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(GetQuestID()) or {}
+		if #spellRewards > 0 then
 			for spellReward in rewardsFrame.spellRewardPool:EnumerateActive() do
 				if not spellReward.textBg then
 					local icon = spellReward.Icon

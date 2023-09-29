@@ -10,8 +10,8 @@ local function setBorder(button)
 	local border = button.Border
 	if not border then return end
 
-	border.__textureFile = DB.textures.pushed
-	border:SetTexture(DB.textures.pushed)
+	border.__textureFile = DB.pushedTex
+	border:SetTexture(DB.pushedTex)
 	border:SetAllPoints()
 end
 

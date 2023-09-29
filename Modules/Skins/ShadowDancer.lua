@@ -72,7 +72,7 @@ function S:ShadowDancer()
 				},
 			},
 			NormalTexture = {
-				file = DB.textures.normal,
+				file = NIL,
 				texCoords = RectType(unpack(DB.TexCoord)),
 				vertexColor = Color(.3, .3, .3, 1),
 				location = {
@@ -81,7 +81,7 @@ function S:ShadowDancer()
 				},
 			},
 			PushedTexture = {
-				file = DB.textures.pushed,
+				file = DB.pushedTex,
 				location = {
 					Anchor("TOPLEFT", C.mult, -C.mult),
 					Anchor("BOTTOMRIGHT", -C.mult, C.mult),

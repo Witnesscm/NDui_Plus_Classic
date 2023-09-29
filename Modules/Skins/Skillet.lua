@@ -20,7 +20,7 @@ local function reskinTradeButton(bu)
 	bu:GetHighlightTexture():SetInside()
 
 	if bu.SetPushedTexture then bu:SetPushedTexture(0) end
-	if bu.SetCheckedTexture then bu:SetCheckedTexture(DB.textures.pushed) end
+	if bu.SetCheckedTexture then bu:SetCheckedTexture(DB.pushedTex) end
 
 	local icon = _G[bu:GetName().."Icon"]
 	icon:SetInside()
@@ -135,7 +135,7 @@ function S:SkilletClassic()
 				hl:SetAllPoints()
 
 				if bu.SetCheckedTexture then
-					bu:SetCheckedTexture(DB.textures.pushed)
+					bu:SetCheckedTexture(DB.pushedTex)
 				end
 			end
 		end

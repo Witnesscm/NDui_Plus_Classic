@@ -62,7 +62,7 @@ function S:tdInspect()
 			end
 			B.StripTextures(tab)
 			B.ReskinIcon(tab.nt)
-			tab.ct:SetTexture(DB.textures.pushed)
+			tab.ct:SetTexture(DB.pushedTex)
 			tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			tab:HookScript("OnEnter", function()
 				GameTooltip:Show() -- fix

@@ -353,7 +353,7 @@ function M:TalentUI_CreateTab()
 	tab:GetNormalTexture():SetTexCoord(unpack(DB.TexCoord))
 	tab:SetHighlightTexture(0)
 	tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-	tab:SetCheckedTexture(DB.textures.pushed)
+	tab:SetCheckedTexture(DB.pushedTex)
 	B.CreateBDFrame(tab)
 	tab:Hide()
 

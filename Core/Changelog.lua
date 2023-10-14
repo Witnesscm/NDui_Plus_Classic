@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v2.4.5
+[主要] 更新版本号 3.4.3
+[易用性] 更新暂离界面职业纹章材质
+[美化] 更新Auctionator美化
+[美化] 修复WeakAurasOptions美化
+[美化] 修复Immersion美化
+
 v2.4.4
 [主要] 更新版本号 3.4.2
 [美化] 更新Auctionator美化

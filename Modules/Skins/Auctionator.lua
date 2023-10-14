@@ -16,6 +16,32 @@ local function reskinButtons(self, buttons)
 	end
 end
 
+local function reskinChildButtons(self)
+	for _, child in pairs {self:GetChildren()} do
+		if child:GetObjectType() == "Button" and child.Text then
+			B.Reskin(child)
+		end
+	end
+end
+
+local function reskinInput(editbox)
+	if not editbox then P:Debug("Unknown: Input") return end
+
+	P.ReskinInput(editbox, 24)
+	editbox.bg:SetPoint("TOPLEFT", -2, 4)
+end
+
+local function reskinSimplePanel(frame)
+	if not frame then P:Debug("Unknown: Panel") return end
+
+	B.StripTextures(frame)
+	B.SetBD(frame)
+
+	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
+	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
+	if frame.Inset then frame.Inset:SetAlpha(0)end
+end
+
 local function reskinItemDialog(self)
 	if not self then
 		P:Debug("Unknown: ItemDialog")
@@ -29,6 +55,7 @@ local function reskinItemDialog(self)
 	P.ReskinDropDown(self.FilterKeySelector)
 	P.ReskinDropDown(self.QualityContainer.DropDown.DropDown)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
+	reskinInput(self.PurchaseQuantity.InputBox)
 
 	if self.Inset then
 		self.Inset:SetAlpha(0)
@@ -86,22 +113,8 @@ local function reskinListHeader(frame)
 	end
 end
 
-local function reskinSimplePanel(frame)
-	if not frame then P:Debug("Unknown: Panel") return end
-
-	B.StripTextures(frame)
-	B.SetBD(frame)
-
-	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
-	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
-	if frame.Inset then frame.Inset:SetAlpha(0)end
-end
-
-local function reskinInput(editbox)
-	if not editbox then P:Debug("Unknown: Input") return end
-
-	P.ReskinInput(editbox, 24)
-	editbox.bg:SetPoint("TOPLEFT", -2, 4)
+local function updateSelectedColor(self, r, g, b)
+	self:SetColorTexture(r, g, b, .5)
 end
 
 local function reskinBagItem(button)
@@ -113,36 +126,10 @@ local function reskinBagItem(button)
 	button.Highlight:SetColorTexture(1, 1, 1, .25)
 	button.Highlight:SetAllPoints(button.Icon)
 	button.bg = B.ReskinIcon(button.Icon)
-	B.ReskinIconBorder(button.IconBorder)
-	button.IconBorder:Hide()
-	button.IconBorder.Show = B.Dummy
-	button.IconBorder.SetShown = B.Dummy
-end
-
-local function reskinBagList(frame)
-	B.StripTextures(frame.SectionTitle)
-	frame.titleBG = B.CreateBDFrame(frame.SectionTitle, .25)
-	frame.titleBG:SetAllPoints()
-
-	local buttons = frame.ItemContainer and frame.ItemContainer.buttons
-	if buttons then
-		for _, bu in ipairs(buttons) do
-			reskinBagItem(bu)
-			bu.styled = true
-		end
-	end
-
-	local buttonPool = frame.ItemContainer and frame.ItemContainer.buttonPool
-	if buttonPool then
-		hooksecurefunc(buttonPool, "Acquire", function(self)
-			for bu in self:EnumerateActive() do
-				if not bu.styled then
-					reskinBagItem(bu)
-					bu.styled = true
-				end
-			end
-		end)
-	end
+	button.IconBorder.SetVertexColor = B.Dummy
+	B.ReskinIconBorder(button.IconBorder, true)
+	button.IconSelectedHighlight.SetVertexColor = updateSelectedColor
+	button.IconSelectedHighlight:SetAllPoints(button.bg)
 end
 
 local function reskinMoneyInput(self)
@@ -190,6 +177,69 @@ end
 
 local function reskinSearchButton(self)
 	S:Proxy("Reskin", self.SearchButton)
+end
+
+local function reskinCopyAndPaste(self)
+	S:Proxy("ReskinInput", self.InputBox)
+end
+
+local function reskinBagUse(self)
+	S:Proxy("Reskin", self.CustomiseButton)
+end
+
+local function reskinCustomiseGroup(self)
+	reskinButtons(self, {"FocusButton", "RenameButton", "DeleteButton", "HideButton", "ShiftUpButton", "ShiftDownButton"})
+
+	for _, key in ipairs({"NumStacks", "StackSize", "Quantity"}) do
+		local editbox = self.Quantity and self.Quantity[key]
+		if editbox then
+			P.ReskinInput(editbox)
+			editbox.bg:SetPoint("TOPLEFT", -2, -2)
+			editbox.bg:SetPoint("BOTTOMRIGHT", 0, 2)
+		end
+	end
+
+	for _, key in ipairs({"Short", "Medium", "Long", "Default"}) do
+		local radio = self.Durations and self.Durations[key]
+		if radio then
+			B.ReskinRadio(radio)
+		end
+	end
+
+	for _, child in pairs {self:GetChildren()} do
+		if child.Divider then
+			child.Divider:SetAlpha(0)
+			break
+		end
+	end
+end
+
+local function reskinBagView(self)
+	S:Proxy("ReskinTrimScroll", self.ScrollBar)
+
+	hooksecurefunc(self, "UpdateFromExisting", function()
+		for bu in self.groupPool:EnumerateActive() do
+			if not bu.styled then
+				B.StripTextures(bu.GroupTitle)
+				local bg = B.CreateBDFrame(bu.GroupTitle, .25)
+				bg:SetAllPoints()
+
+				bu.styled = true
+			end
+		end
+	end)
+end
+
+local function reskinBagCustomise(self)
+	B.ReskinPortraitFrame(self)
+	reskinChildButtons(self)
+end
+
+local function reskinBagItemButton(self)
+	if not self.styled then
+		reskinBagItem(self)
+		self.styled = true
+	end
 end
 
 function S:Auctionator()
@@ -327,18 +377,6 @@ function S:Auctionator()
 				end
 			end
 
-			local BagListing = SellingFrame.BagListing
-			if BagListing then
-				local frameMap = BagListing.frameMap
-				if frameMap then
-					for _, items in pairs(frameMap) do
-						reskinBagList(items)
-					end
-				end
-
-				S:Proxy("ReskinTrimScroll", BagListing.ScrollBar)
-			end
-
 			if SellingFrame.BagInset then
 				SellingFrame.BagInset:SetAlpha(0)
 			end
@@ -357,6 +395,7 @@ function S:Auctionator()
 				if child.StartScanButton and child.CancelNextButton then
 					B.Reskin(child.StartScanButton)
 					B.Reskin(child.CancelNextButton)
+					break
 				end
 			end
 
@@ -372,13 +411,6 @@ function S:Auctionator()
 			B.StripTextures(ConfigFrame)
 			B.CreateBDFrame(ConfigFrame, .25)
 			reskinButtons(ConfigFrame, {"ScanButton", "OptionsButton"})
-
-			for _, key in ipairs({"DiscordLink", "BugReportLink", "TechnicalRoadmap"}) do
-				local eb = ConfigFrame[key]
-				if eb then
-					S:Proxy("ReskinInput", eb.InputBox)
-				end
-			end
 
 			for _, child in pairs {ConfigFrame:GetChildren()} do
 				if child:GetObjectType() == "Frame" and child.BorderTopRight then
@@ -413,9 +445,24 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	if _G.AuctionatorCraftingInfoFrameMixin then
-		hooksecurefunc(_G.AuctionatorCraftingInfoFrameMixin, "OnLoad", reskinSearchButton)
+	local function hook(object, method, func)
+		if type(object) == "string" then
+			object = _G[object]
+		end
+		if object and object[method] then
+			hooksecurefunc(object, method, func)
+		else
+			P.Developer_ThrowError(format("function %s:%s does not exist", object, method))
+		end
 	end
+
+	hook("AuctionatorConfigurationCopyAndPasteMixin", "OnLoad", reskinCopyAndPaste)
+	hook("AuctionatorCraftingInfoFrameMixin", "OnLoad", reskinSearchButton)
+	hook("AuctionatorBagUseMixin", "OnLoad", reskinBagUse)
+	hook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
+	hook("AuctionatorGroupsCustomiseMixin", "OnLoad", reskinBagCustomise)
+	hook("AuctionatorGroupsViewItemMixin", "SetItemInfo", reskinBagItemButton)
+	hook("AuctionatorGroupsCustomiseGroupMixin", "OnLoad", reskinCustomiseGroup)
 end
 
 S:RegisterSkin("Auctionator", S.Auctionator)

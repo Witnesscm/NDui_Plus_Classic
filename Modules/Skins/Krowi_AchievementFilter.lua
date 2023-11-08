@@ -15,7 +15,31 @@ local function SetupButtonHighlight(button, bg)
 	hl:SetInside(bg)
 end
 
-local function updateAccountString(button)
+local function SkinSearchResults(button)
+	if not button.styled then
+		B.StripTextures(button, 2)
+		B.ReskinIcon(button.Icon)
+		local bg = B.CreateBDFrame(button, .25)
+		bg:SetInside()
+		SetupButtonHighlight(button, bg)
+
+		button.styled = true
+	end
+end
+
+local function updateAchievementBorder(button)
+	if not button.bg then return end
+
+	local achievement = button.Achievement
+	local state = achievement and achievement.TemporaryObtainable and achievement.TemporaryObtainable.Obtainable()
+	if state and (state == false or state == "Past" or state == "Future") then
+		button.bg:SetBackdropBorderColor(.33, 0, 0)
+	elseif state and state == "Current" then
+		button.bg:SetBackdropBorderColor(0, .33, 0)
+	else
+		button.bg:SetBackdropBorderColor(0, 0, 0)
+	end
+
 	if button.DateCompleted:IsShown() then
 		if button.accountWide then
 			button.Header:SetTextColor(0, .6, 1)
@@ -28,26 +52,6 @@ local function updateAccountString(button)
 		else
 			button.Header:SetTextColor(.65, .65, .65)
 		end
-	end
-end
-
-local function updateAchievementBorder(button)
-	if not button.bg then return end
-
-	if button.accountWide then
-		button.Header:SetTextColor(0, .6, 1)
-	else
-		button.Header:SetTextColor(.9, .9, .9)
-	end
-
-	local achievement = button.Achievement
-	local state = achievement and achievement.TemporaryObtainable and achievement.TemporaryObtainable.Obtainable()
-	if state and (state == false or state == "Past" or state == "Future") then
-		button.bg:SetBackdropBorderColor(.33, 0, 0)
-	elseif state and state == "Current" then
-		button.bg:SetBackdropBorderColor(0, .33, 0)
-	else
-		button.bg:SetBackdropBorderColor(0, 0, 0)
 	end
 end
 
@@ -69,7 +73,6 @@ local function SkinAchivementButton(button)
 		button.Tracked:SetSize(20, 20)
 		button.Check:SetAlpha(0)
 
-		hooksecurefunc(button, "UpdatePlusMinusTexture", updateAccountString)
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 	end
 end
@@ -89,6 +92,31 @@ local function SkinAchivementButtonLight(button)
 
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 		if button.Achievement then button:SetAchievement(button.Achievement) end
+	end
+end
+
+local function SkinCategory(button)
+	if not button.styled then
+		B.StripTextures(button)
+		local bg = B.CreateBDFrame(button, .25)
+		bg:SetPoint("TOPLEFT", 0, -1)
+		bg:SetPoint("BOTTOMRIGHT")
+		SetupButtonHighlight(button, bg)
+
+		button.styled = true
+	end
+end
+
+local function SkinCharacterList(button)
+	if not button.styled then
+		for _, key in ipairs({"HeaderTooltip", "EarnedByAchievementTooltip", "IgnoreCharacter", "MostProgressAchievementTooltip"}) do
+			local check = button[key]
+			if check then
+				B.ReskinCheck(check)
+			end
+		end
+
+		button.styled = true
 	end
 end
 
@@ -117,44 +145,17 @@ local function reskinStatusBar(self, isTip)
 	end
 end
 
-local function reskinAlertFrame(self)
-	self.Background:SetTexture("")
-	self.bg = B.SetBD(self)
-	self.bg:SetPoint("TOPLEFT", 0, -7)
-	self.bg:SetPoint("BOTTOMRIGHT", 0, 8)
-	B.ReskinIcon(self.Icon.Texture)
-	self.Icon.Overlay:SetTexture("")
-	B.SetFontSize(self.Unlocked, 13)
-end
+local function SkinAlertFrame(self)
+	if not self.styled then
+		self.Background:SetTexture("")
+		self.bg = B.SetBD(self)
+		self.bg:SetPoint("TOPLEFT", 0, -7)
+		self.bg:SetPoint("BOTTOMRIGHT", 0, 8)
+		B.ReskinIcon(self.Icon.Texture)
+		self.Icon.Overlay:SetTexture("")
+		B.SetFontSize(self.Unlocked, 13)
 
-local function SkinCategory(button)
-	if not button.styled then
-		B.StripTextures(button)
-		local bg = B.CreateBDFrame(button, .25)
-		bg:SetPoint("TOPLEFT", 0, -1)
-		bg:SetPoint("BOTTOMRIGHT")
-		SetupButtonHighlight(button, bg)
-
-		button.styled = true
-	end
-end
-
-local function reskinCharacterListButton(self)
-	for _, key in ipairs({"HeaderTooltip", "EarnedByAchievementTooltip", "IgnoreCharacter", "MostProgressAchievementTooltip"}) do
-		local check = self[key]
-		if check and check.GetObjectType and check:GetObjectType() == "CheckButton" then
-			B.ReskinCheck(check)
-		end
-	end
-end
-
-local function reskinCharacterList(self)
-	local buttons = self.ScrollFrame.buttons
-	for _, button in ipairs(buttons) do
-		if not button.styled then
-			reskinCharacterListButton(button)
-			button.styled = true
-		end
+		self.styled = true
 	end
 end
 
@@ -183,7 +184,7 @@ local function SkinAchievementFrame()
 	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
 	CalendarButton.Icon:SetInside()
 	CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
-	CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.11)
+	CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.12)
 
 	-- Search Box
 	local SearchBox = _G.KrowiAF_SearchBoxFrame
@@ -217,20 +218,9 @@ local function SkinAchievementFrame()
 	Result.bg:SetPoint("TOPLEFT", -10, 0)
 	Result.bg:SetPoint("BOTTOMRIGHT")
 	B.ReskinClose(Result.closeButton)
-	B.ReskinScroll(Result.Container.ScrollBar)
-	hooksecurefunc(Result, "Update", function(self)
-		local buttons = self.Container.buttons
-		for _, button in ipairs(buttons) do
-			if not button.styled then
-				B.StripTextures(button, 2)
-				B.ReskinIcon(button.icon)
-				local bg = B.CreateBDFrame(button, .25)
-				bg:SetInside()
-				SetupButtonHighlight(button, bg)
-
-				button.styled = true
-			end
-		end
+	B.ReskinTrimScroll(Result.ScrollBar)
+	hooksecurefunc(Result.ScrollBox, "Update", function(self)
+		self:ForEachFrame(SkinSearchResults)
 	end)
 
 	-- AchievementsObjectives
@@ -277,7 +267,7 @@ local function SkinAchievementFrame()
 	end)
 
 	-- SummaryFrame
-	local SummaryFrame = _G.KrowiAF_AchievementFrameSummaryFrame
+	local SummaryFrame = _G.KrowiAF_SummaryFrame
 	B.StripTextures(SummaryFrame)
 	SummaryFrame:GetChildren():Hide()
 	SummaryFrame.Achievements.Header.Texture:SetAlpha(0)
@@ -289,8 +279,14 @@ local function SkinAchievementFrame()
 	end)
 
 	reskinStatusBar(SummaryFrame.TotalStatusBar)
-	for _, statusBar in ipairs(SummaryFrame.StatusBars) do
-		reskinStatusBar(statusBar)
+	local origGetStatusBar = SummaryFrame.GetStatusBar
+	SummaryFrame.GetStatusBar = function(self, ...)
+		local statusBar = origGetStatusBar(self, ...)
+		if not statusBar.styled then
+			reskinStatusBar(statusBar)
+			statusBar.styled = true
+		end
+		return statusBar
 	end
 
 	-- CategoriesFrame
@@ -336,7 +332,7 @@ local function SkinAchievementFrame()
 		end
 	end
 
-	local CalendarSideFrame = _G.KrowiAF_CalendarSideFrame
+	local CalendarSideFrame = CalendarFrame.SideFrame
 	B.SetBD(CalendarSideFrame)
 	CalendarSideFrame.Border:SetAlpha(0)
 	B.StripTextures(CalendarSideFrame.Header)
@@ -345,14 +341,6 @@ local function SkinAchievementFrame()
 	hooksecurefunc(CalendarSideFrame.AchievementsFrame.ScrollBox, "Update", function(self)
 		self:ForEachFrame(SkinAchivementButtonLight)
 	end)
-
-	-- SideButton
-	for _, child in ipairs({_G.AchievementFrame:GetChildren()}) do
-		local objectName = child:GetName()
-		if child:GetObjectType() == "Button" and objectName and strfind(objectName, "AchievementFrameSideButton") then
-			reskinAlertFrame(child)
-		end
-	end
 
 	-- DataManagerFrame
 	local DataManagerFrame = _G.KrowiAF_DataManagerFrame
@@ -374,8 +362,9 @@ local function SkinAchievementFrame()
 				hl:SetAllPoints(header.bg)
 			end
 
-			reskinCharacterList(CharacterList)
-			hooksecurefunc(CharacterList, "Update", reskinCharacterList)
+			hooksecurefunc(CharacterList.ScrollBox, "Update", function(self)
+				self:ForEachFrame(SkinCharacterList)
+			end)
 		end
 	end
 end
@@ -389,17 +378,8 @@ function S:Krowi_AchievementFilter()
 	end
 
 	-- AlertSystem
-	local alertFrameSubSystems = _G.AlertFrame.alertFrameSubSystems
-	local numSubSystems = #alertFrameSubSystems
-	for i = numSubSystems, 1, -1 do
-		local subSystem = alertFrameSubSystems[i]
-		if subSystem.alertFramePool and subSystem.alertFramePool.frameTemplate and strfind(subSystem.alertFramePool.frameTemplate, "KrowiAF") then
-			hooksecurefunc(subSystem, "setUpFunction", function(frame)
-				reskinAlertFrame(frame)
-			end)
-			break
-		end
-	end
+	hooksecurefunc("KrowiAF_EventReminderAlertFrame_Small_OnLoad", SkinAlertFrame)
+	hooksecurefunc("KrowiAF_EventReminderAlertFrame_Normal_OnLoad", SkinAlertFrame)
 
 	if IsAddOnLoaded("Blizzard_AchievementUI") then
 		SkinAchievementFrame()

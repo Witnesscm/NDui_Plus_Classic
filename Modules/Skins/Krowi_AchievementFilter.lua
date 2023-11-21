@@ -159,6 +159,15 @@ local function SkinAlertFrame(self)
 	end
 end
 
+local function SkinTextFrame(self)
+	if not self.styled then
+		B.ReskinPortraitFrame(self)
+		S:Proxy("Reskin", self.Button1)
+
+		self.styled = true
+	end
+end
+
 local function SkinAchievementFrame()
 	for i = 4, _G.AchievementFrame.numTabs do
 		local tab = _G["AchievementFrameTab"..i]
@@ -346,9 +355,9 @@ local function SkinAchievementFrame()
 	local DataManagerFrame = _G.KrowiAF_DataManagerFrame
 	if DataManagerFrame then
 		B.ReskinPortraitFrame(DataManagerFrame)
+		S:Proxy("Reskin", DataManagerFrame.Import)
 		local CharacterList = DataManagerFrame.CharacterList
 		if CharacterList then
-			CharacterList.InsetFrame:Hide()
 			CharacterList.bg = B.CreateBDFrame(CharacterList, .25)
 			CharacterList.bg:SetPoint("BOTTOMRIGHT", -2, 0)
 			B.StripTextures(CharacterList.ColumnDisplay)
@@ -380,6 +389,8 @@ function S:Krowi_AchievementFilter()
 	-- AlertSystem
 	hooksecurefunc("KrowiAF_EventReminderAlertFrame_Small_OnLoad", SkinAlertFrame)
 	hooksecurefunc("KrowiAF_EventReminderAlertFrame_Normal_OnLoad", SkinAlertFrame)
+
+	hooksecurefunc(_G.KrowiAF_TextFrameMixin, "OnLoad", SkinTextFrame)
 
 	if IsAddOnLoaded("Blizzard_AchievementUI") then
 		SkinAchievementFrame()
